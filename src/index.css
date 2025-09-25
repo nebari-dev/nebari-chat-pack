@@ -1,0 +1,23 @@
+/*-----------------------------------------------------------------------------
+| Copyright (c) 2025-present, OpenTeams Inc.
+|----------------------------------------------------------------------------*/
+@import 'tailwindcss';
+@import './variables.css';
+
+
+body {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-regular);
+}
+
+
+#root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: 'row';
+}

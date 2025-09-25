@@ -1,0 +1,23 @@
+/*-----------------------------------------------------------------------------
+| Copyright (c) 2025-present, OpenTeams Inc.
+|----------------------------------------------------------------------------*/
+
+
+.chat-ChatPanel {
+  width: 100%;
+  height: 100%;
+  padding: var(--space-600);
+  display: flex;
+  flex-direction: column;
+}
+
+
+.chat-ChatPanel-scroller {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-600);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
