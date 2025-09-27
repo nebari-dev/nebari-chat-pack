@@ -82,7 +82,7 @@ function ChatTab(props: ChatTab.Props): ReactNode {
       <span
         ref={ closeRef }
         onClick={ handleClose }
-        className='flex-none cursor-pointer hover:bg-bg-neutral-default'>
+        className='flex-none cursor-pointer'>
         <X size={ 16 } />
       </span>
     </div>
