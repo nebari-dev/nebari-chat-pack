@@ -33,14 +33,14 @@ function SideBar(): ReactNode {
   return (
     <div className={ clsx(
       'flex flex-col flex-none border-r border-bd-neutral-default',
-      'w-12 bg-bg-neutral-default text-text-neutral-default'
+      'w-12 bg-bg-neutral-default text-text-neutral-default select-none'
     ) }>
       <div
         onClick={ () => toggleSideBarState('chats') }
         className={ clsx(
-        'py-3 cursor-pointer h-12y',
+        'py-3 cursor-pointer h-12 border-b',
         sideBarState === 'chats' ?
-        'bg-bg-white border-b border-b-bd-neutral-default text-bg-brand-default translate-x-px' :
+        'bg-bg-white border-b-bd-neutral-default text-bg-brand-default translate-x-px' :
         'hover:bg-bg-white border-b-transparent'
       ) }>
         <MessageCircleMore className='m-auto'/>
@@ -50,7 +50,7 @@ function SideBar(): ReactNode {
         className={ clsx(
         'py-3 cursor-pointer h-12 border-y',
         sideBarState === 'files' ?
-        'bg-bg-white border-y border-y-bd-neutral-default text-bg-brand-default translate-x-px' :
+        'bg-bg-white border-y-bd-neutral-default text-bg-brand-default translate-x-px' :
         'hover:bg-bg-white border-y-transparent'
       ) }>
         <Files className='m-auto'/>
