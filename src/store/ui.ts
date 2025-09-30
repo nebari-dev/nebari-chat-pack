@@ -84,6 +84,11 @@ type UISlice = {
   |--------------------------------------------------------------------------*/
 
   /**
+   * Check whether a panel is open in the dock area.
+   */
+  readonly isPanelOpen: (id: string) => boolean;
+
+  /**
    * Open a panel in the dock area, or select the tab if it's already open.
    *
    * If a panel with the given `id` does not exist, the function is a no-op,
@@ -137,6 +142,23 @@ const createUISlice: StateCreator<UISlice> = (set, get) => ({
   /*---------------------------------------------------------------------------
   | Actions
   |--------------------------------------------------------------------------*/
+
+  // Check whether a panel is open.
+  isPanelOpen: (id: string) => {
+    // Fetch the dock layout from the store.
+    const layout = get().dockLayout;
+
+    // Bail early if the layout is null.
+    if (layout === null) {
+      return false;
+    }
+
+    // Find a tab layout that includes the chat id.
+    const tl = DockPanel.findTabLayout(layout, tl => tl.keys.includes(id));
+
+    // Return whether the panel was found.
+    return tl !== null;
+  },
 
   // Open an existing panel.
   openPanel: (id: string) => {

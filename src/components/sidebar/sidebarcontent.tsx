@@ -1,6 +1,10 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
+import {
+  clsx
+} from 'clsx';
+
 import type {
   ReactNode
 } from 'react';
@@ -10,12 +14,12 @@ import {
 } from '@/store';
 
 import {
-  Chats
-} from './chats';
+  ChatsPanel
+} from './chatspanel';
 
 import {
-  Files
-} from './files';
+  FilesPanel
+} from './filespanel';
 
 
 /**
@@ -32,15 +36,22 @@ function SideBarContent(): ReactNode {
   // Render the content based on the side bar state.
   switch (sideBarState) {
   case 'chats':
-    content = <Chats />;
+    content = <ChatsPanel />;
     break;
   case 'files':
-    content = <Files />;
+    content = <FilesPanel />;
     break;
   default:
     break;
   }
 
   // Return the rendered component.
-  return content;
+  return (
+    <div className={ clsx(
+      'p-3 w-68 bg-bg-neutral-white border-r border-r-bd-neutral-default',
+      sideBarState === 'none' ? 'hidden' : ''
+    ) }>
+      {content}
+    </div>
+  );
 }
