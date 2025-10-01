@@ -36,7 +36,7 @@ function ContentArea(): ReactNode {
   // Return the rendered content.
   return (
     <div className={ clsx(
-      'flex flex-col flex-auto p-2 items-center justify-center',
+      'flex flex-col flex-auto p-1 items-center justify-center',
       'bg-bg-neutral-dark'
     ) }>
       { content }

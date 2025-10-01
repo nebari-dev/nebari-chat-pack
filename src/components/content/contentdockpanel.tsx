@@ -72,20 +72,18 @@ function ContentDockPanel(): ReactNode {
       splitPanelClassName='w-full h-full'
       tabPanelClassName='w-full h-full min-w-[100px] min-h-[100px]'
       tabPanelPanelClassName='bg-bg-white border border-bd-neutral-default'
-      tabBarInnerClassName='gap-2'
+      tabBarInnerClassName='gap-0.5'
       tabClassName={ clsx(
-        'pt-1 pb-1 pl-2 pr-2 w-40 bg-bg-neutral-default',
-        'rounded-tl-sm rounded-tr-sm border-x border-t',
-        'border-x-bd-neutral-default border-t-bd-neutral-default',
-        'bg-bg-neutral-default data-[selected]:bg-bg-white',
-        'data-[selected]:translate-y-px'
+        'px-2 py-1 w-40 bg-bg-neutral-default border-x border-t',
+        'border-bd-neutral-default bg-bg-neutral-default ',
+        'data-[selected]:bg-bg-white data-[selected]:translate-y-px'
       ) }
       overlayClassName={ clsx(
         'bg-[rgba(255,255,255,0.6)]',
         'border-2 border-dashed border-bd-brand-default',
         'transition transition-[top,left,right,bottom] duration-150'
       ) }
-      handleSize={ 8 } />
+      handleSize={ 4 } />
   );
 }
 
