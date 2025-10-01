@@ -18,7 +18,7 @@ import {
 } from './components/content';
 
 import {
-  SideBar, SideBarContent
+  SideBar
 } from './components/sidebar';
 
 // import {
@@ -90,7 +90,6 @@ function App(): ReactNode {
   return (
     <>
       <SideBar />
-      <SideBarContent />
       <ContentArea />
     </>
   );

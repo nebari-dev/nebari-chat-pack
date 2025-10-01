@@ -17,6 +17,7 @@ body {
   font-weight: 400;
   color: #1E1E1E;
   height: 100%;
+  font-size: 14px;
 }
 
 
@@ -34,7 +35,7 @@ body {
 
 @theme {
   /* Background Colors */
-  --color-bg-neutral-dark: #E9E9E9;
+  --color-bg-neutral-dark: #EDEDED;
   --color-bg-neutral-default: #F5F5F5;
   --color-bg-neutral-white: #FBFBFB;
   --color-bg-brand-default: #9B3DCC;
@@ -49,6 +50,7 @@ body {
   /* Text Colors */
   --color-text-brand-on-brand: #FBFBFB;
   --color-text-neutral-default: #1E1E1E;
+  --color-text-neutral-secondary: #757575;
 }
 
 /*---break---*/

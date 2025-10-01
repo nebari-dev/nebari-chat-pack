@@ -2,4 +2,3 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 export * from './sidebar';
-export * from './sidebarcontent';
