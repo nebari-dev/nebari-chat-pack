@@ -278,7 +278,7 @@ export function DescribeSchemaOutput(props: DescribeSchemaOutput.Props): ReactNo
       </div>
 
       {view === "json" && (
-        <JsonView jsonOpen={jsonOpen} setJsonOpen={setJsonOpen} jsonStr={jsonStr} />
+        <JsonView jsonStr={jsonStr} />
       )}
 
       {view === "table" && (
