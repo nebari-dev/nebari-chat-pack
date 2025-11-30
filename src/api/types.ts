@@ -87,12 +87,58 @@ export
 type RunCompletedEvent = v.InferOutput<typeof runCompletedEventSchema>;
 
 
+const toolCallSchema = v.object({
+  created_at: v.number(),
+  result: v.nullish(v.string()),
+  tool_call_id: v.string(),
+  tool_name: v.string(),
+  tool_args: v.object({
+    task: v.string()
+  })
+});
+
+
+const toolCallEventBaseSchema = v.object({
+  agent_id: v.string(),
+  agent_name: v.string(),
+  created_at: v.number(),
+  run_id: v.string(),
+  session_id: v.string(),
+  tool: toolCallSchema
+});
+
+
+export
+const toolCallStartedEventSchema = v.object({
+  ...toolCallEventBaseSchema.entries,
+  event: v.literal('ToolCallStarted')
+});
+
+
+export
+type ToolCallStartedEvent = v.InferOutput<typeof toolCallStartedEventSchema>;
+
+
+export
+const toolCallCompletedEventSchema = v.object({
+  ...toolCallEventBaseSchema.entries,
+  event: v.literal('ToolCallCompleted'),
+  content: v.string()
+});
+
+
+export
+type ToolCallCompletedEvent = v.InferOutput<typeof toolCallCompletedEventSchema>;
+
+
 export
 const runEventSchema = v.union([
   runStartedEventSchema,
   runContentEventSchema,
   runContentCompletedEventSchema,
-  runCompletedEventSchema
+  runCompletedEventSchema,
+  toolCallStartedEventSchema,
+  toolCallCompletedEventSchema
 ]);
 
 

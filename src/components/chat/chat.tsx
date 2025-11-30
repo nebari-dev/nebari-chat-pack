@@ -20,13 +20,13 @@ import {
 export
 function Chat(props: Chat.Props): ReactNode {
   // Extract the search params.
-  const { session_id, agent_id, setSessionId } = props;
+  const { sessionId, agentId, setSessionId } = props;
 
   // Return the rendered component.
   return (
     <AUIProvider
-      session_id={ session_id }
-      agent_id={ agent_id }
+      sessionId={ sessionId }
+      agentId={ agentId }
       setSessionId={ setSessionId }>
       <Thread />
     </AUIProvider>
@@ -52,16 +52,16 @@ namespace Chat {
      *
      * If this is provided, the session is assumed to exist on the server.
      */
-    readonly session_id: string | undefined;
+    readonly sessionId: string | undefined;
 
     /**
      * The id of the agent for processing user messages.
      */
-    readonly agent_id: string;
+    readonly agentId: string;
 
     /**
      * A callback to set the id for a new session.
      */
-    readonly setSessionId: (session_id: string) => void;
+    readonly setSessionId: (sessionId: string) => void;
   };
 }

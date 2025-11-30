@@ -23,7 +23,7 @@ export
 const Route = createFileRoute('/chat')({
   component: RouteComponent,
   validateSearch: v.object({
-    session_id: v.fallback(
+    sessionId: v.fallback(
       v.optional(
         v.pipe(v.string(), v.uuid())
       ),
@@ -38,24 +38,24 @@ const Route = createFileRoute('/chat')({
  */
 function RouteComponent() {
   // Fetch the search parameters.
-  const { session_id } = Route.useSearch();
+  const { sessionId } = Route.useSearch();
 
   // Fetch the navigator.
   const navigate = Route.useNavigate();
 
   // TODO - allow changing the agent id.
-  const agent_id = 'claude';
+  const agentId = 'claude';
 
   // Create the callback to change the session id on the first message.
-  const setSessionId = useCallback((session_id: string) => {
-    navigate({ search: prev => ({ ...prev, session_id }) });
+  const setSessionId = useCallback((sessionId: string) => {
+    navigate({ search: prev => ({ ...prev, sessionId }) });
   }, []);
 
   // Return the rendered component.
   return (
     <Chat
-      session_id={ session_id }
-      agent_id={ agent_id }
+      sessionId={ sessionId }
+      agentId={ agentId }
       setSessionId={ setSessionId }/>
   );
 }
