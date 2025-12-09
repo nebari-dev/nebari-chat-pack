@@ -2,7 +2,9 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import {
-  Outlet, createRootRouteWithContext
+  Outlet,
+  createRootRouteWithContext,
+  useLocation,
 } from '@tanstack/react-router';
 
 import {
@@ -12,6 +14,10 @@ import {
 import type {
   QueryClient
 } from '@tanstack/react-query';
+
+import {
+  useEffect
+} from 'react';
 
 import type {
   ReactNode
@@ -24,8 +30,17 @@ import {
 } from '@/components/common';
 
 import {
+  MockUserProvider,
+  useMockUser
+} from '@/components/auth';
+
+import {
   Sidebar
 } from '@/components/sidebar';
+
+import {
+  ROLE_DEFAULT_ROUTE
+} from '@/lib/role-navigation';
 
 
 /**
@@ -68,15 +83,55 @@ const Route = createRootRouteWithContext<RouteContext>()({
  * The component that renders the root route.
  */
 function RouteComponent(): ReactNode {
-  // Fetch the Agno config object.
   const config = Route.useLoaderData();
 
-  // Return the rendered component.
   return (
     <ConfigProvider value={ config }>
-      <Sidebar />
-      <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
+      <MockUserProvider>
+        <AppLayout />
+        <TanStackRouterDevtools position="bottom-right" />
+      </MockUserProvider>
     </ConfigProvider>
+  );
+}
+
+
+function AppLayout(): ReactNode {
+  const { user } = useMockUser();
+  const location = useLocation();
+  const navigate = Route.useNavigate();
+
+  const isLoginRoute = location.pathname === '/login';
+
+  useEffect(() => {
+    if (!user && !isLoginRoute) {
+      navigate({ to: '/login', replace: true });
+    }
+  }, [user, isLoginRoute, navigate]);
+
+  useEffect(() => {
+    if (user && isLoginRoute) {
+      navigate({ to: ROLE_DEFAULT_ROUTE[user.role], replace: true });
+    }
+  }, [user, isLoginRoute, navigate]);
+
+  if (!user) {
+    if (!isLoginRoute) {
+      return null;
+    }
+    return <Outlet />;
+  }
+
+  if (isLoginRoute) {
+    return null;
+  }
+
+  return (
+    <div className='flex min-h-screen w-full'>
+      <Sidebar />
+      <div className='flex-auto min-h-screen overflow-auto bg-bg-neutral-dark'>
+        <Outlet />
+      </div>
+    </div>
   );
 }

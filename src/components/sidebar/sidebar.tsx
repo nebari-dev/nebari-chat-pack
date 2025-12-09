@@ -21,6 +21,10 @@ import {
   Launcher
 } from './launcher';
 
+import {
+  MockLogin
+} from './mock-login';
+
 
 /**
  * A React component that renders the chat sidebar.
@@ -42,7 +46,10 @@ function Sidebar(): ReactNode {
       'bg-bg-white transition-[width] duration-150',
       isSidebarOpen ? 'w-60' : 'w-12.25')}>
       <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <Launcher isSidebarOpen={isSidebarOpen} />
+      <MockLogin isSidebarOpen={isSidebarOpen} />
+      <div className='flex-1 overflow-y-auto pb-4'>
+        <Launcher isSidebarOpen={isSidebarOpen} />
+      </div>
     </div>
   );
 }

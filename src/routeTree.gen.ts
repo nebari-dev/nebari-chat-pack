@@ -14,6 +14,13 @@ import { Route as MemoryRouteImport } from './routes/memory';
 import { Route as KnowledgeRouteImport } from './routes/knowledge';
 import { Route as ChatRouteImport } from './routes/chat';
 import { Route as IndexRouteImport } from './routes/index';
+import { Route as TutorRouteImport } from './routes/tutor';
+import { Route as CalendarRouteImport } from './routes/calendar';
+import { Route as TeacherPlanningRouteImport } from './routes/teacher-planning';
+import { Route as ClassOverviewRouteImport } from './routes/class-overview';
+import { Route as CounselorDashboardRouteImport } from './routes/counselor-dashboard';
+import { Route as PrincipalAnalyticsRouteImport } from './routes/principal-analytics';
+import { Route as LoginRouteImport } from './routes/login';
 
 const SessionsRoute = SessionsRouteImport.update({
   id: '/sessions',
@@ -30,6 +37,41 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
   path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any);
+const TutorRoute = TutorRouteImport.update({
+  id: '/tutor',
+  path: '/tutor',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const TeacherPlanningRoute = TeacherPlanningRouteImport.update({
+  id: '/teacher-planning',
+  path: '/teacher-planning',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ClassOverviewRoute = ClassOverviewRouteImport.update({
+  id: '/class-overview',
+  path: '/class-overview',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const CounselorDashboardRoute = CounselorDashboardRouteImport.update({
+  id: '/counselor-dashboard',
+  path: '/counselor-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const PrincipalAnalyticsRoute = PrincipalAnalyticsRouteImport.update({
+  id: '/principal-analytics',
+  path: '/principal-analytics',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -43,44 +85,86 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
+  '/login': typeof LoginRoute;
   '/chat': typeof ChatRoute;
+  '/calendar': typeof CalendarRoute;
+  '/class-overview': typeof ClassOverviewRoute;
   '/knowledge': typeof KnowledgeRoute;
   '/memory': typeof MemoryRoute;
+  '/teacher-planning': typeof TeacherPlanningRoute;
+  '/principal-analytics': typeof PrincipalAnalyticsRoute;
   '/sessions': typeof SessionsRoute;
+  '/tutor': typeof TutorRoute;
+  '/counselor-dashboard': typeof CounselorDashboardRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
+  '/login': typeof LoginRoute;
   '/chat': typeof ChatRoute;
+  '/calendar': typeof CalendarRoute;
+  '/class-overview': typeof ClassOverviewRoute;
   '/knowledge': typeof KnowledgeRoute;
   '/memory': typeof MemoryRoute;
+  '/teacher-planning': typeof TeacherPlanningRoute;
+  '/principal-analytics': typeof PrincipalAnalyticsRoute;
   '/sessions': typeof SessionsRoute;
+  '/tutor': typeof TutorRoute;
+  '/counselor-dashboard': typeof CounselorDashboardRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
+  '/login': typeof LoginRoute;
   '/chat': typeof ChatRoute;
+  '/calendar': typeof CalendarRoute;
+  '/class-overview': typeof ClassOverviewRoute;
   '/knowledge': typeof KnowledgeRoute;
   '/memory': typeof MemoryRoute;
+  '/teacher-planning': typeof TeacherPlanningRoute;
+  '/principal-analytics': typeof PrincipalAnalyticsRoute;
   '/sessions': typeof SessionsRoute;
+  '/tutor': typeof TutorRoute;
+  '/counselor-dashboard': typeof CounselorDashboardRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/chat' | '/knowledge' | '/memory' | '/sessions';
+  fullPaths: '/' | '/calendar' | '/chat' | '/class-overview' | '/counselor-dashboard' | '/knowledge' | '/login' | '/memory' | '/principal-analytics' | '/sessions' | '/teacher-planning' | '/tutor';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/chat' | '/knowledge' | '/memory' | '/sessions';
-  id: '__root__' | '/' | '/chat' | '/knowledge' | '/memory' | '/sessions';
+  to: '/' | '/calendar' | '/chat' | '/class-overview' | '/counselor-dashboard' | '/knowledge' | '/login' | '/memory' | '/principal-analytics' | '/sessions' | '/teacher-planning' | '/tutor';
+  id: '__root__' | '/' | '/calendar' | '/chat' | '/class-overview' | '/counselor-dashboard' | '/knowledge' | '/login' | '/memory' | '/principal-analytics' | '/sessions' | '/teacher-planning' | '/tutor';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   ChatRoute: typeof ChatRoute;
+  CalendarRoute: typeof CalendarRoute;
+  ClassOverviewRoute: typeof ClassOverviewRoute;
   KnowledgeRoute: typeof KnowledgeRoute;
   MemoryRoute: typeof MemoryRoute;
+  TeacherPlanningRoute: typeof TeacherPlanningRoute;
+  PrincipalAnalyticsRoute: typeof PrincipalAnalyticsRoute;
   SessionsRoute: typeof SessionsRoute;
+  TutorRoute: typeof TutorRoute;
+  CounselorDashboardRoute: typeof CounselorDashboardRoute;
+  LoginRoute: typeof LoginRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/calendar': {
+      id: '/calendar';
+      path: '/calendar';
+      fullPath: '/calendar';
+      preLoaderRoute: typeof CalendarRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/sessions': {
       id: '/sessions';
       path: '/sessions';
@@ -95,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemoryRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/class-overview': {
+      id: '/class-overview';
+      path: '/class-overview';
+      fullPath: '/class-overview';
+      preLoaderRoute: typeof ClassOverviewRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/knowledge': {
       id: '/knowledge';
       path: '/knowledge';
@@ -102,11 +193,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KnowledgeRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/teacher-planning': {
+      id: '/teacher-planning';
+      path: '/teacher-planning';
+      fullPath: '/teacher-planning';
+      preLoaderRoute: typeof TeacherPlanningRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/chat': {
       id: '/chat';
       path: '/chat';
       fullPath: '/chat';
       preLoaderRoute: typeof ChatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/principal-analytics': {
+      id: '/principal-analytics';
+      path: '/principal-analytics';
+      fullPath: '/principal-analytics';
+      preLoaderRoute: typeof PrincipalAnalyticsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/tutor': {
+      id: '/tutor';
+      path: '/tutor';
+      fullPath: '/tutor';
+      preLoaderRoute: typeof TutorRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/counselor-dashboard': {
+      id: '/counselor-dashboard';
+      path: '/counselor-dashboard';
+      fullPath: '/counselor-dashboard';
+      preLoaderRoute: typeof CounselorDashboardRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/': {
@@ -122,9 +241,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  CalendarRoute: CalendarRoute,
+  ClassOverviewRoute: ClassOverviewRoute,
   KnowledgeRoute: KnowledgeRoute,
   MemoryRoute: MemoryRoute,
+  TeacherPlanningRoute: TeacherPlanningRoute,
+  PrincipalAnalyticsRoute: PrincipalAnalyticsRoute,
   SessionsRoute: SessionsRoute,
+  TutorRoute: TutorRoute,
+  CounselorDashboardRoute: CounselorDashboardRoute,
+  LoginRoute: LoginRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,21 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import {
-  Link
-} from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
-import {
-  Database, MemoryStick, MessageSquarePlus, MessagesSquare
-} from 'lucide-react';
-
-import type {
-  ReactNode
-} from 'react';
-
-import {
-  cn
-} from '@/lib/utils';
+import { useMockUser } from '@/components/auth';
+import { ROLE_NAV_LINKS, type RoleNavLink } from '@/lib/role-navigation';
+import { cn } from '@/lib/utils';
 
 
 /**
@@ -25,30 +17,25 @@ export
 function Launcher(props: Launcher.Props): ReactNode {
   // Extract the props.
   const {isSidebarOpen} = props;
+  const { user } = useMockUser();
+
+  const links = user ? ROLE_NAV_LINKS[user.role] ?? [] : [];
 
   // Return the rendered component.
   return (
     <div className='px-2 flex flex-col flex-none gap-px'>
-      <LauncherLink
-        to='/chat'
-        text='Chat'
-        collapsed={!isSidebarOpen}
-        icon={<MessageSquarePlus className='m-auto' size={20} />} />
-      <LauncherLink
-        to='/sessions'
-        text='Sessions'
-        collapsed={!isSidebarOpen }
-        icon={<MessagesSquare className='m-auto' size={20} />} />
-      <LauncherLink
-        to='/knowledge'
-        text='Knowledge'
-        collapsed={!isSidebarOpen}
-        icon={<Database className='m-auto' size={20} />} />
-      <LauncherLink
-        to='/memory'
-        text='Memory'
-        collapsed={!isSidebarOpen}
-        icon={<MemoryStick className='m-auto' size={20} />} />
+      {!user || links.length === 0 ? (
+        <p className='text-xs text-gray-500 px-2 py-3'>No navigation items</p>
+      ) : (
+        links.map(link => (
+          <LauncherLink
+            key={link.to}
+            to={link.to}
+            text={link.text}
+            collapsed={!isSidebarOpen}
+            icon={link.icon} />
+        ))
+      )}
     </div>
   );
 }
@@ -77,7 +64,7 @@ namespace Launcher {
  */
 function LauncherLink(props: LauncherLink.Props): ReactNode {
   // Extract the props.
-  const {to, collapsed, icon, text} = props;
+  const {to, collapsed, icon: Icon, text} = props;
 
   // Create the active link props.
   const activeProps = {
@@ -100,7 +87,9 @@ function LauncherLink(props: LauncherLink.Props): ReactNode {
       className={cn(
       'h-9 px-1 flex flex-row gap-2 items-center cursor-pointer',
       'rounded-xs whitespace-nowrap overflow-hidden')}>
-      <span className='flex-none w-6'>{icon}</span>
+      <span className='flex-none w-6'>
+        <Icon className='m-auto' size={20} />
+      </span>
       <span className={ collapsed ? 'hidden' : '' }>{text}</span>
     </Link>
   );
@@ -129,7 +118,7 @@ namespace LauncherLink {
     /**
      * The icon for the button.
      */
-    readonly icon: ReactNode;
+    readonly icon: LucideIcon;
 
     /**
      * The text for the button.
@@ -137,3 +126,6 @@ namespace LauncherLink {
     readonly text: string;
   };
 }
+
+
+type NavLink = RoleNavLink;

@@ -12,7 +12,7 @@ export default defineConfig({
       semicolons: true
     }),
     tailwindcss(),
-    react()
+    react() // Dummy comment to force Vite re-optimization
   ],
   resolve: {
     alias: {
@@ -20,17 +20,19 @@ export default defineConfig({
     }
   },
   server: {
+    host: '0.0.0.0',
+    port: 3000,
     proxy: {
       '/agents': {
-        target: 'http://localhost:7777',
+        target: 'http://backend:8000',
         changeOrigin: true
       },
       '/config': {
-        target: 'http://localhost:7777',
+        target: 'http://backend:8000',
         changeOrigin: true
       },
       '/sessions': {
-        target: 'http://localhost:7777',
+        target: 'http://backend:8000',
         changeOrigin: true
       }
     }

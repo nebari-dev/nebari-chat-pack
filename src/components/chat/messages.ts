@@ -90,7 +90,7 @@ function useThreadMessages(): UseThreadMessagesResult {
   }, [mutateAsync, config]);
 
   // Return the results.
-  return { messages: data!, isFetching, isPending, onNewCallback };
+  return { messages: data ?? [], isFetching, isPending, onNewCallback };
 }
 
 
