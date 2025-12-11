@@ -25,11 +25,17 @@ export default defineConfig({
         target: 'http://localhost:7777',
         changeOrigin: true
       },
-      '/config': {
+      '/agno_sessions': {
         target: 'http://localhost:7777',
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/agno_sessions/, '/sessions'),
       },
-      '/sessions': {
+      '/agno_metrics': {
+        target: 'http://localhost:7777',
+        changeOrigin: false,
+        rewrite: (path) => path.replace(/^\/agno_metrics/, '/metrics'),
+      },
+      '/config': {
         target: 'http://localhost:7777',
         changeOrigin: true
       }
