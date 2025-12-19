@@ -6,6 +6,8 @@ import * as v from 'valibot';
 
 /**
  * A schema for Agno metrics.
+ *
+ * TODO rename or move this for message metrics.
  */
 export
 const metricsSchema = v.object({
@@ -19,10 +21,17 @@ const metricsSchema = v.object({
 
 /**
  * A type alias for Agno metrics.
+ *
+ * TODO rename or move this for message metrics.
  */
 export
 type Metrics = v.InferOutput<typeof metricsSchema>;
 
+
+/**
+ * A schema for Agno token metrics.
+ */
+export
 const tokenMetricsSchema = v.object({
   input_tokens: v.number(),
   output_tokens: v.number(),
@@ -35,12 +44,35 @@ const tokenMetricsSchema = v.object({
   reasoning_tokens: v.number(),
 });
 
+
+/**
+ * A type alias for Agno token metrics.
+ */
+export
+type TokenMetrics = v.InferOutput<typeof tokenMetricsSchema>;
+
+
+/**
+ * A schema for Agno model metrics.
+ */
+export
 const modelMetricSchema = v.object({
   model_id: v.string(),
   model_provider: v.string(),
   count: v.number(),
 });
 
+
+/**
+ * A type alias for Agno model metrics.
+ */
+export
+type ModelMetrics = v.InferOutput<typeof modelMetricSchema>;
+
+
+/**
+ * A schema for Agno ...
+ */
 const metricsRowSchema = v.object({
   id: v.string(),
   agent_runs_count: v.number(),
@@ -57,28 +89,81 @@ const metricsRowSchema = v.object({
   updated_at: v.number(),
 });
 
-export const metricsResponseSchema = v.object({
-  metrics: v.array(metricsRowSchema),
-  updated_at: v.string(),
-});
 
-export
-type MetricsResponse = v.InferOutput<typeof metricsResponseSchema>;
-
+/**
+ * A type alias for Agno ...
+ */
 export
 type MetricsRow = v.InferOutput<typeof metricsRowSchema>;
 
+
+/**
+ *
+ */
+export const metricsResponseSchema = v.object({
+  metrics: v.array(metricsRowSchema),
+  updated_at: v.nullable(v.string()),
+});
+
+
+/**
+ *
+ */
 export
-async function getMetrics(): Promise<MetricsResponse> {
-  const url = '/agno_metrics';
+type MetricsResponse = v.InferOutput<typeof metricsResponseSchema>;
 
-  const res = await fetch(url);
 
-  if (!res.ok) {
-    throw new Error(`Response: ${res.status} ${res.statusText}`);
+/**
+ *
+ */
+export
+async function getMetrics(options: getMetrics.Options): Promise<MetricsResponse> {
+  //
+  const { starting_date, ending_date } = options;
+
+  const params = new URLSearchParams();
+
+  if (starting_date) {
+    params.append('starting_date', starting_date);
+  }
+  if (ending_date) {
+    params.append('ending_date', ending_date);
   }
 
-  const json = await res.json();
+  // Fetch the resource.
+  const resp = await fetch(`/agno_metrics?${params}`);
 
+  // Guard against fetch failure.
+  if (!resp.ok) {
+    throw new Error(`Response: ${resp.status} ${resp.statusText}`);
+  }
+
+  // Convert the respon to JSON.
+  const json = await resp.json();
+
+  // Return the parsed result.
   return v.parse(metricsResponseSchema, json);
+}
+
+
+/**
+ *
+ */
+export
+namespace getMetrics {
+  /**
+   *
+   */
+  export
+  type Options = {
+    /**
+     *
+     */
+    readonly starting_date?: string;
+
+    /**
+     *
+     */
+    readonly ending_date?: string;
+  };
 }
