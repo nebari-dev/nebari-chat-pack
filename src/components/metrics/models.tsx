@@ -13,7 +13,7 @@ import {
 
 import {
   useMetricsConfig
-} from './metricsconfigprovider';
+} from './configprovider';
 
 
 /**

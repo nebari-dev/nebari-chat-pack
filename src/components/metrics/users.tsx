@@ -11,7 +11,7 @@ import {
 
 import {
   useMetricsConfig
-} from './metricsconfigprovider';
+} from './configprovider';
 
 import {
   collectMetricsByDay, createDayRange
