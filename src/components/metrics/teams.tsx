@@ -11,7 +11,7 @@ import {
 
 import {
   useMetricsConfig
-} from './metricsconfigprovider';
+} from './configprovider';
 
 import {
   collectMetricsByDay, createDayRange
@@ -40,6 +40,7 @@ function TeamRunsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#00bc7d'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -101,6 +102,7 @@ function TeamSessionsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#00bc7d'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -125,6 +127,7 @@ function TeamSessionsChart(): ReactNode {
       {
         name: 'Team Sessions',
         type: 'line',
+        symbol: 'rect',
         data: counts
       }
     ]

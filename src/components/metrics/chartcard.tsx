@@ -59,7 +59,7 @@ function ChartCard(props: ChartCard.Props): ReactNode {
 
   // Return the rendered component.
   return (
-    <Card className='min-w-0 min-h-80 rounded-sm'>
+    <Card className='min-w-0 min-h-80 rounded-xs'>
       <CardHeader>
         <CardTitle>
           { title }

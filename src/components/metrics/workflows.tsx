@@ -11,7 +11,7 @@ import {
 
 import {
   useMetricsConfig
-} from './metricsconfigprovider';
+} from './configprovider';
 
 import {
   collectMetricsByDay, createDayRange
@@ -40,6 +40,7 @@ function WorkflowRunsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#fd9a00'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -101,6 +102,7 @@ function WorkflowSessionsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#fd9a00'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -125,6 +127,7 @@ function WorkflowSessionsChart(): ReactNode {
       {
         name: 'Workflow Sessions',
         type: 'line',
+        symbol: 'rect',
         data: counts
       }
     ]

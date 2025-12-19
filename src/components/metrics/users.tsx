@@ -11,7 +11,7 @@ import {
 
 import {
   useMetricsConfig
-} from './metricsconfigprovider';
+} from './configprovider';
 
 import {
   collectMetricsByDay, createDayRange
@@ -40,6 +40,7 @@ function UsersChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#ff2056'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {

@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
+export * from './configprovider';
 export * from './metrics';
-export * from './metricsconfigprovider';
