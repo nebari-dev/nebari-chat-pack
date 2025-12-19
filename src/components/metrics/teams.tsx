@@ -127,6 +127,7 @@ function TeamSessionsChart(): ReactNode {
       {
         name: 'Team Sessions',
         type: 'line',
+        symbol: 'rect',
         data: counts
       }
     ]

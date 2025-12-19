@@ -127,6 +127,7 @@ function AgentSessionsChart(): ReactNode {
       {
         name: 'Agent Sessions',
         type: 'line',
+        symbol: 'rect',
         data: counts
       }
     ]

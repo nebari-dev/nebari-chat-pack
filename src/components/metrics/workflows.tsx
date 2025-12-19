@@ -127,6 +127,7 @@ function WorkflowSessionsChart(): ReactNode {
       {
         name: 'Workflow Sessions',
         type: 'line',
+        symbol: 'rect',
         data: counts
       }
     ]
