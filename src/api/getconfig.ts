@@ -50,7 +50,7 @@ type Config = v.InferOutput<typeof configSchema>;
 export
 async function getConfig(): Promise<Config> {
   // Fetch the resource.
-  const resp = await fetch('/config');
+  const resp = await fetch('/agno_config');
 
   // Guard against request failure.
   if (!resp.ok) {

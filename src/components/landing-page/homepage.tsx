@@ -3,24 +3,20 @@ import type {
 } from 'react';
 
 import {
-  useState
-} from "react";
-
-import {
   useConfig
 } from '@/components/common';
 
 import {
-  ChevronDown
-} from 'lucide-react';
+  Accordion
+} from "@chakra-ui/react";
 
 import {
   Explore
 } from './explore'
 
 import {
-  DropdownArea
-} from './dropdownarea'
+  ConfigList
+} from './configlist'
 
 /*
  * Renders the Home page component
@@ -33,9 +29,13 @@ function HomePage(): ReactNode {
 
   const config = useConfig();
 
-  const [isAgentsExpanded, setIsAgentsExpanded] = useState(true);
-  const [isTeamsExpanded, setIsTeamsExpanded] = useState(true);
-  const [isWorkflowsExpanded, setIsWorkflowsExpanded] = useState(true);
+  // Preset sections for the accordion component
+  // Filer removes empty sections from the page
+  const sections = [
+    { label: "Agents", content: config.agents, type: "agent" },
+    { label: "Teams", content: config.teams, type: "team" },
+    { label: "Workflows", content: config.workflows, type: "workflow" },
+  ].filter(section => section.content && section.content.length > 0);
 
   return (
     <main className='flex flex-col w-full gap-4'>
@@ -46,46 +46,25 @@ function HomePage(): ReactNode {
           <Explore/>
       </div>
 
-      <div className="px-6">
-        <button
-          onClick={() => setIsAgentsExpanded((isAgentsExpanded) => !isAgentsExpanded)}
-          className='flex flex-row'
-        >
-          <div className="text-md font-semibold mb-4">Agents</div>
-          <ChevronDown className={`transition-transform ${isAgentsExpanded ? "" : "rotate-180"}`}/>
-        </button>
-        <DropdownArea 
-          isExpanded={isAgentsExpanded}
-          content={config.agents}
-          type='agent'
-        />
-      </div>
+      <Accordion.Root multiple collapsible defaultValue={["agent", "team", "workflow"]} className="px-6">
+        {sections.map(({ label, content, type }) => (
+          <Accordion.Item key={type} value={type}>
+            <Accordion.ItemTrigger>
+              <span className="text-md font-semibold">{label}</span>
+              <Accordion.ItemIndicator />
+            </Accordion.ItemTrigger>
 
-      <div className="px-6">
-        <button
-          onClick={() => setIsTeamsExpanded((isTeamsExpanded) => !isTeamsExpanded)}
-          className='flex flex-row'
-        >
-          <div className="text-md font-semibold mb-4">Teams</div>
-          <ChevronDown className={`transition-transform ${isTeamsExpanded ? "" : "rotate-180"}`}/>
-        </button>
-        <DropdownArea
-          isExpanded={isTeamsExpanded}
-          content={config.teams}
-          type='team'
-        />
-      </div>
-
-      <div className="px-6">
-        <button
-          onClick={() => setIsWorkflowsExpanded((isWorkflowsExpanded) => !isWorkflowsExpanded)}
-          className='flex flex-row'
-        >
-          <div className="text-md font-semibold mb-4">Workflows</div>
-          <ChevronDown className={`transition-transform ${isWorkflowsExpanded ? "" : "rotate-180"}`}/>
-        </button>
-        <DropdownArea isExpanded={isWorkflowsExpanded} content={config.workflows} type='workflow'/>
-      </div>
+            <Accordion.ItemContent>
+              <Accordion.ItemBody>
+                <ConfigList
+                  content={content}
+                  type={type}
+                />
+              </Accordion.ItemBody>
+            </Accordion.ItemContent>
+          </Accordion.Item>
+        ))}
+      </Accordion.Root>
     </main>
   )
 }

@@ -24,22 +24,20 @@ import * as api from '@/api';
  * A React component that renders the homepage dropdown items.
  */
 export
-function DropdownArea(props: DropdownArea.Props): ReactNode {
+function ConfigList(props: DropdownArea.Props): ReactNode {
   // Extract the props.
-  const {isExpanded, content, type} = props;
+  const {content, type} = props;
 
   // Return the rendered component.
   return (
     <div
-      className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full ${
-        isExpanded ? "block" : "hidden"
-      }`}
+      className={'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full'}
     >
       {content.map((item) => (
-        <DropdownItem
+        <ConfigListItem
           name={item.name}
           chatLink={`/chat?type=${type}&id=${item.id}`}
-          configLink={`config?type=${type}&id=${item.id}`}
+          configLink={`config?type=${type}s&id=${item.id}`}
         />
       ))}
     </div>
@@ -58,11 +56,6 @@ namespace DropdownArea {
   export
   type Props = {
     /**
-     * Whether dropdown area is expanded.
-     */
-    readonly isExpanded: boolean;
-
-    /**
      * Information for each dropdown item
      */
     readonly content: api.AgentDetail[];
@@ -78,7 +71,7 @@ namespace DropdownArea {
 /**
  * A React component that renders a launcher link.
  */
-function DropdownItem(props: DropdownItem.Props): ReactNode {
+function ConfigListItem(props: ConfigListItem.Props): ReactNode {
   // Extract the props.
   const {name, chatLink, configLink} = props;
 
@@ -107,7 +100,7 @@ function DropdownItem(props: DropdownItem.Props): ReactNode {
 /**
  * The namespace for the `DropdownItem` component.
  */
-namespace DropdownItem {
+namespace ConfigListItem {
   /**
    * A type alias for the `DropdownItem` props.
    */

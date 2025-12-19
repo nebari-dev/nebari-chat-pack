@@ -25,6 +25,14 @@ export default defineConfig({
         target: 'http://localhost:7777',
         changeOrigin: true
       },
+      '/teams': {
+        target: 'http://localhost:7777',
+        changeOrigin: true
+      },
+      '/workflows': {
+        target: 'http://localhost:7777',
+        changeOrigin: true
+      },
       '/agno_sessions': {
         target: 'http://localhost:7777',
         changeOrigin: true,
@@ -35,9 +43,10 @@ export default defineConfig({
         changeOrigin: false,
         rewrite: (path) => path.replace(/^\/agno_metrics/, '/metrics'),
       },
-      '/config': {
+      '/agno_config': {
         target: 'http://localhost:7777',
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/agno_config/, '/config'),
       }
     }
   }
