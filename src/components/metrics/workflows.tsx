@@ -40,6 +40,7 @@ function WorkflowRunsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#fd9a00'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -101,6 +102,7 @@ function WorkflowSessionsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#fd9a00'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {

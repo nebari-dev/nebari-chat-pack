@@ -43,6 +43,7 @@ function TokensChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#00bc7d', '#fd9a00'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {

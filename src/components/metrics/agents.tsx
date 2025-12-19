@@ -40,6 +40,7 @@ function AgentRunsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#ad46ff'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -101,6 +102,7 @@ function AgentSessionsChart(): ReactNode {
 
   // Create the echarts option.
   const option: ChartCard.Option = {
+    color: ['#ad46ff'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
