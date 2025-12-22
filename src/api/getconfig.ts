@@ -3,6 +3,16 @@
 |----------------------------------------------------------------------------*/
 import * as v from 'valibot';
 
+/**
+ * The schema for all agent configs.
+ */
+export
+const agentDetailSchema = v.object({
+  id: v.nullish(v.string()),
+  name: v.nullish(v.string()),
+  description: v.nullish(v.string()),
+  db_id: v.nullish(v.string()),
+})
 
 /**
  * The schema for an Agno OS config.
@@ -11,24 +21,9 @@ export
 const configSchema = v.object({
   os_id: v.string(),
   databases: v.array(v.string()),
-  agents: v.array(v.object({
-    id: v.nullish(v.string()),
-    name: v.nullish(v.string()),
-    description: v.nullish(v.string()),
-    db_id: v.nullish(v.string()),
-  })),
-  teams: v.array(v.object({
-    id: v.nullish(v.string()),
-    name: v.nullish(v.string()),
-    description: v.nullish(v.string()),
-    db_id: v.nullish(v.string()),
-  })),
-  workflows: v.array(v.object({
-    id: v.nullish(v.string()),
-    name: v.nullish(v.string()),
-    description: v.nullish(v.string()),
-    db_id: v.nullish(v.string()),
-  })),
+  agents: v.array(agentDetailSchema),
+  teams: v.array(agentDetailSchema),
+  workflows: v.array(agentDetailSchema),
   name: v.nullish(v.string()),
   description: v.nullish(v.string()),
   chat: v.optional(v.object({
@@ -36,6 +31,9 @@ const configSchema = v.object({
   }))
 });
 
+
+export
+type AgentDetail = v.InferOutput<typeof agentDetailSchema>;
 
 /**
  * A type alias for an Agno OS config.
@@ -52,7 +50,7 @@ type Config = v.InferOutput<typeof configSchema>;
 export
 async function getConfig(): Promise<Config> {
   // Fetch the resource.
-  const resp = await fetch('/config');
+  const resp = await fetch('/agno_config');
 
   // Guard against request failure.
   if (!resp.ok) {

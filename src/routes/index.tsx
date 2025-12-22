@@ -5,10 +5,13 @@ import {
   createFileRoute
 } from '@tanstack/react-router';
 
-import {
-  cn
-} from '@/lib/utils';
+import type {
+  ReactNode
+} from 'react';
 
+import {
+  HomePage
+} from '@/components/landing-page';
 
 export
 const Route = createFileRoute('/')({
@@ -16,11 +19,8 @@ const Route = createFileRoute('/')({
 });
 
 
-function RouteComponent() {
+function RouteComponent(): ReactNode {
   return (
-    <div className={cn(
-      'flex-auto h-full bg-[url(/assets/Nebari-Logo-Horizontal-Lockup.svg)]',
-      'bg-[auto_240px] bg-center bg-no-repeat'
-    )}/>
+    <HomePage/>
   );
 }
