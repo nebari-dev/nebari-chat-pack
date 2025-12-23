@@ -3,16 +3,25 @@
 |----------------------------------------------------------------------------*/
 import * as v from 'valibot';
 
+
 /**
- * The schema for all agent configs.
+ * The schema for the Agno config detail.
  */
 export
-const agentDetailSchema = v.object({
+const configDetailSchema = v.object({
   id: v.nullish(v.string()),
   name: v.nullish(v.string()),
   description: v.nullish(v.string()),
   db_id: v.nullish(v.string()),
-})
+});
+
+
+/**
+ * A type alias for the Agno config detail.
+ */
+export
+type ConfigDetail = v.InferOutput<typeof configDetailSchema>;
+
 
 /**
  * The schema for an Agno OS config.
@@ -21,9 +30,9 @@ export
 const configSchema = v.object({
   os_id: v.string(),
   databases: v.array(v.string()),
-  agents: v.array(agentDetailSchema),
-  teams: v.array(agentDetailSchema),
-  workflows: v.array(agentDetailSchema),
+  agents: v.array(configDetailSchema),
+  teams: v.array(configDetailSchema),
+  workflows: v.array(configDetailSchema),
   name: v.nullish(v.string()),
   description: v.nullish(v.string()),
   chat: v.optional(v.object({
@@ -31,9 +40,6 @@ const configSchema = v.object({
   }))
 });
 
-
-export
-type AgentDetail = v.InferOutput<typeof agentDetailSchema>;
 
 /**
  * A type alias for an Agno OS config.

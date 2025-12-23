@@ -5,7 +5,7 @@ import * as v from 'valibot';
 
 
 /**
- * A schema for an Agno tool call.
+ * The schema for an Agno tool call.
  */
 export
 const toolCallSchema = v.object({
@@ -18,7 +18,32 @@ const toolCallSchema = v.object({
 
 
 /**
- * A type alias for an Ango tool call.
+ * The type alias for an Ango tool call.
  */
 export
 type ToolCall = v.InferOutput<typeof toolCallSchema>;
+
+
+/**
+ * The schema for an Agno tool detail.
+ */
+export
+const toolDetailSchema = v.object({
+  name: v.string(),
+  description: v.optional(v.string()),
+  parameters: v.object({
+    type: v.optional(v.string()),
+    properties: v.record(v.string(), v.unknown()),
+    required: v.array(v.string()),
+    additionalProperties: v.optional(v.boolean()),
+  }),
+  requires_confirmation: v.optional(v.boolean()),
+  external_execution: v.optional(v.boolean()),
+});
+
+
+/**
+ * The type alias for an Agno tool detail.
+ */
+export
+type ToolDetail = v.InferOutput<typeof toolDetailSchema>;
