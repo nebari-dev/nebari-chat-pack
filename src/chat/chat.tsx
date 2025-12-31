@@ -2,10 +2,6 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import {
-  Box, Stack
-} from '@chakra-ui/react';
-
-import {
   type ReactNode
 } from 'react';
 
@@ -28,13 +24,13 @@ import {
 export
 function Chat(): ReactNode {
   return (
-    <Stack width='100%' gap={ 0 }>
+    <main className='grow flex flex-col'>
       <Breadcrumbs />
-      <Box minW={ 0 } minH={ 0 } flexGrow={ 1 }>
+      <div className='grow min-h-0'>
         <AUIProvider>
           <Thread />
         </AUIProvider>
-      </Box>
-    </Stack>
+      </div>
+    </main>
   );
 }

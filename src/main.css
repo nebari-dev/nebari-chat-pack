@@ -48,6 +48,8 @@ body {
   --color-text-brand-on-brand: #FBFBFB;
   --color-text-neutral-default: #1E1E1E;
   --color-text-neutral-secondary: #757575;
+
+  --thread-max-width: 44rem;
 }
 
 /*---break---*/

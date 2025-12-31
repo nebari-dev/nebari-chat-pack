@@ -120,8 +120,8 @@ namespace Private {
       <Breadcrumb.Item>
         <Select.Root
           collection={ collection }
-          size='sm'
-          width='160px'
+          size='md'
+          width='220px'
           value={ [value] }
           onValueChange={ handleValueChange }>
           <Select.HiddenSelect />
