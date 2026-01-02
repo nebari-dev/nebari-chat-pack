@@ -54,6 +54,12 @@ function DataTable(): ReactNode {
   // Create the array to hold the header rows.
   const headerRows: ReactNode[] = [];
 
+  // Create the column -> className mapping.
+  const classNames = {
+    memory: 'w-[60%]',
+    topics: 'w-[40%]'
+  } as Record<string, string>;
+
   // Iterate the header groups to create the header rows.
   for (const group of table.getHeaderGroups()) {
     // Create the array to hold the cells for the group.
@@ -66,7 +72,12 @@ function DataTable(): ReactNode {
       const content = flexRender(template, header.getContext());
 
       // Create and add the header cell.
-      cells.push(<TableHead key={ header.id }>{ content }</TableHead>);
+      cells.push(
+        <TableHead
+          key={ header.id }
+          className={ classNames[header.id] }>
+          { content }
+        </TableHead>);
     }
 
     // Create and add the header row.
