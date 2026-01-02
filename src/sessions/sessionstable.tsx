@@ -200,8 +200,9 @@ namespace Private {
         className: 'text-bd-brand-default font-semibold'
       };
       return (
-        <p className='max-w-xl whitespace-pre-wrap break-words'>
+        <p className='whitespace-pre-wrap'>
           <Link
+            className='block'
             to='/sessions/{-$sessionId}'
             params={ { sessionId } }
             // @ts-ignore
