@@ -196,13 +196,17 @@ namespace Private {
     cell: cellContext => {
       const row = cellContext.row;
       const sessionId = row.original.session_id;
+      const activeProps = {
+        className: 'text-bd-brand-default font-semibold'
+      };
       return (
         <p className='max-w-xl whitespace-pre-wrap break-words'>
           <Link
             to='/sessions/{-$sessionId}'
             params={ { sessionId } }
             // @ts-ignore
-            search={ prev => prev }>
+            search={ prev => prev }
+            activeProps={ activeProps }>
             { cellContext.getValue() || 'Untitled Session' }
           </Link>
         </p>
