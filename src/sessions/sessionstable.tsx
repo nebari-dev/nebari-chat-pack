@@ -60,8 +60,7 @@ function SessionsTable(): ReactNode {
 
   // Create the column -> className mapping.
   const classNames = {
-    'session_name': 'w-[80%]',
-    'updated_at': 'w-[20%]'
+    session_name: 'w-[100%]'
   } as Record<string, string>;
 
   // Iterate the header groups to create the header rows.
