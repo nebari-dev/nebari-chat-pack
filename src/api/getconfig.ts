@@ -9,8 +9,8 @@ import * as v from 'valibot';
  */
 export
 const configDetailSchema = v.object({
-  id: v.nullish(v.string()),
-  name: v.nullish(v.string()),
+  id: v.string(),
+  name: v.string(),
   description: v.nullish(v.string()),
   db_id: v.nullish(v.string()),
 });
