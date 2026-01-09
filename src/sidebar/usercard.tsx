@@ -10,6 +10,10 @@ import type {
 } from '@/login/authconfigprovider';
 
 import {
+  useRouter
+} from '@tanstack/react-router';
+
+import {
   Card,
   CardContent
 } from '@/components/ui/card'
@@ -22,6 +26,9 @@ export
 function UserCard(props: UserCard.Props): ReactNode {
   // Extract the props.
   const { isSidebarOpen, context } = props;
+  
+  // Fetch the router for the current endpoint.
+  const router = useRouter();
 
   // Get auth data from the context
   const user = context?.user;
@@ -53,7 +60,11 @@ function UserCard(props: UserCard.Props): ReactNode {
             variant="ghost"
             size="sm"
             className="ml-auto px-2 text-red-600"
-            onClick={context.logout}
+            onClick = {async () => {
+              context.logout();
+              await router.invalidate();
+              router.navigate({ to: "/", replace: true });
+            }}
           >
             Log out
           </Button>

@@ -14,9 +14,8 @@ import {
 } from './auiprovider';
 
 import {
-  Breadcrumbs
-} from './breadcrumbs';
-
+  Header
+} from './header';
 
 /**
  * A component that renders the Assistant-UI chat panel.
@@ -25,7 +24,7 @@ export
 function Chat(): ReactNode {
   return (
     <main className='grow flex flex-col'>
-      <Breadcrumbs />
+      <Header />
       <div className='grow min-h-0'>
         <AUIProvider>
           <Thread />

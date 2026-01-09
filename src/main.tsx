@@ -2,10 +2,6 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import {
-  ChakraProvider, createSystem, defaultConfig
-} from '@chakra-ui/react';
-
-import {
   StrictMode, useEffect
 } from 'react';
 
@@ -38,12 +34,6 @@ const client = new QueryClient();
 // Inject auth state into the router context
 function App() {
   const auth = useAuth()
-  
-  // Force reload the router if authentication has changed
-  useEffect(() => {
-    router.invalidate();
-  }, [auth.isAuthenticated]);
-
   return <RouterProvider router={router} context={{ auth }} />
 }
 
@@ -67,19 +57,13 @@ declare module '@tanstack/react-router' {
 }
 
 
-// Create a default Chakra system. TODO - define our own for styling.
-const system = createSystem(defaultConfig, { preflight: false });
-
-
 // Render the app into the root element.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <ChakraProvider value={ system }>
-        <QueryClientProvider client={ client }>
-          <App />
-        </QueryClientProvider>
-      </ChakraProvider>
+      <QueryClientProvider client={ client }>
+        <App />
+      </QueryClientProvider>
     </AuthProvider>
   </StrictMode>
 );
