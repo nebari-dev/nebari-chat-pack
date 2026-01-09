@@ -7,7 +7,7 @@ import {
 } from 'react'
 
 type LoginProps = {
-  submit: (username: string, password: string) => Promise<void> | void;
+  submit: (email: string, password: string) => Promise<void> | void;
 };
 
 export
@@ -34,7 +34,7 @@ function Login({ submit }: LoginProps): ReactElement {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <main className="flex w-full items-center justify-center">
       <form
         onSubmit={handleSubmit}
         className="max-w-md w-full space-y-4 p-6 border rounded-lg"
@@ -78,11 +78,11 @@ function Login({ submit }: LoginProps): ReactElement {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-[#20AAA1] text-white py-2 px-4 rounded-md hover:bg-[#2F9C8E] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
-    </div>
+    </main>
   )
 }

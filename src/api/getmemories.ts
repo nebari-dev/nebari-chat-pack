@@ -2,7 +2,9 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import * as v from 'valibot';
-
+import {
+  pb
+} from './pb'
 
 /**
  * A schema for an Agno memory item.
@@ -74,7 +76,7 @@ export
 async function getMemories(): Promise<Memories> {
   // Fetch the resource.
   const resp = await fetch('/api/memories', {
-    credentials: 'include'
+    headers: { 'Authorization': `Bearer ${pb.authStore.token}` }
   });
 
   // Guard against fetch failure.

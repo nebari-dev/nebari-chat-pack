@@ -2,7 +2,9 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import * as v from 'valibot';
-
+import {
+  pb
+} from './pb'
 
 /**
  * A schema for the details common to agent/team/workflow sessions.
@@ -161,7 +163,7 @@ async function getSession(options: getSession.Options): Promise<SessionDetail> {
 
   // Fetch the resource.
   const resp = await fetch(`/api/sessions/${sessionId}?type=${type}`, {
-    credentials: 'include'
+    headers: { 'Authorization': `Bearer ${pb.authStore.token}` }
   });
 
   // Guard against fetch failure.

@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  StrictMode
+  StrictMode, useEffect
 } from 'react';
 
 import {
@@ -38,6 +38,12 @@ const client = new QueryClient();
 // Inject auth state into the router context
 function App() {
   const auth = useAuth()
+  
+  // Force reload the router if authentication has changed
+  useEffect(() => {
+    router.invalidate();
+  }, [auth.isAuthenticated]);
+
   return <RouterProvider router={router} context={{ auth }} />
 }
 

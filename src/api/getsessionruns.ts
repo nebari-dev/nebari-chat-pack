@@ -7,6 +7,9 @@ import {
   toolCallSchema
 } from './tools';
 
+import {
+  pb
+} from './pb'
 
 /**
  * A schema for Agno session run metrics.
@@ -62,7 +65,7 @@ export
 async function getSessionRuns(session_id: string): Promise<SessionRun[]> {
   // Make the fetch request.
   const resp = await fetch(`/api/sessions/${session_id}/runs`, {
-    credentials: 'include'
+    headers: { 'Authorization': `Bearer ${pb.authStore.token}` }
   });
 
   // Guard against request failure.

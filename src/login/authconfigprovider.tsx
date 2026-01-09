@@ -5,21 +5,22 @@ import {
   useEffect 
 } from 'react'
 
-import * as api from '@/api'
+import {
+  pb
+} from '@/api'
 
-export
-type User = {
-  user_id: string;
-  username: string;
-  email?: string;
-}
+import type {
+  RecordModel
+} from 'pocketbase';
+
+import * as api from '@/api'
 
 export
 type UserLoginOptions = {
   /**
    * username for the login
    */
-  readonly username: string;
+  readonly email: string;
   /**
    * password for the login
    */
@@ -36,12 +37,12 @@ type AuthConfig = {
   /**
    * Logged in User
    */
-  readonly user: User | null;
+  readonly user: RecordModel | null;
 
   /**
    * A callback for the login
    */
-  readonly login: (options: UserLoginOptions) => Promise<void>;
+  readonly login: (options: UserLoginOptions) => Promise<RecordModel | null>;
 
   /**
    * A callback for the login
@@ -50,46 +51,34 @@ type AuthConfig = {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const isAuthenticated = user !== null
+  const [user, setUser] = useState(pb.authStore.record);
+  const isAuthenticated = user !== null;
 
-  // validate auth state on app load
+  // Sync user state with PocketBase auth store
   useEffect(() => {
-    validate()
-      .catch(() => {
-        cookieStore.delete('access_token')
-        setIsLoading(false);
-      })
-  }, [])
+    return pb.authStore.onChange((_token, record) => {
+      setUser(record);
+    });
+  }, []);
 
-  const validate = async () => {
-    const user = await api.validate()
-
-    if(user) {
-      setUser(user);
-      setIsLoading(false);
-    }
-  }
-
+  /**
+   * login using Pocketbase authentication
+   * 
+   * @param options (email, password)
+   * @returns PocketBase (RecordModel) type object
+   */
   const login = async (options: UserLoginOptions) => {
-    await api.login(options);
+    const data = await api.login(options);
+    setUser(data.record);
 
-    await validate();
+    return user;
   }
 
+  /**
+   * Clear the PocketBase auth store
+   */  
   const logout = () => {
-    setUser(null)
-    cookieStore.delete('access_token')
-  }
-
-  // Show loading state while checking auth
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
-      </div>
-    )
+    pb.authStore.clear();
   }
 
   return (
@@ -99,15 +88,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * Auth context provider
+ */
 export
 const AuthContext = createContext<AuthConfig | undefined>(undefined)
 
 // return auth context
 export function useAuth(): AuthConfig {
+
   const config = useContext(AuthContext)
+
   if (config === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('missing `AuthContext`')
   }
+
   return config
 }
 

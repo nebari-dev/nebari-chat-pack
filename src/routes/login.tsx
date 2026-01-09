@@ -31,8 +31,8 @@ function RouteComponent() {
   const navigate = useNavigate()
   const { redirect: redirectTo } = Route.useSearch()
 
-  const handleLogin = async (username: string, password: string) => {
-    await auth.login({ username, password });
+  const handleLogin = async (email: string, password: string) => {
+    await auth.login({ email, password });
     await navigate({ to: redirectTo });
   };
 

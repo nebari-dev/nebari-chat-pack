@@ -2,7 +2,9 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 import * as v from 'valibot';
-
+import {
+  pb
+} from './pb'
 
 /**
  * A schema for Agno sessions list metadata.
@@ -75,7 +77,7 @@ async function listSessions(options: listSessions.Options): Promise<SessionsList
 
   // Fetch the resource.
   const resp = await fetch(`/api/sessions?type=${type}&sort_by=updated_at`, {
-    credentials: 'include'
+    headers: { 'Authorization': `Bearer ${pb.authStore.token}` }
   });
 
   // Guard against fetch failure.

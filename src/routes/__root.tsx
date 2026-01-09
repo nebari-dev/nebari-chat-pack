@@ -21,14 +21,18 @@ import {
   Sidebar
 } from '@/sidebar';
 
+import type {
+  RecordModel
+} from 'pocketbase';
+
 
 /**
  * Auth state interface
  */
 type AuthState = {
   isAuthenticated: boolean;
-  user: {user_id: string; username: string; email?: string} | null;
-  login: (options: {username: string, password: string}) => Promise<void>;
+  user: RecordModel | null;
+  login: (options: {email: string, password: string}) => Promise<RecordModel | null>;
   logout: () => void;
 }
 
