@@ -308,18 +308,16 @@ namespace Private {
     const { execution, setExecution } = props;
 
     // Create the callback to update the schema.
-    const setSchema = useCallback(
-      (index: number, schema: api.UserInputSchema) => {
-        // Clone the input schema array.
-        const user_input_schema = [ ...execution.user_input_schema! ];
+    const setSchema = (index: number, schema: api.UserInputSchema) => {
+      // Clone the input schema array.
+      const user_input_schema = [ ...execution.user_input_schema! ];
 
-        // Overwrite the modified schema.
-        user_input_schema[index] = schema;
+      // Overwrite the modified schema.
+      user_input_schema[index] = schema;
 
-        // Update the tool execution.
-        setExecution({ ...execution, user_input_schema });
-      }
-    , [setExecution]);
+      // Update the tool execution.
+      setExecution({ ...execution, user_input_schema });
+    };
 
     // Create the input schema components.
     const content = execution.user_input_schema!.map((schema, i) => {
