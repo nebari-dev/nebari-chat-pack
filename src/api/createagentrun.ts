@@ -132,9 +132,9 @@ const runPausedEventSchema = v.object({
   agent_name: v.string(),
   content: v.string(),
   created_at: v.number(),
-  requirements: v.array(runRequirementSchema),
   run_id: v.string(),
-  session_id: v.string()
+  session_id: v.string(),
+  tools: v.array(toolExecutionSchema)
 });
 
 
