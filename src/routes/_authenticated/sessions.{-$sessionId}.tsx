@@ -118,7 +118,7 @@ const Route = createFileRoute('/_authenticated/sessions/{-$sessionId}')({
       throw redirect({
         to: '/sessions/{-$sessionId}',
         params: { sessionId: undefined },
-        search: s => s
+        search: { type }
       });
     }
 

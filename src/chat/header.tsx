@@ -197,7 +197,7 @@ namespace Private {
           isDisabled ? 'bg-bd-brand-default/50' : 'bg-bd-brand-default'
         ) }
         disabled={ sessionId === undefined }
-        search={ { type, id } }>
+        search={ type && id ? { type, id } : { type: undefined, id: undefined, sessionId: undefined } }>
         New Chat
       </Link>
     );
