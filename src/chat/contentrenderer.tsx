@@ -5,6 +5,8 @@ import type {
   ReactNode
 } from 'react';
 
+import remarkGfm from "remark-gfm";
+
 import Markdown from 'react-markdown';
 
 import * as api from '@/api';
@@ -27,11 +29,13 @@ function ContentRenderer(props: ContentRenderer.Props): ReactNode {
   }
 
   // Return the rendered component.
-  //
-  // TODO custom markdown formatting.
   return (
-    <div>
-      <Markdown>{ content }</Markdown>
+    <div className='ot-ChatPlusPlus-markdown'>
+      <Markdown
+        remarkPlugins={ [remarkGfm] }
+        components={ Private.markdownComponents }>
+        { content }
+      </Markdown>
     </div>
   );
 }
@@ -80,4 +84,18 @@ namespace Private {
       return content + (e.event === 'RunContent' ? e.content : '');
     }, '');
   }
+
+  /**
+   * The custom markdown components.
+   *
+   * These handle the tags that can't be handled solely in `main.css`.
+   */
+  export
+  const markdownComponents = {
+    table: ({ ...props }) => (
+      <div className='my-6 w-full border rounded-md overflow-x-auto'>
+        <table { ...props } />
+      </div>
+    )
+  } as const;
 }
