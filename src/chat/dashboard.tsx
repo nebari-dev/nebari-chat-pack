@@ -10,6 +10,14 @@ import {
 } from './alerts';
 
 import {
+  EventsLog
+} from './eventslog';
+
+import {
+  FaultInjector
+} from './faultinjector';
+
+import {
   SensorStatus
 } from './sensorstatus';
 
@@ -24,10 +32,12 @@ import {
 export
 function Dashboard(): ReactNode {
   return (
-    <div className='grid gap-2 grid-cols-3'>
-      <Alerts className='h-65' />
-      <SensorStatus className='h-65 col-span-2' />
-      <Tracks className='h-160 col-span-3' />
+    <div className='h-full grid gap-2 grid-cols-7 grid-rows-[260px_1fr]'>
+      <FaultInjector />
+      <Alerts className='col-span-2' />
+      <SensorStatus className='col-span-4' />
+      <Tracks className='col-span-4' />
+      <EventsLog className='col-span-3' />
     </div>
   );
 }

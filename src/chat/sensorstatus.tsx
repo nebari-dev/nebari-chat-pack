@@ -76,7 +76,7 @@ namespace Private {
   /**
    * A type alias for the state of a sensor.
    *
-   * Assumed to be valid from the sensor.
+   * Assumed to be valid from the server.
    *
    * No client validation for the demo.
    */

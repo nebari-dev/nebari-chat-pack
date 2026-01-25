@@ -38,6 +38,9 @@ import {
 
 import { cn } from "@/lib/utils";
 
+import { useChatConfig } from "@/chat";
+
+
 export const Thread: FC = () => {
   return (
     <LazyMotion features={domAnimation}>
@@ -113,7 +116,7 @@ const ThreadWelcome: FC = () => {
   return (
     <div className="aui-thread-welcome-root mx-auto my-auto flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
       <div className="aui-thread-welcome-center flex w-full flex-grow flex-col items-center justify-center">
-        <div className="aui-thread-welcome-message flex size-full flex-col justify-center px-8">
+        {/*<div className="aui-thread-welcome-message flex size-full flex-col justify-center px-8">
           <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -131,38 +134,45 @@ const ThreadWelcome: FC = () => {
           >
             How can I help you today?
           </m.div>
-        </div>
+        </div>*/}
       </div>
-      {/*<ThreadSuggestions />*/}
+      <ThreadSuggestions />
     </div>
   );
 };
 
 const ThreadSuggestions: FC = () => {
+  const { id } = useChatConfig();
+
+  const suggestions = (
+    id === 'ops-copilot' ?
+    [
+      {
+        title: "Check for Changes",
+        action: "What has changed in the last hour? Generate a report.",
+      },
+      {
+        title: 'Explain Alerts',
+        action: 'Explain the most recent 10 alerts and suggest mitigations.'
+      }
+    ] :
+    id === 'anomaly-sentinel' ?
+    [
+      {
+        title: "Check Sensor Health",
+        action: "Check the sensor health over the last day and report any errors?",
+      },
+      {
+        title: "Analyze the Last Hour",
+        action: "Look at the event log for the last hour and generate a report.",
+      }
+    ] :
+    []
+  );
+
   return (
     <div className="aui-thread-welcome-suggestions grid w-full gap-2 pb-4 @md:grid-cols-2">
-      {[
-        {
-          title: "What's the weather",
-          label: "in San Francisco?",
-          action: "What's the weather in San Francisco?",
-        },
-        {
-          title: "Explain React hooks",
-          label: "like useState and useEffect",
-          action: "Explain React hooks like useState and useEffect",
-        },
-        {
-          title: "Write a SQL query",
-          label: "to find top customers",
-          action: "Write a SQL query to find top customers",
-        },
-        {
-          title: "Create a meal plan",
-          label: "for healthy weight loss",
-          action: "Create a meal plan for healthy weight loss",
-        },
-      ].map((suggestedAction, index) => (
+      {suggestions.map((suggestedAction, index) => (
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -178,14 +188,11 @@ const ThreadSuggestions: FC = () => {
           >
             <Button
               variant="ghost"
-              className="aui-thread-welcome-suggestion h-auto w-full flex-1 flex-wrap items-start justify-start gap-1 rounded-3xl border px-5 py-4 text-left text-sm @md:flex-col dark:hover:bg-accent/60"
+              className="aui-thread-welcome-suggestion h-auto w-full flex-1 flex-wrap items-start justify-start gap-1 rounded-md border px-4 py-2 text-left text-sm @md:flex-col dark:hover:bg-accent/60"
               aria-label={suggestedAction.action}
             >
               <span className="aui-thread-welcome-suggestion-text-1 font-medium">
                 {suggestedAction.title}
-              </span>
-              <span className="aui-thread-welcome-suggestion-text-2 text-muted-foreground">
-                {suggestedAction.label}
               </span>
             </Button>
           </ThreadPrimitive.Suggestion>

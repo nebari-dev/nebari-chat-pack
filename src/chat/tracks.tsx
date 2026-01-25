@@ -40,7 +40,7 @@ function Tracks(props: Tracks.Props): ReactNode {
       'min-w-0 min-h-40 gap-2 py-4 rounded-sm', className) }>
       <CardHeader className='px-4'>
         <CardTitle>
-          Tracks
+          Vehicular Tracks Over London
         </CardTitle>
       </CardHeader>
       <CardContent className='px-4 grow min-h-0'>
@@ -121,10 +121,7 @@ namespace Private {
       center: [LONDON_CENTER_X, LONDON_CENTER_Y],
       itemStyle: {
         areaColor: '#e7e8ea'
-      },
-      // emphasis: {
-      //   disabled: true
-      // }
+      }
     },
     dataset: {
       source: []
@@ -248,7 +245,7 @@ namespace Private {
       };
 
       // Setup the polling interval.
-      const intervalId = setInterval(poller, 2000);
+      const intervalId = setInterval(poller, 5000);
 
       // Create the resize observer.
       const observer = new ResizeObserver(([entry]) => {
