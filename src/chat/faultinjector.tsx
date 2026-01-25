@@ -59,7 +59,7 @@ function FaultInjector(props: FaultInjector.Props): ReactNode {
           Clock Skew
         </Button>
         <Button
-          className='cursor-pointer bg-green-700'
+          className='cursor-pointer bg-green-700 hover:bg-green-600'
           onClick={ Private.clearFaults }>
           Clear Faults
         </Button>
