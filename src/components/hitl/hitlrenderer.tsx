@@ -105,9 +105,6 @@ function HITLRenderer(props: HITLRenderer.Props): ReactNode {
       );
     }
 
-    // The AUI messages hook should already skip non-HITL tools.
-    console.error('Unhandled tool execution:', tool);
-
     // Skip unhandled tools.
     return null;
   });

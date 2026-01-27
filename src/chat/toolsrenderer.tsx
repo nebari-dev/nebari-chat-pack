@@ -6,7 +6,7 @@ import type {
 } from 'echarts';
 
 import {
-  ChevronRight
+  ChevronRight, Hammer
 } from 'lucide-react';
 
 import type {
@@ -35,6 +35,10 @@ import {
   HITLRenderer
 } from '@/components/hitl/hitlrenderer';
 
+import {
+  useChatRuntime
+} from './chatruntimeprovider';
+
 
 /**
  * A react component that renders the tool executions for a run.
@@ -59,16 +63,19 @@ function ToolsRenderer(props: ToolsRenderer.Props): ReactNode {
       event={ evt } />
   );
 
+  // Create the HTIL content, if needed.
+  const hitl = (
+    pausedEvent ?
+    <Private.HITLWrapper pausedEvent={ pausedEvent } /> :
+    null
+  );
+
   // Return the rendered component.
   return (
     <div className='flex flex-col gap-4'>
       <Private.ToolCountRenderer toolEvents={ toolEvents } />
       { content }
-      {
-        pausedEvent ?
-        <HITLRenderer pausedEvent={ pausedEvent } /> :
-        null
-      }
+      { hitl }
     </div>
   );
 }
@@ -178,7 +185,8 @@ namespace Private {
           className={ cn(
             'h-6 rounded-md text-xs bg-bg-neutral-dark cursor-pointer',
             'hover:bg-bg-neutral-default shadow-none' ) }>
-          { `Used ${count} Tool${count === 1 ? '' : 's'}` }
+          <Hammer />
+          { `${count} TOOL${count === 1 ? '' : 'S'} CALLED` }
           <ChevronRight />
         </Button>
       </div>
@@ -299,5 +307,47 @@ namespace Private {
     }
 
     return { mimeType: result.mime_type, data: result.data };
+  }
+
+  /**
+   * A type alias for the `HITLWrapper` props.
+   */
+  export
+  type HITLWrapperProps = {
+    /**
+     * The api paused event that triggers the HITL renderer.
+     */
+    readonly pausedEvent: api.RunPausedEvent;
+  };
+
+  /**
+   *  A react component that wraps the HITL renderer.
+   *
+   * This manages the closure state needed for the renderer.
+   */
+  export
+  function HITLWrapper(props: HITLWrapperProps): ReactNode {
+    // Extract the props.
+    const { pausedEvent } = props;
+
+    // Fetch the resume run handler handler from the runtime.
+    const { onResumeRun } = useChatRuntime();
+
+    // Create the callback to handle the HITL submit.
+    const handleSubmitExecutions = (exc: readonly api.ToolExecution[]) => {
+      onResumeRun({
+        agentId: pausedEvent.agent_id,
+        runId: pausedEvent.run_id,
+        sessionId: pausedEvent.session_id,
+        tools: exc
+      });
+    };
+
+    // Return the rendered component.
+    return (
+      <HITLRenderer
+        pausedEvent={ pausedEvent }
+        submitExecutions={ handleSubmitExecutions } />
+    );
   }
 }

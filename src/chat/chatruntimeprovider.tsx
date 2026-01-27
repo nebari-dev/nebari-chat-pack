@@ -54,13 +54,51 @@ type ChatRuntime = ChatConfig & {
   /**
    * The session runs for the chat.
    */
-  readonly runs: readonly api.SessionRun[];
+  readonly runs: api.SessionRuns;
 
   /**
    * A callback to submit a new user message to the session.
    */
   readonly onUserSubmit: (prompt: string) => void;
+
+  /**
+   * A callback to resume a run after a HITL tool pause.
+   */
+  readonly onResumeRun: (args: ChatRuntime.ResumeRunArgs) => void;
 };
+
+
+/**
+ * The namespace for the `ChatRuntime` statics.
+ */
+export
+namespace ChatRuntime {
+  /**
+   * A type alias for chat runtime `ResumeRunArgs`.
+   */
+  export
+  type ResumeRunArgs = {
+    /**
+     * The unique agent id.
+     */
+    readonly agentId: string;
+
+    /**
+     * The unique run id.
+     */
+    readonly runId: string;
+
+    /**
+     * The unique session id.
+     */
+    readonly sessionId: string;
+
+    /**
+     * The array of updated tool executions.
+     */
+    readonly tools: readonly api.ToolExecution[];
+  };
+}
 
 
 /**
@@ -112,32 +150,24 @@ function ChatRuntimeProvider(props: PropsWithChildren): ReactNode {
     await createRun.mutateAsync({ prompt, config });
   }, [createRun.mutateAsync, config]);
 
-  // // Create the mutation for continuing runs.
-  // const continueRun = useMutation({
-  //   mutationFn: Private.continueRun
-  // });
-  //   // Create the callback from resuming a tool call.
-  // const onResumeToolCall = useCallback((options: ResumeToolCallOptions) => {
-  //   // Extract the paylaoad.
-  //   const { toolCallId, payload } = options;
+  // Create the mutation for continuing runs.
+  const resumeRun = useMutation({
+    mutationFn: Private.resumeRun
+  });
 
-  //   // Guard against tool calls we don't know how to resume.
-  //   if (toolCallId !== 'application/vnd.openteams-agno-hitl') {
-  //     console.log('Ignoring resume tool:', toolCallId);
-  //     return;
-  //   }
+  // Create the callback from resuming a run after it is paused..
+  const handleResumeRun = useCallback((args: ChatRuntime.ResumeRunArgs) => {
+    resumeRun.mutate(args);
+  }, [resumeRun.mutate]);
 
-  //   // Invoke the mutation function.
-  //   continueRun.mutate(payload as Private.ContinueRunArgs);
-  // }, [continueRun.mutateAsync]);
-  // Create the chat runtime object.
-
+  // Create the chat runtime.
   const runtime: ChatRuntime = {
     ...config,
     isLoading: loadRuns.isFetching,
     isRunning: createRun.isPending,
     runs: loadRuns.data!,
-    onUserSubmit: handleUserSubmit
+    onUserSubmit: handleUserSubmit,
+    onResumeRun: handleResumeRun
   };
 
   // Return the rendered component.
@@ -173,7 +203,7 @@ namespace Private {
   export
   async function loadRuns(
     context: QueryFunctionContext<QueryKey>
-  ): Promise<readonly api.SessionRun[]> {
+  ): Promise<api.SessionRuns> {
     // Extract the query key from the context.
     const { queryKey } = context;
 
@@ -240,7 +270,7 @@ namespace Private {
     config.update({ type: config.type, id: config.id, sessionId });
 
     // Initialize the cache with the new run.
-    client.setQueryData<api.SessionRun[]>(
+    client.setQueryData<api.SessionRuns>(
       queryKey,
       prev => [...(prev ?? []), {
         agent_id: config.id!,
@@ -269,7 +299,7 @@ namespace Private {
 
     // Handle the stream events from the Agno API.
     for await (const evt of stream) {
-      client.setQueryData<api.SessionRun[]>(
+      client.setQueryData<api.SessionRuns>(
         queryKey,
         produce(draft => { processEvent(evt, draft!); })
       );
@@ -279,7 +309,7 @@ namespace Private {
   /**
    * A type alias for a writeable AUI thread draft.
    */
-  type Draft = WritableDraft<api.SessionRun>[];
+  type Draft = WritableDraft<api.SessionRuns>;
 
   /**
    * Process an Agno event and add it's effects to the thread draft.
@@ -315,59 +345,36 @@ namespace Private {
     }
   }
 
-  // /**
-  //  * A type alias for the arguments to `continueRun`.
-  //  */
-  // export
-  // type ContinueRunArgs = {
-  //   /**
-  //    * The unique agent id.
-  //    */
-  //   readonly agentId: string;
+  /**
+   * A mutation function which continues a run after HITL interaction.
+   */
+  export
+  async function resumeRun(
+    args: ChatRuntime.ResumeRunArgs, context: MutationFunctionContext
+  ): Promise<void> {
+    // Extract the args.
+    const { agentId, runId, sessionId, tools } = args;
 
-  //   /**
-  //    * The unique run id.
-  //    */
-  //   readonly runId: string;
+    // Extract the query client.
+    const client = context.client;
 
-  //   /**
-  //    * The unique session id.
-  //    */
-  //   readonly sessionId: string;
+    // Create the query key for updating the run.
+    const queryKey = createQueryKey(sessionId);
 
-  //   /**
-  //    * The array of updated tool executions.
-  //    */
-  //   readonly tools: readonly api.ToolExecution[];
-  // };
+    // Set up the event stream for the Agno API.
+    const stream = api.continueAgentRun({
+      agent_id: agentId,
+      run_id: runId,
+      session_id: sessionId,
+      tools
+    });
 
-  // /**
-  //  * A mutation function which continues a run after HITL interaction.
-  //  */
-  // export
-  // async function continueRun(
-  //   args: ContinueRunArgs, context: MutationFunctionContext
-  // ): Promise<void> {
-  //   // Extract the args.
-  //   const { agentId, runId, sessionId, tools } = args;
-
-  //   // Extract the query client.
-  //   const client = context.client;
-
-  //   // Set up the event stream for the Agno API.
-  //   const stream = api.continueAgentRun({
-  //     agent_id: agentId,
-  //     run_id: runId,
-  //     session_id: sessionId,
-  //     tools
-  //   });
-
-  //   // Handle the stream events from the Agno API.
-  //   for await (const evt of stream) {
-  //     client.setQueryData<ThreadMessageLike[]>(
-  //       createQueryKey(sessionId),
-  //       produce(draft => { processEvent(evt, draft!); })
-  //     );
-  //   }
-  // }
+    // Handle the stream events from the Agno API.
+    for await (const evt of stream) {
+      client.setQueryData<api.SessionRuns>(
+        queryKey,
+        produce(draft => { processEvent(evt, draft!); })
+      );
+    }
+  }
 }
