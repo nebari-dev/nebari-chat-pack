@@ -183,6 +183,7 @@ namespace Private {
             { evt.tool.tool_name.toUpperCase() }
           </div>
           <JsonEditor
+            className='ot-ChatPlusPlus-jer'
             data={ evt.tool }
             maxWidth='100%'
             viewOnly={ true }

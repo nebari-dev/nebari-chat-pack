@@ -147,8 +147,10 @@ body {
  * It overrides the default in the library which aligns the keys in the
  * vertical center, which appears confusing when looking at it.
  */
-.jer-value-main-row {
-  align-items: start;
+.ot-ChatPlusPlus-jer {
+  .jer-value-main-row {
+    align-items: start;
+  }
 }
 
 

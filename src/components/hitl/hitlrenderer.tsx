@@ -235,6 +235,7 @@ namespace Private {
               ARGUMENTS
             </div>
             <JsonEditor
+              className='ot-ChatPlusPlus-jer'
               data={ execution.tool_args }
               maxWidth='100%'
               viewOnly={ true }
