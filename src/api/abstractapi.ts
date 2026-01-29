@@ -429,6 +429,11 @@ type GetSessionRunsOptions = {
 export
 type SessionRun = SessionSummary & {
   /**
+   * The unique id for the run.
+   */
+  readonly runId: string;
+
+  /**
    * The unique id for the agent for the run.
    */
   readonly agentId: string;
@@ -573,7 +578,24 @@ type RunEvent = { // TODO define the events API
  */
 export
 type CreateRunOptions = {
+  /**
+   * The new session id for the run.
+   *
+   * This must be a random UUIDv4.
+   *
+   * This will be assigned by the client on a new submission.
+   */
+  readonly sessionId: string;
 
+  /**
+   * The unique id of the agent to handle the run.
+   */
+  readonly agentId: string;
+
+  /**
+   * The user prompt for the run.
+   */
+  readonly userPrompt: string;
 };
 
 
@@ -582,7 +604,22 @@ type CreateRunOptions = {
  */
 export
 type ContinueRunOptions = {
+  /**
+   * The unique session id to continue.
+   */
+  readonly sessionId: string;
 
+  /**
+   * The unique id of the run to continue.
+   */
+  readonly runId: string;
+
+  /**
+   * The user-supplied feedback for the agent.
+   *
+   * TODO - make this more well-typed.
+   */
+  readonly feedback: any;
 };
 
 
