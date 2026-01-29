@@ -560,13 +560,40 @@ type GetMemoriesResult = {
 
 
 /**
- * An abstract class that defines the API interface for Chat++.
  *
- * An implementation of this class is responsible for managing it's own
+ */
+export
+type RunEvent = {
+
+};
+
+
+/**
+ *
+ */
+export
+type CreateRunOptions = {
+
+};
+
+
+/**
+ *
+ */
+export
+type ContinueRunOptions = {
+
+};
+
+
+/**
+ * An interface the defines the API for Chat++.
+ *
+ * An implementation of this interface is responsible for managing it's own
  * caching as appropriate.
  */
 export
-abstract class AbstractAPI {
+interface AbstractAPI {
   /**
    * Fetch the overall application config object.
    *
@@ -575,7 +602,7 @@ abstract class AbstractAPI {
    *
    * @returns The global application configuration object.
    */
-  abstract getAppConfig(): Promise<AppConfig>;
+  getAppConfig(): Promise<AppConfig>;
 
   /**
    * Fetch the aggregate application metrics.
@@ -584,7 +611,7 @@ abstract class AbstractAPI {
    *
    * @returns The aggregate metrics results for the requested time range.
    */
-  abstract getAppMetrics(options: GetAppMetricsOptions): Promise<GetAppMetricsResult>;
+  getAppMetrics(options: GetAppMetricsOptions): Promise<GetAppMetricsResult>;
 
   /**
    * Fetch the sesssion summaries subject to the options.
@@ -593,7 +620,7 @@ abstract class AbstractAPI {
    *
    * @returns The paginated session summaries according to the results.
    */
-  abstract listSessions(options: ListSessionsOptions): Promise<ListSessionsResult>;
+  listSessions(options: ListSessionsOptions): Promise<ListSessionsResult>;
 
   /**
    * Fetch the details for a particular session.
@@ -603,7 +630,7 @@ abstract class AbstractAPI {
    * @returns The details of the specified session, minus its runs. This
    *   result is useful for generating a medium-overview of the session.
    */
-  abstract getSession(options: GetSessionOptions): Promise<SessionDetail>;
+  getSession(options: GetSessionOptions): Promise<SessionDetail>;
 
   /**
    * Fetch the runs for a particular session.
@@ -613,7 +640,7 @@ abstract class AbstractAPI {
    * @returns A full and complete history of the session runs. This can be
    *   used to restore the full state of a session from history.
    */
-  abstract getSessionRuns(options: GetSessionRunsOptions): Promise<readonly SessionRun[]>;
+  getSessionRuns(options: GetSessionRunsOptions): Promise<readonly SessionRun[]>;
 
   /**
    * Fetch the agentic memories subject to the options.
@@ -622,5 +649,23 @@ abstract class AbstractAPI {
    *
    * @returns The agentic memories that have been stored for the user/agent.
    */
-  abstract getMemories(options: GetMemoriesOptions): Promise<GetMemoriesResult>;
+  getMemories(options: GetMemoriesOptions): Promise<GetMemoriesResult>;
+
+  /**
+   * Create a new session run according the options.
+   *
+   * @param options - The options for creating the run.
+   *
+   * @returns An async generator that streams run events.
+   */
+  createRun(options: CreateRunOptions): AsyncGenerator<RunEvent>;
+
+  /**
+   * Continue a session run after a human-in-the-loop pause.
+   *
+   * @param options - The options for continuing the run.
+   *
+   * @returns An async generator that continues the run events.
+   */
+  continueRunOptions(options: ContinueRunOptions): AsyncGenerator<RunEvent>;
 }
