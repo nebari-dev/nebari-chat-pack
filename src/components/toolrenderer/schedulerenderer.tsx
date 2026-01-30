@@ -3,7 +3,7 @@
 |----------------------------------------------------------------------------*/
 import { clsx } from 'clsx';
 
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import {
   Card,
@@ -34,8 +34,15 @@ import {
 } from '@/components/ui/dialog';
 
 import { Button } from '@/components/ui/button';
-import { DownloadIcon, InfoIcon, DatabaseIcon } from 'lucide-react';
+import { DownloadIcon, InfoIcon, DatabaseIcon, PlayIcon, SaveIcon, RefreshCwIcon } from 'lucide-react';
 import { useChatRuntime } from '../../chat/chatruntimeprovider';
+
+const ICON_MAP: Record<string, any> = {
+  database: DatabaseIcon,
+  save: SaveIcon,
+  play: PlayIcon,
+  refresh: RefreshCwIcon,
+};
 
 export function ScheduleRenderer({
   result,
@@ -51,13 +58,13 @@ export function ScheduleRenderer({
     );
   }
 
-  const { status, assignments = [], metadata } = result.data;
+  const { status, view, axis, items = [], actions = [] } = result.data;
 
-  // Safe access for metadata
-  const periods = metadata?.periods || [];
-  const rooms = metadata?.rooms || [];
+  // Safe access for axes
+  const rows = axis?.rows || [];
+  const cols = axis?.columns || [];
 
-  if (periods.length === 0 || rooms.length === 0) {
+  if (rows.length === 0 || cols.length === 0) {
     return (
       <Card className='w-full'>
         <CardHeader>
@@ -72,40 +79,51 @@ export function ScheduleRenderer({
     );
   }
 
-  // Transform assignments into a lookup map: [room_id][period] -> Assignment
-  const scheduleMap = useMemo(() => {
+  // Transform items into a lookup map: [row_id][col_id] -> Item
+  const itemMap = useMemo(() => {
     const map: Record<string, Record<string, any>> = {};
-    assignments.forEach((asn: any) => {
-      if (!map[asn.room_id]) {
-        map[asn.room_id] = {};
+    items.forEach((item: any) => {
+      if (!map[item.row_id]) {
+        map[item.row_id] = {};
       }
-      map[asn.room_id][asn.period] = asn;
+      map[item.row_id][item.col_id] = item;
     });
     return map;
-  }, [assignments]);
+  }, [items]);
 
   const handleExport = () => {
     // Generate CSV content
     const headers = [
-      'Room',
-      'Period',
-      'Course',
-      'Teacher',
-      'Students Count',
-      'Student Names',
+      view?.row_label || 'Row',
+      view?.col_label || 'Column',
+      view?.item_label || 'Item',
+      'Subtitle',
+      'Details',
     ];
-    const rows = assignments.map((asn: any) => [
-      asn.room_name,
-      asn.period,
-      asn.section_name,
-      asn.teacher_name,
-      asn.student_count || asn.students, // Fallback if backend not updated
-      Array.isArray(asn.students) ? asn.students.join(';') : '',
-    ]);
+    
+    // Create rows based on grid + items
+    // Let's export the items list as it's cleaner for data analysis
+    const csvRows = items.map((item: any) => {
+       const rowObj = rows.find(r => r.id === item.row_id);
+       const colObj = cols.find(c => c.id === item.col_id);
+       
+       // Flatten details into a string
+       const detailsStr = (item.details || [])
+         .map((d: any) => `${d.label}: ${d.value}`)
+         .join('; ');
+
+       return [
+         rowObj?.label || item.row_id,
+         colObj?.label || item.col_id,
+         item.title,
+         item.subtitle || '',
+         detailsStr
+       ];
+    });
 
     const csvContent = [
       headers.join(','),
-      ...rows.map((row) => row.map((c) => `"${c}"`).join(',')), // Quote fields
+      ...csvRows.map((row) => row.map((c) => `"${c}"`).join(',')), // Quote fields
     ].join('\n');
 
     // Create download link
@@ -113,7 +131,7 @@ export function ScheduleRenderer({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'master_schedule_draft.csv');
+    link.setAttribute('download', 'schedule_export.csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -125,7 +143,7 @@ export function ScheduleRenderer({
       <CardHeader>
         <CardTitle className='flex items-center justify-between'>
           <div className='flex items-center gap-2'>
-            <span>Master Schedule Draft</span>
+            <span>{view?.title || 'Schedule'}</span>
             <Badge variant={status === 'Success' ? 'default' : 'destructive'}>
               {status}
             </Badge>
@@ -135,47 +153,53 @@ export function ScheduleRenderer({
               <DownloadIcon className='mr-2 h-4 w-4' />
               Export CSV
             </Button>
-            <Button
-              size='sm'
-              onClick={() =>
-                runtime.onUserSubmit('Save this schedule to RosarioSIS')
-              }
-            >
-              <DatabaseIcon className='mr-2 h-4 w-4' />
-              Save to RosarioSIS
-            </Button>
+            {actions.map((action: any, i: number) => {
+               const Icon = ICON_MAP[action.icon] || PlayIcon;
+               return (
+                  <Button
+                    key={i}
+                    size='sm'
+                    onClick={() => runtime.onUserSubmit(action.prompt)}
+                  >
+                    <Icon className='mr-2 h-4 w-4' />
+                    {action.label}
+                  </Button>
+               );
+            })}
           </div>
         </CardTitle>
         <CardDescription>
-          {assignments.length} sections scheduled across {rooms.length} rooms.
+          {items.length} {view?.item_label?.toLowerCase() || 'items'} scheduled across {rows.length} {view?.row_label?.toLowerCase() || 'rows'}.
         </CardDescription>
       </CardHeader>
       <CardContent className='overflow-x-auto'>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className='w-[100px]'>Room</TableHead>
-              {periods.map((p: string) => (
-                <TableHead key={p} className='min-w-[140px]'>
-                  {p}
+              <TableHead className='w-[100px]'>{view?.row_label || 'Row'}</TableHead>
+              {cols.map((c: any) => (
+                <TableHead key={c.id} className='min-w-[140px]'>
+                  {c.label}
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rooms.map((room: any) => (
-              <TableRow key={room.id}>
+            {rows.map((row: any) => (
+              <TableRow key={row.id}>
                 <TableCell className='bg-muted/50 font-medium'>
-                  {room.name}
-                  <div className='text-muted-foreground text-xs'>
-                    Cap: {room.capacity}
-                  </div>
+                  {row.label}
+                  {row.sub_label && (
+                    <div className='text-muted-foreground text-xs'>
+                      {row.sub_label}
+                    </div>
+                  )}
                 </TableCell>
-                {periods.map((p: string) => {
-                  const asn = scheduleMap[room.id]?.[p];
+                {cols.map((col: any) => {
+                  const item = itemMap[row.id]?.[col.id];
                   return (
-                    <TableCell key={`${room.id}-${p}`} className='border-l p-2'>
-                      {asn ? (
+                    <TableCell key={`${row.id}-${col.id}`} className='border-l p-2'>
+                      {item ? (
                         <Dialog>
                           <DialogTrigger asChild>
                             <div
@@ -186,76 +210,67 @@ export function ScheduleRenderer({
                             >
                               <div
                                 className='truncate font-bold'
-                                title={asn.section_name}
+                                title={item.title}
                               >
-                                {asn.section_name}
+                                {item.title}
                               </div>
                               <div
                                 className='text-muted-foreground truncate'
-                                title={asn.teacher_name}
+                                title={item.subtitle}
                               >
-                                {asn.teacher_name}
+                                {item.subtitle}
                               </div>
                               <div className='mt-1 flex items-center justify-between text-[10px]'>
-                                <span>
-                                  {asn.student_count ?? asn.students} students
-                                </span>
                                 <InfoIcon className='h-3 w-3 opacity-50' />
                               </div>
                             </div>
                           </DialogTrigger>
                           <DialogContent className='flex max-h-[80vh] flex-col'>
                             <DialogHeader>
-                              <DialogTitle>{asn.section_name}</DialogTitle>
+                              <DialogTitle>{item.title}</DialogTitle>
                               <DialogDescription>
-                                {asn.teacher_name} • {asn.room_name} •{' '}
-                                {asn.period}
+                                {item.subtitle} • {row.label} • {col.label}
                               </DialogDescription>
                             </DialogHeader>
 
                             <div className='bg-muted/20 mt-2 min-h-0 flex-1 overflow-y-auto rounded-md border p-2'>
-                              <h4 className='mb-2 text-sm font-semibold'>
-                                Enrolled Students (
-                                {asn.student_count ??
-                                  (Array.isArray(asn.students)
-                                    ? asn.students.length
-                                    : asn.students)}
-                                )
-                              </h4>
-                              <ul className='space-y-1 text-sm'>
-                                {Array.isArray(asn.students) &&
-                                asn.students.length > 0 ? (
-                                  asn.students.map(
-                                    (student: string, i: number) => (
-                                      <li
-                                        key={i}
-                                        className='flex items-center gap-2'
-                                      >
-                                        <span className='bg-primary/50 h-1.5 w-1.5 rounded-full' />
-                                        {student}
-                                      </li>
-                                    ),
-                                  )
-                                ) : (
-                                  <li className='text-muted-foreground italic'>
-                                    No student list available.
-                                  </li>
-                                )}
-                              </ul>
+                              <div className="space-y-4">
+                                {item.details?.map((detail: any, i: number) => (
+                                  <div key={i}>
+                                     <h4 className='mb-1 text-sm font-semibold'>{detail.label}</h4>
+                                     {detail.type === 'list' && Array.isArray(detail.value) ? (
+                                        <ul className='space-y-1 text-sm'>
+                                          {detail.value.length > 0 ? (
+                                            detail.value.map((v: string, idx: number) => (
+                                              <li key={idx} className='flex items-center gap-2'>
+                                                <span className='bg-primary/50 h-1.5 w-1.5 rounded-full' />
+                                                {v}
+                                              </li>
+                                            ))
+                                          ) : (
+                                            <li className='text-muted-foreground italic'>Empty</li>
+                                          )}
+                                        </ul>
+                                     ) : (
+                                        <p className="text-sm">{detail.value}</p>
+                                     )}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
 
                             <div className='bg-secondary/20 mt-4 rounded-md border p-3 text-sm'>
                               <h4 className='mb-1 font-semibold'>
-                                Want to move this class?
+                                Want to move this?
                               </h4>
                               <p className='text-muted-foreground text-xs'>
                                 Ask the agent:
                                 <span className='bg-muted ml-1 rounded px-1 font-mono select-all'>
-                                  Move {asn.section_name} to{' '}
-                                  {asn.period === 'P1'
-                                    ? 'P2'
-                                    : 'another period'}{' '}
-                                  in {asn.room_name}
+                                  Move {item.title} to{' '}
+                                  {col.id === cols[0]?.id
+                                    ? (cols[1]?.label || 'another column')
+                                    : (cols[0]?.label || 'another column')}{' '}
+                                  in {row.label}
                                 </span>
                               </p>
                             </div>
@@ -287,12 +302,29 @@ export namespace ScheduleRenderer {
     mimeType: 'application/vnd.openteams-schedule';
     data: {
       status: string;
-      assignments: any[];
-      metadata: {
-        teachers: any[];
-        rooms: any[];
-        periods: string[];
+      view: {
+        title: string;
+        row_label: string;
+        col_label: string;
+        item_label: string;
       };
+      actions?: {
+        label: string;
+        prompt: string;
+        icon: string;
+      }[];
+      axis: {
+        rows: { id: string; label: string; sub_label?: string }[];
+        columns: { id: string; label: string }[];
+      };
+      items: {
+        id: string;
+        row_id: string;
+        col_id: string;
+        title: string;
+        subtitle?: string;
+        details: { label: string; value: any; type?: 'list' }[];
+      }[];
     };
   }
 }
