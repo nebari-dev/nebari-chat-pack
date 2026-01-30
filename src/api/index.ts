@@ -1,6 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
+import {
+  createContext, useContext
+} from 'react';
 
 
 /**
@@ -114,6 +117,21 @@ type AgentDetail = {
   readonly description: string;
 
   /**
+   * The unique id of the model underlying the agent.
+   */
+  readonly modelId: string;
+
+  /**
+   * The human readable name of the model underlying the agent.
+   */
+  readonly modelName: string;
+
+  /**
+   * The provider hosting the underlying model.
+   */
+  readonly modelProvider: string;
+
+  /**
    * The quick prompts to show for the agent in a new empty chat.
    */
   readonly quickPrompts?: readonly QuickPrompt[];
@@ -195,6 +213,25 @@ type AppTokenMetricsRow = {
 
 
 /**
+ * A type alias for the application aggregate model metrics by-day.
+ */
+export
+type AppModelMetricsRow = {
+  /**
+   * The ISO UTC date string of the row.
+   *
+   * The app metrics should be aggregated by ISO UTC day.
+   */
+  readonly date: string;
+
+  /**
+   * The aggregate token metrics across all sessions for the day.
+   */
+  readonly modelMetrics: readonly ModelMetrics[];
+};
+
+
+/**
  * A type alias for the `AbstractAPI.getAppMetrics()` result.
  */
 export
@@ -207,7 +244,7 @@ type GetAppMetricsResult = {
   /**
    * The model metrics for the requested time range.
    */
-  readonly modelMetrics: ModelMetrics;
+  readonly modelMetrics: readonly AppModelMetricsRow[];
 };
 
 
@@ -250,7 +287,7 @@ type ListSessionsOptions = {
 /**
  * A type alias for session info.
  *
- * This is used to render a row in the sessions table.
+ * This is used to render a summary row in the sessions table.
  */
 export
 type SessionInfo = {
@@ -372,26 +409,6 @@ type SessionDetail = SessionInfo & {
   readonly agentId: string;
 
   /**
-   * The human readonly name for the agent.
-   */
-  readonly agentName: string;
-
-  /**
-   * The unique id of the model underlying the agent.
-   */
-  readonly modelId: string;
-
-  /**
-   * The human readable name of the model underlying the agent.
-   */
-  readonly modelName: string;
-
-  /**
-   * The name of the hardware provider hosting the underlying model.
-   */
-  readonly modelProvider: string;
-
-  /**
    * The aggregate token metrics for the session.
    */
   readonly tokenMetrics: TokenMetrics;
@@ -408,6 +425,184 @@ type SessionDetail = SessionInfo & {
 
 
 /**
+ *
+ */
+export
+type ToolCall = {
+  /**
+   *
+   */
+  readonly toolCallId: string;
+
+  /**
+   *
+   */
+  readonly toolName: string;
+
+  /**
+   *
+   */
+  readonly toolArgs: any; // TODO any??
+
+  /**
+   *
+   */
+  readonly result: string;
+};
+
+
+/**
+ *
+ */
+export
+type EventCommon = {
+  /**
+   *
+   */
+  readonly createdAt: string;
+
+  /**
+   *
+   */
+  readonly agentId: string;
+
+  /**
+   *
+   */
+  readonly runId: string;
+
+  /**
+   *
+   */
+  readonly sessionId: string;
+};
+
+
+/**
+ *
+ */
+export
+type RunStartedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'RunStarted';
+};
+
+
+/**s
+ *
+ */
+export
+type RunContentEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'RunContent';
+
+  /**
+   *
+   */
+  readonly content: string;
+};
+
+
+/**
+ *
+ */
+export
+type RunPausedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'RunPaused';
+
+  /**
+   *
+   */
+  readonly tools: readonly ToolCall[];
+};
+
+
+/**
+ *
+ */
+export
+type RunContinuedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'RunContinued';
+};
+
+
+/**
+ *
+ */
+export
+type ToolCallStartedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'ToolCallStarted';
+
+  /**
+   *
+   */
+  readonly tool: ToolCall;
+};
+
+
+/**
+ *
+ */
+export
+type ToolCallCompletedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'ToolCallCompleted';
+
+  /**
+   *
+   */
+  readonly tool: ToolCall;
+};
+
+
+/**
+ *
+ */
+export
+type RunCompletedEvent = EventCommon & {
+  /**
+   *
+   */
+  readonly type: 'RunCompleted';
+
+  /**
+   *
+   */
+  readonly content: string;
+};
+
+
+/**
+ * A type alias for the application run events.
+ */
+export
+type RunEvent = (
+  RunStartedEvent |
+  RunContentEvent |
+  RunPausedEvent |
+  RunContinuedEvent |
+  ToolCallStartedEvent |
+  ToolCallCompletedEvent |
+  RunCompletedEvent
+);
+
+
+/**
  * A type alias for the `AbstractAPI.getSessionRuns()` options.
  */
 export
@@ -420,28 +615,38 @@ type GetSessionRunsOptions = {
 
 
 /**
- * A type alias that represents a full single run in a session.
+ * A type alias that represents a single run in a session.
  *
  * This is used as the absolute source of truth for a session, which
- * includes all details to fully re-hydrate a session run from the
+ * includes all events to fully re-hydrate a session run from the
  * stored state.
  */
 export
-type SessionRun = SessionInfo & {
-  /**
-   * The unique id for the run.
-   */
-  readonly runId: string;
-
+type SessionRun = {
   /**
    * The unique id for the agent for the run.
    */
   readonly agentId: string;
 
   /**
+   * The ISO UTC timestamp of when the run was created.
+   */
+  readonly createdAt: string;
+
+  /**
    * The event stream for the run.
    */
   readonly events: readonly RunEvent[];
+
+  /**
+   * The unique id for the run.
+   */
+  readonly runId: string;
+
+  /**
+   * The ISO UTC timestamp of the most recent update to the run.
+   */
+  readonly updatedAt: string;
 
   /**
    * The user prompt for the run.
@@ -565,15 +770,6 @@ type GetMemoriesResult = {
 
 
 /**
- * A type alias for an event in a session run.
- */
-export
-type RunEvent = { // TODO define the events API
-
-};
-
-
-/**
  * A type alias for the `AbstractApi.createRun(...)` options.
  */
 export
@@ -615,11 +811,9 @@ type ContinueRunOptions = {
   readonly runId: string;
 
   /**
-   * The user-supplied feedback for the agent.
    *
-   * TODO - make this more well-typed.
    */
-  readonly feedback: any;
+  readonly tools: readonly ToolCall[];
 };
 
 
@@ -706,4 +900,24 @@ interface CppAPI {
    * @returns An async generator that continues the run events.
    */
   continueRunOptions(options: ContinueRunOptions): AsyncGenerator<RunEvent>;
+}
+
+
+/**
+ * The API provider.
+ */
+export
+const APIProvider = createContext<CppAPI | undefined>(undefined);
+
+
+/**
+ * A hook which returns the api
+ */
+export
+function useAPI(): CppAPI {
+  const api = useContext(APIProvider);
+  if (api === undefined) {
+    throw new Error('missing `APIProvider`');
+  }
+  return api;
 }
