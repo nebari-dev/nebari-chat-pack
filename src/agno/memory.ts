@@ -19,9 +19,7 @@ import {
  */
 export
 async function getMemories(_options: api.GetMemories.Options): Promise<api.MemoriesPage> {
-  // Extract the options.
-  //
-  // Ignore the pagination options for Agno for now.
+  // Ignore the pagination options for now.
 
   // Fetch the resource.
   const resp = await fetch('/agno/memories', {
