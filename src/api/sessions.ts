@@ -512,6 +512,9 @@ namespace listSessions {
  */
 export
 async function deleteSessions(ids: readonly string[]): Promise<void> {
+  // Fill in the session types to match. Dumb Agno API right here...
+  const session_types = new Array<string>(ids.length).fill('agent');
+
   // Create the request.
   const resp = await fetch('/api/sessions', {
     method: 'DELETE',
@@ -519,7 +522,7 @@ async function deleteSessions(ids: readonly string[]): Promise<void> {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${auth.getAuthToken()}`
     },
-    body: JSON.stringify({ session_ids: ids }),
+    body: JSON.stringify({ session_ids: ids, session_types }),
   });
 
   // Guard against request failure.
