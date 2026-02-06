@@ -6,12 +6,12 @@ import type {
 } from 'react';
 
 import {
-  ChartCard
-} from './chartcard';
+  useMetrics
+} from '@/context';
 
 import {
-  useMetricsConfig
-} from './configprovider';
+  ChartCard
+} from './chartcard';
 
 import {
   collectMetricsByDay, createDayRange
@@ -24,7 +24,7 @@ import {
 export
 function AgentRunsChart(): ReactNode {
   // Fetch the loaded metrics data.
-  const { year, month, metrics } = useMetricsConfig();
+  const { year, month, metrics } = useMetrics();
 
   // Create the day range for the month of interest.
   const dayRange = createDayRange(year, month);
@@ -112,7 +112,7 @@ function AgentRunsChart(): ReactNode {
 export
 function AgentSessionsChart(): ReactNode {
   // Fetch the loaded metrics data.
-  const { year, month, metrics } = useMetricsConfig();
+  const { year, month, metrics } = useMetrics();
 
   // Create the day range for the month of interest.
   const dayRange = createDayRange(year, month);

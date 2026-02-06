@@ -10,12 +10,12 @@ import type {
 } from 'react';
 
 import {
-  cn
-} from '@/lib/utils';
+  useMetrics
+} from '@/context';
 
 import {
-  useMetricsConfig
-} from './configprovider';
+  cn
+} from '@/lib/utils';
 
 
 /**
@@ -24,7 +24,7 @@ import {
 export
 function MonthSelector(): ReactNode {
   // Fetch the metrics config.
-  const { year, month, atStart, atEnd, update } = useMetricsConfig();
+  const { year, month, atStart, atEnd, update } = useMetrics();
 
   // Get the date for the selection.
   const selectedTimestamp = Date.UTC(year, month - 1);

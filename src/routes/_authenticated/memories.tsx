@@ -7,6 +7,10 @@ import {
 
 import * as api from '@/api';
 
+import type {
+  MemoriesContextValue
+} from '@/context';
+
 import {
   MemoriesContext
 } from '@/context';
@@ -52,9 +56,12 @@ function RouteComponent() {
     await router.invalidate();
   };
 
+  // Create the context value.
+  const value: MemoriesContextValue = { page, deleteMemories };
+
   // Return the rendered component.
   return (
-    <MemoriesContext value={ { page, deleteMemories } }>
+    <MemoriesContext value={ value }>
       <Memories />
     </MemoriesContext>
   );

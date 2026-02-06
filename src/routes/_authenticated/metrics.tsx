@@ -14,11 +14,15 @@ import * as v from 'valibot';
 import * as api from '@/api';
 
 import type {
-  MetricsConfig, MetricsConfigUpdateOptions
-} from '@/metrics';
+  MetricsContextValue
+} from '@/context';
 
 import {
-  Metrics, MetricsConfigProvider
+  MetricsContext
+} from '@/context';
+
+import {
+  Metrics
 } from '@/metrics';
 
 
@@ -119,8 +123,8 @@ function RouteComponent() {
   // Fetch the search parameters.
   const { month, year } = Route.useSearch();
 
-  // Fetch the loaded metrics data.
-  const data = Route.useLoaderData();
+  // Fetch the loaded metrics.
+  const metrics = Route.useLoaderData();
 
   // Fetch the navigator.
   const navigate = Route.useNavigate();
@@ -142,19 +146,19 @@ function RouteComponent() {
   );
 
   // Create the callback for updating the config.
-  const update = useCallback((options: MetricsConfigUpdateOptions) => {
+  const update = useCallback((options: MetricsContextValue.UpdateOptions) => {
     navigate({ search: { ...options } });
   }, []);
 
-  // Create the metrics config.
-  const config: MetricsConfig = {
-    month, year, atStart, atEnd, metrics: data, update
+  // Create the context value.
+  const value: MetricsContextValue = {
+    month, year, atStart, atEnd, metrics, update
   };
 
   // Return the rendered component.
   return (
-    <MetricsConfigProvider value={ config }>
+    <MetricsContext value={ value }>
       <Metrics />
-    </MetricsConfigProvider>
+    </MetricsContext>
   );
 }

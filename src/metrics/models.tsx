@@ -8,12 +8,12 @@ import type {
 import * as api from '@/api';
 
 import {
-  ChartCard
-} from './chartcard';
+  useMetrics
+} from '@/context';
 
 import {
-  useMetricsConfig
-} from './configprovider';
+  ChartCard
+} from './chartcard';
 
 
 /**
@@ -22,7 +22,7 @@ import {
 export
 function ModelRunsChart(): ReactNode {
   // Fetch the loaded metrics.
-  const { metrics } = useMetricsConfig();
+  const { metrics } = useMetrics();
 
   // Setup the array of runs.
   const runs = Private.collectModelRuns(metrics);
