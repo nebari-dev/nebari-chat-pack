@@ -14,8 +14,8 @@ import * as api from '@/api';
 import * as auth from '@/auth';
 
 import {
-  ConfigProvider
-} from '@/config';
+  ConfigContext
+} from '@/context/config';
 
 import {
   Sidebar
@@ -62,9 +62,9 @@ function RouteComponent(): ReactNode {
 
   // Return the rendered component.
   return (
-    <ConfigProvider value={ config }>
+    <ConfigContext value={ config }>
       <Sidebar />
       <Outlet />
-    </ConfigProvider>
+    </ConfigContext>
   );
 }

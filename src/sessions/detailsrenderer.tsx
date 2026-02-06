@@ -8,12 +8,12 @@ import type {
 import * as api from '@/api';
 
 import {
-  useConfig
-} from '@/config';
-
-import {
   Table, TableBody, TableCell, TableRow
 } from '@/components/ui/table';
+
+import {
+  useConfig
+} from '@/context/config';
 
 
 /**

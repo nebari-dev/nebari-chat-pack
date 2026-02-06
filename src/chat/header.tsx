@@ -10,13 +10,13 @@ import type {
 } from 'react';
 
 import {
-  useConfig
-} from '@/config';
-
-import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+
+import {
+  useConfig
+} from '@/context/config';
 
 import {
   cn

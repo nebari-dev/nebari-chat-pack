@@ -9,10 +9,10 @@ import * as api from '@/api';
 
 
 /**
- * The config context provider.
+ * The api config context.
  */
 export
-const ConfigProvider = createContext<api.Config | undefined>(undefined);
+const ConfigContext = createContext<api.Config | undefined>(undefined);
 
 
 /**
@@ -20,9 +20,9 @@ const ConfigProvider = createContext<api.Config | undefined>(undefined);
  */
 export
 function useConfig(): api.Config {
-  const config = useContext(ConfigProvider);
+  const config = useContext(ConfigContext);
   if (config === undefined) {
-    throw new Error('missing `ConfigProvider`');
+    throw new Error('`useConfig` must be called within a `ConfigContext`');
   }
   return config;
 }

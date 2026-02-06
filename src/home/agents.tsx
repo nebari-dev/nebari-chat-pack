@@ -11,7 +11,7 @@ import type {
 
 import {
   useConfig
-} from '@/config';
+} from '@/context/config';
 
 import {
   LinkCard
