@@ -3,7 +3,7 @@
 |----------------------------------------------------------------------------*/
 import type {
   ReactNode
-} from "react";
+} from 'react';
 
 import {
   DataTable

@@ -16,7 +16,7 @@ const ConfigContext = createContext<api.Config | undefined>(undefined);
 
 
 /**
- * A hook which returns the config context.
+ * A hook which returns the api config.
  */
 export
 function useConfig(): api.Config {

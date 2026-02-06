@@ -28,12 +28,12 @@ import {
 } from '@/components/ui/table';
 
 import {
-  cn
-} from '@/lib/utils';
+  useMemories
+} from '@/context';
 
 import {
-  useMemoriesConfig
-} from './configprovider';
+  cn
+} from '@/lib/utils';
 
 
 /**
@@ -42,7 +42,7 @@ import {
 export
 function DataTable(): ReactNode {
   // Fetch the memories page.
-  const { page } = useMemoriesConfig();
+  const { page } = useMemories();
 
   // Create the data table model.
   const table = useReactTable({
@@ -261,7 +261,7 @@ namespace Private {
     const { table } = props;
 
     // Fetch the memories config.
-    const { deleteMemories } = useMemoriesConfig();
+    const { deleteMemories } = useMemories();
 
     // Fetch the needed info from the table.
     const rowCount = table.getRowModel().rows.length;

@@ -7,12 +7,12 @@ import {
 
 import * as api from '@/api';
 
-import type {
-  MemoriesConfig
-} from '@/memories';
+import {
+  MemoriesContext
+} from '@/context';
 
 import {
-  Memories, MemoriesConfigProvider
+  Memories
 } from '@/memories';
 
 
@@ -41,7 +41,7 @@ function RouteComponent() {
   const router = useRouter();
 
   // Fetch the loader data.
-  const data = Route.useLoaderData();
+  const page = Route.useLoaderData();
 
   // Create the handler for deleting memories.
   const deleteMemories = async (ids: readonly string[]) => {
@@ -52,13 +52,10 @@ function RouteComponent() {
     await router.invalidate();
   };
 
-  // Create the memories config.
-  const config: MemoriesConfig = { page: data, deleteMemories };
-
   // Return the rendered component.
   return (
-    <MemoriesConfigProvider value={ config }>
+    <MemoriesContext value={ { page, deleteMemories } }>
       <Memories />
-    </MemoriesConfigProvider>
+    </MemoriesContext>
   );
 }

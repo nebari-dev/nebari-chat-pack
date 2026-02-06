@@ -9,12 +9,12 @@ import * as api from '@/api';
 
 
 /**
- * A type alias for the memories config.
+ * A type alias for the memories context value.
  */
 export
-type MemoriesConfig = {
+type MemoriesContextValue = {
   /**
-   * The loaded memories from the api.
+   * The loaded memories page from the api.
    */
   readonly page: api.MemoriesPage;
 
@@ -26,20 +26,20 @@ type MemoriesConfig = {
 
 
 /**
- * The memories config provider.
+ * The memories context.
  */
 export
-const MemoriesConfigProvider = createContext<MemoriesConfig | undefined>(undefined);
+const MemoriesContext = createContext<MemoriesContextValue | undefined>(undefined);
 
 
 /**
- * A hook which returns the memories config.
+ * A hook which returns the memories context value.
  */
 export
-function useMemoriesConfig(): MemoriesConfig {
-  const config = useContext(MemoriesConfigProvider);
-  if (config === undefined) {
-    throw new Error('missing `MemoriesConfigProvider`');
+function useMemories(): MemoriesContextValue {
+  const value = useContext(MemoriesContext);
+  if (value === undefined) {
+    throw new Error('`useMemories` must be called within a `MemoriesContext`');
   }
-  return config;
+  return value;
 }
