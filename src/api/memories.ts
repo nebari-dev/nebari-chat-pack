@@ -151,7 +151,7 @@ async function deleteMemories(ids: readonly string[]): Promise<void> {
 namespace Private {
   // A schema for an Agno memory item.
   const memoryItemSchema = v.object({
-    agent_id: v.string(),
+    agent_id: v.fallback(v.string(), ''), // i'm so over Agno
     memory: v.string(),
     memory_id: v.string(),
     topics: v.array(v.string()),
