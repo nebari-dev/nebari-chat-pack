@@ -160,7 +160,7 @@ async function getMetrics(options: getMetrics.Options): Promise<DailyMetricsArra
   }
 
   // Return the parsed result.
-  return DailyMetricsArray.parse(await resp.json());
+  return DailyMetricsArraySchema.parse(await resp.json());
 }
 
 
