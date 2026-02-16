@@ -122,14 +122,14 @@ type DailyMetrics = z.infer<typeof DailyMetricsSchema>;
  * The schema for an array of daily metrics.
  */
 export
-const DailyMetricsArray = z.array(DailyMetricsSchema);
+const DailyMetricsArraySchema = z.array(DailyMetricsSchema);
 
 
 /**
  * A type alias for an array of daily metrics.
  */
 export
-type DailyMetricsArray = z.infer<typeof DailyMetricsArray>;
+type DailyMetricsArray = z.infer<typeof DailyMetricsArraySchema>;
 
 
 /**
