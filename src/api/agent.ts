@@ -1,13 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type {
-  AGUIEvent, RunAgentInput
-} from '@ag-ui/core';
-
-import {
-  EventSchemas
-} from '@ag-ui/core';
+import * as agui from '@ag-ui/core';
 
 import * as auth from '@/auth';
 
@@ -24,7 +18,7 @@ import {
  * @returns An async generator that streams the ag-ui events.
  */
 export
-async function *runAgent(options: runAgent.Options): AsyncGenerator<AGUIEvent> {
+async function *runAgent(options: runAgent.Options): AsyncGenerator<agui.AGUIEvent> {
   // Extract the options.
   const { agentId, input } = options;
 
@@ -54,7 +48,7 @@ async function *runAgent(options: runAgent.Options): AsyncGenerator<AGUIEvent> {
     const json = JSON.parse(evt.data);
 
     // Yield the parsed/validated event.
-    yield EventSchemas.parse(json);
+    yield agui.EventSchemas.parse(json);
   }
 }
 
@@ -77,6 +71,6 @@ namespace runAgent {
     /**
      * The input for running the agent.
      */
-    readonly input: RunAgentInput;
+    readonly input: agui.RunAgentInput;
   };
 }

@@ -1,17 +1,11 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import {
-  MessageSchema
-} from '@ag-ui/core';
+import * as agui from '@ag-ui/core';
 
 import * as z from 'zod';
 
 import * as auth from '@/auth';
-
-import {
-  TokenMetricsSchema
-} from './metrics';
 
 import type {
   PageOptions
@@ -76,43 +70,19 @@ type ThreadInfoPage = z.infer<typeof ThreadInfoPageSchema>;
 
 
 /**
- * The schema for a run in a thread.
- */
-export
-const RunSchema = z.object({
-  /**
-   * The unique id for the run.
-   */
-  runId: z.string(),
-
-  /**
-   * The ag-ui messages for the run.
-   */
-  messages: z.array(MessageSchema)
-});
-
-
-/**
- * A type alias for a run in a thread.
- */
-export
-type Run = z.infer<typeof RunSchema>;
-
-
-/**
  * The schema for detailed information about a thread.
  */
 export
 const ThreadDetailSchema = ThreadInfoSchema.extend({
   /**
-   * The aggregate metrics for the thread.
+   * The agentic state for the thread.
    */
-  tokenMetrics: TokenMetricsSchema,
+  state: agui.StateSchema,
 
   /**
-   * The runs for the thread.
+   * The ag-ui messages for the thread.
    */
-  runs: z.array(RunSchema)
+  messages: z.array(agui.MessageSchema)
 });
 
 
