@@ -71,21 +71,6 @@ const AgentConfigSchema = z.object({
   description: z.string(),
 
   /**
-   * The unique id of the model underlying the agent.
-   */
-  modelId: z.string(),
-
-  /**
-   * The human readable name of the model underlying the agent.
-   */
-  modelName: z.string(),
-
-  /**
-   * The provider hosting the underlying model.
-   */
-  modelProvider: z.string(),
-
-  /**
    * The quick prompts to show for the agent in a new empty chat.
    */
   quickPrompts: z.array(QuickPromptSchema)
