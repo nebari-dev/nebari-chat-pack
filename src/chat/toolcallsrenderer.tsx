@@ -69,7 +69,7 @@ namespace ToolCallsRenderer {
   export
   type Props = {
     /**
-     * The api events for the run.
+     * The tool calls for the message.
      */
     readonly toolCalls: readonly agui.ToolCall[];
   };
@@ -92,7 +92,7 @@ namespace Private {
   };
 
   /**
-   * A react component that renders the tool accordion.
+   * A react component that renders the tool calls accordion.
    *
    * This component allows the user to inspect the raw JSON tool data.
    */
@@ -101,7 +101,9 @@ namespace Private {
     // Extract the props.
     const { toolCalls } = props;
 
-    // Get the number of tools called, which is gated `> 0` by the parent.
+    // Get the number of tools called.
+    //
+    // The parent enforces this to be `> 0`.
     const count = toolCalls.length;
 
     // Create the tool call items for the accordion.
@@ -115,9 +117,9 @@ namespace Private {
         <AccordionItem value='tools'>
           <AccordionTrigger
             className={ cn(
-              'px-2 py-1 gap-2 items-center flex-0 text-nowrap text-xs rounded-sm',
-              'hover:no-underline cursor-pointer bg-bg-neutral-dark',
-              'hover:bg-bg-neutral-default' ) }>
+              'px-2 py-1 gap-2 items-center flex-0 text-nowrap text-xs',
+              'rounded-sm cursor-pointer bg-bg-neutral-dark',
+              'hover:no-underline hover:bg-bg-neutral-default' ) }>
             <Hammer size={ 14 } />
             { `${count} TOOL${count === 1 ? '' : 'S'} CALLED` }
           </AccordionTrigger>
@@ -159,7 +161,7 @@ namespace Private {
     export
     type Props = {
       /**
-       * The tool call data to render.
+       * The ag-ui tool call to render.
        */
       readonly toolCall: agui.ToolCall;
     };
@@ -204,7 +206,7 @@ namespace Private {
     // Find the tool message that matches the tool call id.
     const toolMessage = useToolMessage(toolCall.id);
 
-    // Try to parse the result to JSON.
+    // Try to parse the result to JSON, falling back on the string.
     const result = (() => {
       try {
         return JSON.parse(toolMessage?.content ?? '');
@@ -227,27 +229,27 @@ namespace Private {
   }
 
   /**
-   * A hook which finds the tool message for a `toolCallId`.
+   * A hook which finds the `ToolMessage` result for a `toolCallId`.
    */
-  function useToolMessage(toolCallId: string): agui.ToolMessage | null {
+  function useToolMessage(toolCallId: string): agui.ToolMessage | undefined {
     // Fetch the thread from the chat config.
     const { thread } = useChatConfig();
 
     // Create the query for the thread.
     const query = threadMessagesQuery(thread?.id);
 
-    // Find the message that finishes the tool call, or `null`.
+    // Find the tool message that finishes the tool call.
     const { data: message } = useQuery({
       ...query,
       select: msgs => {
         return (msgs ?? []).find(msg =>
           msg.role === 'tool' &&
           msg.toolCallId === toolCallId
-        ) ?? null;
+        );
       }
     });
 
-    // Return the found tool messages, or `null`.
-    return message as (agui.ToolMessage | null);
+    // Return the found tool messages, or `undefined`.
+    return message as (agui.ToolMessage | undefined);
   }
 }
