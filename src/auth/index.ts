@@ -1,10 +1,6 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type {
-  KeycloakProfile
-} from 'keycloak-js';
-
 import Keycloak from 'keycloak-js';
 
 
