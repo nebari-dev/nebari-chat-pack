@@ -30,9 +30,9 @@ Then copy the example `env` file and edit the `VITE_API_URL` to match your Hrafn
 cp .env.example .env
 ```
 
-Chat++ uses KeyCloak for authentication. To bypass authentication for local development, set 
-`VITE_AUTH_ENABLED=false`, otherwise set it to `true` and set the rest of the variables to 
-match your Keycloak deployment.
+Chat++ uses [KeyCloak](https://www.keycloak.org/) for authentication. To bypass authentication 
+for local development, set `VITE_AUTH_ENABLED=false`, otherwise set it to `true` and set the 
+rest of the variables to match your Keycloak deployment.
 
 Once your `env` file is configured and your Hrafnar server is running, start the Chat++
 dev server with the following command and point your browser at the URL displayed in the terminal.
