@@ -4,8 +4,18 @@
 import Keycloak from 'keycloak-js';
 
 
+// Save a reference to the native fetch before it can be overridden.
+//
+// This does two things:
+//   1) It prevents a monkey-patched fetch from intercepting the
+//      the auth token, unless it's patched before this module loads.
+//   2) It allows us to define our own `fetch` without name-clashing.
+const nativeFetch = window.fetch;
+
+
 // Whether auth is enabled for the application.
 const AUTH_ENABLED = import.meta.env.VITE_AUTH_ENABLED === 'true';
+
 
 // The singleton `Keycloak` instance for handling authentication.
 const keycloak = new Keycloak('/keycloak-config.json');
@@ -18,15 +28,6 @@ const keycloak = new Keycloak('/keycloak-config.json');
 if (AUTH_ENABLED) {
   await keycloak.init({ checkLoginIframe: false });
 }
-
-
-// Save a reference to the native fetch before it can be overridden.
-//
-// This does two things:
-//   1) It prevents a monkey-patched fetch from intercepting the
-//      the auth token, unless it's patched before this module loads.
-//   2) It allows us to define our own `fetch` without name-clashing.
-const nativeFetch = window.fetch;
 
 
 /**
