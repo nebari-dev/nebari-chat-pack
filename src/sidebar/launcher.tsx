@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 
 import {
-  MessageSquarePlus, MessagesSquare
+  History, MessageSquarePlus
 } from 'lucide-react';
 
 import type {
@@ -38,7 +38,7 @@ function Launcher(props: Launcher.Props): ReactNode {
         to='/history'
         text='History'
         collapsed={ !isSidebarOpen }
-        icon={ <MessagesSquare className='m-auto' size={ 20 } /> } />
+        icon={ <History className='m-auto' size={ 20 } /> } />
     </div>
   );
 }
