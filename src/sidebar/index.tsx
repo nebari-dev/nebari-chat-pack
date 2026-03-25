@@ -22,6 +22,10 @@ import {
 } from './launcher';
 
 import {
+  Recent
+} from './recent';
+
+import {
   UserProfile
 } from './userprofile';
 
@@ -49,6 +53,7 @@ function Sidebar(): ReactNode {
         isSidebarOpen={ isSidebarOpen }
         toggleSidebar={ toggleSidebar } />
       <Launcher isSidebarOpen={ isSidebarOpen } />
+      <Recent isSidebarOpen={ isSidebarOpen } />
       <div className='grow' />
       <UserProfile isSidebarOpen={ isSidebarOpen } />
     </div>
