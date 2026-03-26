@@ -240,7 +240,7 @@ async function *createRun(options: createRun.Options): AsyncGenerator<agui.AGUIE
   const { threadId, ...rest } = options;
 
   // Fetch the resource.
-  const resp = await fetch(`/api/threads/${threadId}/run`, {
+  const resp = await auth.fetch(`/api/threads/${threadId}/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(rest)
