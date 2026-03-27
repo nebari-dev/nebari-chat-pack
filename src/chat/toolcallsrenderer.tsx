@@ -51,7 +51,7 @@ function ToolCallsRenderer(props: ToolCallsRenderer.Props): ReactNode {
 
   // Return the rendered component.
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 isolate'>
       <Private.ToolCallsAccordion toolCalls={ toolCalls } />
     </div>
   );
@@ -224,7 +224,7 @@ namespace Private {
         rootName='result'
         viewOnly={ true }
         rootFontSize={ 12 }
-        collapse={ false } />
+        collapse={ true } />
     );
   }
 
