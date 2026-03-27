@@ -65,7 +65,7 @@ nebariapp:
     provider: keycloak
     provisionClient: true
     enforceAtGateway: false
-    redirectURI: /
+    redirectURI: /*
     scopes:
       - openid
       - profile
