@@ -70,6 +70,8 @@ nebariapp:
       - openid
       - profile
       - email
+    spaClient:
+      enabled: true
   routing:
     publicRoutes:
       - pathPrefix: /

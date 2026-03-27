@@ -8,10 +8,13 @@ metadata:
 data:
   keycloak-config.json: |
     {{-
+    $resource := .Values.keycloak.resource | default (printf "%s-%s-spa" .Release.Namespace (include "chat-plus-plus.fullname" .))
+    -}}
+    {{-
     dict
       "auth-server-url" (required "keycloak.authServerUrl is required" .Values.keycloak.authServerUrl)
       "realm" (required "keycloak.realm is required" .Values.keycloak.realm)
-      "resource" (required "keycloak.resource is required" .Values.keycloak.resource)
+      "resource" $resource
     | toPrettyJson | nindent 4
     }}
   API_URL: {{ required "api.url is required" .Values.api.url }}

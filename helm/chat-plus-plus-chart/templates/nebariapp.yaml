@@ -29,6 +29,10 @@ spec:
     groups:
       {{- toYaml . | nindent 6 }}
     {{- end }}
+    {{- with .spaClient }}
+    spaClient:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   {{- end }}
   {{- with .Values.nebariapp.gateway }}
   gateway: {{ . }}
