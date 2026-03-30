@@ -14,6 +14,10 @@ import {
 } from './chatoutput';
 
 import {
+  ChatSidebar
+} from './chatsidebar';
+
+import {
   Header
 } from './header';
 
@@ -32,10 +36,13 @@ function Chat(): ReactNode {
   return (
     <main className='grow flex flex-col'>
       <Header />
-      <Viewport>
-        <ChatOutput />
-        <ChatInput />
-      </Viewport>
+      <div className='min-h-0 grow flex flex-row'>
+        <Viewport>
+          <ChatOutput />
+          <ChatInput />
+        </Viewport>
+        <ChatSidebar />
+      </div>
     </main>
   );
 }
