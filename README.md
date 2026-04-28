@@ -84,8 +84,8 @@ Build and push the image for `linux/amd64`:
 
 ```
 docker buildx build --platform linux/amd64 \
-  -t quay.io/openteams/chat-plus-plus:<version> \
-  -t quay.io/openteams/chat-plus-plus:latest \
+  -t quay.io/nebari/nebari-chat:<version> \
+  -t quay.io/nebari/nebari-chat:latest \
   --push .
 ```
 
@@ -94,11 +94,11 @@ docker buildx build --platform linux/amd64 \
 Package and push the chart:
 
 ```
-helm package helm/chat-plus-plus-chart
-helm push chat-plus-plus-chart-<version>.tgz oci://quay.io/openteams
+helm package helm/nebari-chat-chart
+helm push nebari-chat-chart-<version>.tgz oci://quay.io/nebari
 ```
 
-This publishes to `quay.io/openteams/chat-plus-plus-chart:<version>`. Push to `oci://quay.io/openteams`
+This publishes to `quay.io/nebari/nebari-chat-chart:<version>`. Push to `oci://quay.io/nebari`
 (the org level) so the chart name from `Chart.yaml` becomes the repo name.
 
 

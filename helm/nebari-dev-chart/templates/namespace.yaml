@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   name: {{ .Release.Namespace }}
   labels:
-    {{- include "chat-plus-plus.labels" . | nindent 4 }}
+    {{- include "nebari-chat.labels" . | nindent 4 }}
     nebari.dev/managed: "true"

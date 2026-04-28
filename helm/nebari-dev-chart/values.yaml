@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   # -- The repository of the main application image
-  repository: quay.io/reiemp/chat-plus-plus
+  repository: quay.io/reiemp/nebari-chat
   # -- The tag of the main application image. If not set, the chart's appVersion is used.
   tag: ""
   # -- The pull policy for the main application image
@@ -53,7 +53,7 @@ service:
 keycloak:
   authServerUrl: ""
   realm: "nebari"
-  resource: ""
+  resource: "nebari-chat"
 
 api:
   url: ""

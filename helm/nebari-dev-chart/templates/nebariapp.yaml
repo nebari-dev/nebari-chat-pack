@@ -1,14 +1,14 @@
 apiVersion: reconcilers.nebari.dev/v1
 kind: NebariApp
 metadata:
-  name: {{ include "chat-plus-plus.fullname" . }}
+  name: {{ include "nebari-chat.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "chat-plus-plus.labels" . | nindent 4 }}
+    {{- include "nebari-chat.labels" . | nindent 4 }}
 spec:
   hostname: {{ required "nebariapp.hostname is required" .Values.nebariapp.hostname }}
   service:
-    name: {{ include "chat-plus-plus.fullname" . }}
+    name: {{ include "nebari-chat.fullname" . }}
     port: {{ .Values.service.port }}
   {{- with .Values.nebariapp.routing }}
   routing:
