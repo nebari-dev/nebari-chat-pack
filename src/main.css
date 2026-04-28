@@ -29,7 +29,7 @@ body {
   flex-direction: row;
 }
 
-.ot-ChatPlusPlus-markdown {
+.ot-NebariChat-markdown {
   h1 {
     margin: 0 0 2rem 0;
     font-weight: 800;
@@ -147,7 +147,7 @@ body {
  * It overrides the default in the library which aligns the keys in the
  * vertical center, which appears confusing when looking at it.
  */
-.ot-ChatPlusPlus-jer {
+.ot-NebariChat-jer {
   .jer-value-main-row {
     align-items: start;
   }

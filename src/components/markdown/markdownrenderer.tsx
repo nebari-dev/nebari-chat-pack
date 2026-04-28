@@ -19,7 +19,7 @@ import {
 
 
 /**
- * A react component that renders markdown configured for Chat++.
+ * A react component that renders markdown configured for Nebari Chat.
  */
 export
 function MarkdownRenderer(props: MarkdownRenderer.Props): ReactNode {
@@ -29,9 +29,9 @@ function MarkdownRenderer(props: MarkdownRenderer.Props): ReactNode {
   // Return the rendered component.
   //
   // The markdown elements are formatted in `main.css` based on the
-  // `ot-ChatPlusPlus-markdown` class name. Do not remove it.
+  // `ot-NebariChat-markdown` class name. Do not remove it.
   return (
-    <div className={ cn('ot-ChatPlusPlus-markdown', className) }>
+    <div className={ cn('ot-NebariChat-markdown', className) }>
       <Markdown
         remarkPlugins={ [remarkGfm, remarkMath] }
         rehypePlugins={ [rehypeKatex] }

@@ -1,42 +1,42 @@
-# chat-plus-plus
-Chat++ is a frontend for a [Hrafnar Server](https://github.com/openteams-ai/hrafnar) or any
-other agentic server that implments the Hrafnar API, which is essentially just the
+# Nebari Chat
+Nebari Chat is a frontend for a [Ravnar Server](https://github.com/nebari-dev/ravnar) or any
+other agentic server that implments the Ravnar API, which is essentially just the
 [AG-UI](https://docs.ag-ui.com/introduction) protocol with some additional endpoints for
 managing thread history.
 
 # Instructions
 
-Before you can run Chat++ you need a [Hrafnar](https://github.com/openteams-ai/hrafnar)
-compatible server running somewhere. Follow the Hrafnar instructions for creating your
+Before you can run Nebari Chat you need a [Ravnar](https://github.com/nebari-dev/ravnar)
+compatible server running somewhere. Follow the Ravnar instructions for creating your
 agents and deploying the server.
 
-To get started with a local version of Chat++, first checkout the repo:
+To get started with a local version of Nebari Chat, first checkout the repo:
 
 ```
-git clone https://github.com/openteams-ai/chat-plus-plus.git
+git clone https://github.com/nebari-dev/nebari-chat-pack.git
 ```
 
 Then navigate to the repo and install the dependencies:
 
 ```
-cd chat-plus-plus
+cd nebari-chat-pack
 npm install
 ```
 
-Then copy the example `env` file and set `VITE_API_URL` to match your Hrafnar deployment.
+Then copy the example `env` file and set `VITE_API_URL` to match your Ravnar deployment.
 
 ```
 cp .env.example .env
 ```
 
-Chat++ uses [KeyCloak](https://www.keycloak.org/) for authentication. Keycloak is configured
+Nebari Chat uses [KeyCloak](https://www.keycloak.org/) for authentication. Keycloak is configured
 via `public/keycloak-config.json`. Edit this file to match your Keycloak deployment before running:
 
 ```json
 {
   "auth-server-url": "https://keycloak.example.com",
   "realm": "myrealm",
-  "resource": "chat-plus-plus"
+  "resource": "nebari-chat"
 }
 ```
 
@@ -45,7 +45,7 @@ To bypass authentication for local development, set `VITE_AUTH_ENABLED=false` in
 
 # Run the Development Server
 
-Once your `env` file is configured and your Hrafnar server is running, start the Chat++
+Once your `env` file is configured and your Ravnar server is running, start the Nebari Chat
 development server with the following command and point your browser at the URL displayed in 
 the terminal.
 
