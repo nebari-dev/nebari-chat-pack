@@ -124,7 +124,7 @@ namespace Private {
     // Return the rendered component.
     return (
       <JsonEditor
-        className='ot-ChatPlusPlus-jer'
+        className='ot-NebariChat-jer'
         data={ args }
         maxWidth='100%'
         rootName='arguments'
@@ -156,7 +156,7 @@ namespace Private {
     // Return the rendered component.
     return (
       <JsonEditor
-        className='ot-ChatPlusPlus-jer'
+        className='ot-NebariChat-jer'
         data={ result }
         maxWidth='100%'
         rootName='result'
