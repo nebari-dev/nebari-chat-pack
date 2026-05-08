@@ -15,6 +15,8 @@ import {
   useCallback
 } from 'react';
 
+import * as api from "@/api";
+
 import {
   useChatConfig
 } from '@/context';
@@ -22,14 +24,6 @@ import {
 import {
   createRunMutation, createThreadMutation
 } from '@/queries';
-
-
-/**
- * A type alias for a chat prompt submit function.
- */
-export
-type SubmitPromptFunc = (prompt: string) => Promise<void>;
-
 
 /**
  * A hook for submitting a user prompt.
@@ -50,7 +44,7 @@ type SubmitPromptFunc = (prompt: string) => Promise<void>;
  *   the prompt as a new run for that thread.
  */
 export
-function useSubmitPrompt(): SubmitPromptFunc {
+function useOnSubmit() {
   // Extract the chat config.
   const { thread, agentId } = useChatConfig();
 
@@ -64,7 +58,21 @@ function useSubmitPrompt(): SubmitPromptFunc {
   const { mutateAsync: createRun } = useMutation(createRunMutation);
 
   // Create the callback function for handling the submit.
-  const onSubmitPrompt = useCallback(async (prompt: string) => {
+  const onSubmitPrompt = useCallback(async (options: useOnSubmit.CallbackOptions) => {
+    // Extract the options.
+    const { prompt, files } = options;
+
+    // Throw if the agent id is somehow undefined.
+    //
+    // This should not happen if the router search param validation is
+    // operating properly.
+    if (agentId === undefined) {
+      throw new Error("`agentId` is `undefined`");
+    }
+
+    // Upload any attached files to ravnar.
+    const ravnarFiles = await Promise.all((files ?? []).map(api.uploadFile));
+
     // Determine the thread id for submission, creating one if needed.
     const tid = (
       thread?.id ||
@@ -87,7 +95,7 @@ function useSubmitPrompt(): SubmitPromptFunc {
     const msg: agui.UserMessage = {
       role: 'user',
       id: crypto.randomUUID(),
-      content: prompt
+      content: [{ type: "text", text: prompt }, ...ravnarFiles],
     };
 
     // Create the run for the thread.
@@ -101,4 +109,24 @@ function useSubmitPrompt(): SubmitPromptFunc {
 
   // Return the submit callback.
   return onSubmitPrompt;
+}
+
+/**
+ * The namespace for the `useOnSubmit` statics.
+ */
+export namespace useOnSubmit {
+  /**
+   * A type alias for the `useOnSubmit` callback options.
+   */
+  export type CallbackOptions = {
+    /**
+     * The prompt for the submission.
+     */
+    readonly prompt: string;
+
+    /**
+     * The file input content to attach to the submission.
+     */
+    readonly files?: readonly api.FileInputContent[];
+  };
 }
