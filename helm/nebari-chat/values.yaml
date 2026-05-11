@@ -7,7 +7,7 @@ config:
   inline: {}
 
 keycloak:
-  hostname: ""
+  url: ""
   realm: "nebari"
   clientId: ""
 

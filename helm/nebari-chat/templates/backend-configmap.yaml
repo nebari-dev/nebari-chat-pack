@@ -1,4 +1,3 @@
-{{- include "backend.validateValues" . -}}
 {{- $component := "backend" }}
 apiVersion: v1
 kind: ConfigMap

@@ -2,8 +2,8 @@ apiVersion: v2
 name: nebari-chat
 type: application
 description: chat pack for nebari
-version: "0.0.5"
-appVersion: "0.0.1"
+version: "0.0.9"
+appVersion: "0.0.6"
 keywords:
   - nebari
 home: https://github.com/nebari-dev/nebari-chat-pack

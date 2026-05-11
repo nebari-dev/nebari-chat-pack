@@ -2,6 +2,6 @@ security:
   authenticator:
     cls_or_fn: ravnar_nebari_chat.keycloak_authenticator
     params:
-      keycloak_url: '{{ printf "%s://%s" (.Values.backend.nebariapp.routing.tls.enabled | ternary "https" "http") .Values.keycloak.hostname }}'
+      keycloak_url: '{{ required "keycloak.url is required" .Values.keycloak.url }}'
       realm: "{{ .Values.keycloak.realm }}"
       client_id: "{{ .Values.keycloak.clientId }}"

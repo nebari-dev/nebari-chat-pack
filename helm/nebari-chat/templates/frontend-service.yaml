@@ -1,3 +1,4 @@
+{{- if .Values.frontend.enabled }}
 {{- $component := "frontend" }}
 apiVersion: v1
 kind: Service
@@ -14,3 +15,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.frontend.service.port }}
       targetPort: {{ .Values.frontend.service.targetPort }}
+{{- end }}
