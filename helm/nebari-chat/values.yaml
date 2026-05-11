@@ -6,10 +6,6 @@ fullnameOverride: ""
 config:
   inline: {}
 
-nebariapp:
-  tls: true
-  hostname: "ravnar.nebari-chat-pack.openteams.dev"
-
 keycloak:
   hostname: "keycloak.nebari-chat-pack.openteams.dev"
   realm: "nebari"
@@ -22,7 +18,32 @@ ravnar:
   ingress:
     enabled: false
 
+ravnarNebari:
+  nebariapp:
+    hostname: "ravnar.nebari-chat-pack.openteams.dev"
+    auth:
+      enabled: false
+      provider: keycloak
+      provisionClient: true
+      enforceAtGateway: false
+      redirectURI: /*
+      scopes:
+        - openid
+        - profile
+        - email
+      spaClient:
+        enabled: true
+    routing:
+      publicRoutes:
+        - pathPrefix: /
+          pathType: PathPrefix
+      tls:
+        enabled: true
+    gateway: public
+
 chatPlusPlus:
+  enabled: true
+
   replicaCount: 1
 
   image:
