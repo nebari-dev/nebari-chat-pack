@@ -34,8 +34,8 @@ jobs:
       - name: Patch helm chart
         uses: ./.github/actions/patch-helm-chart
         with:
-          chart-version: ${{ needs.versions.outputs.chart-version }}
-          app-version: ${{ needs.versions.outputs.app-version }}
+          chart-version: ${{ steps.versions.outputs.chart-version }}
+          app-version: ${{ steps.versions.outputs.app-version }}
 
       - name: Install chart dependencies
         run: helm dependencies update ./helm/nebari-chat
@@ -53,4 +53,4 @@ jobs:
 
       - name: Push helm chart
         if: ${{ github.event_name != 'pull_request' }}
-        run: helm push 'nebari-chat-${{ needs.versions.outputs.chart-version }}.tgz' oci://quay.io/nebari/charts
+        run: helm push 'nebari-chat-${{ steps.versions.outputs.chart-version }}.tgz' oci://quay.io/nebari/charts
