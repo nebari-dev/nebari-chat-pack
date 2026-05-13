@@ -4,40 +4,52 @@ nameOverride: ""
 fullnameOverride: ""
 
 config:
+  # -- Inline configuration for the application. Merged with the default config.yaml
   inline: {}
 
 keycloak:
+  # -- The URL of the Keycloak server
   url: ""
+  # -- The Keycloak realm to use
   realm: "nebari"
+  # -- The Keycloak client ID. If not set, a default is generated based on the release name
   clientId: ""
 
 ravnar:
   image:
+    # -- The repository of the backend application image
     repository: quay.io/nebari/nebari-chat-backend
+    # -- The tag of the backend application image. Defaults to the chart's appVersion
     tag: "{{ .Chart.AppVersion }}"
   config:
     existingConfigMap:
+      # -- The name of the ConfigMap for backend configuration
       name: '{{ .Release.Name }}-backend'
   ingress:
+    # -- Whether to enable ingress for the backend
     enabled: false
 
 backend:
   nebariapp:
+    # -- The hostname for the backend NebariApp
     hostname: ""
+    # -- Routing configuration for the backend NebariApp
     routing:
       routes:
         - pathPrefix: /
           pathType: PathPrefix
 
 frontend:
+  # -- Whether to deploy the frontend
   enabled: true
 
+  # -- Number of replicas for the frontend
   replicaCount: 1
 
   image:
     # -- The repository of the main application image
     repository: quay.io/nebari/nebari-chat-frontend
-    # -- The tag of the main application image. If not set, the chart's appVersion is used.
+    # -- The tag of the main application image. If not set, the chart's appVersion is used
     tag: ""
     # -- The pull policy for the main application image
     pullPolicy: IfNotPresent
@@ -79,37 +91,61 @@ frontend:
     targetPort: 8080
 
   keycloak:
+    # -- The URL of the Keycloak auth server
     authServerUrl: ""
+    # -- The Keycloak realm for frontend authentication
     realm: "nebari"
+    # -- The Keycloak resource/client ID for the frontend
     resource: ""
 
   api:
+    # -- The URL of the backend API. Auto-detected if not set
     url: ""
 
   nebariapp:
+    # -- The hostname for the frontend NebariApp
     hostname: ""
+    # -- Authentication configuration for the frontend NebariApp
     auth:
+      # -- Whether authentication is enabled for the frontend NebariApp
       enabled: true
+      # -- The OIDC authentication provider
       provider: keycloak
+      # -- Whether to automatically provision an OIDC client
       provisionClient: true
+      # -- The OAuth2 callback path for the application
       redirectURI: /*
+      # -- The OIDC scopes to request during authentication
       scopes:
         - openid
         - profile
         - email
+      # -- Whether to enforce authentication at the gateway level
       enforceAtGateway: false
+      # -- SPA client configuration for browser-based authentication
       spaClient:
+        # -- Whether to provision a public OIDC client for SPA use
         enabled: true
+    # -- Routing configuration for the frontend NebariApp
     routing:
       routes:
         - pathPrefix: /
           pathType: PathPrefix
+    # -- Landing page configuration for the frontend NebariApp
     landingPage:
+      # -- Whether to show the service on the landing page
       enabled: true
+      # -- The display name shown on the landing page
       displayName: Chat
+      # -- The description shown on the landing page
       description: Chat with AI models
+      # -- The category on the landing page
       category: AI
+      # -- The priority for sorting on the landing page (lower = higher)
       priority: 1
+      # -- Health check configuration for the landing page
       healthCheck:
+        # -- Whether health checks are enabled
         enabled: true
+        # -- The HTTP path to check for health status
         path: /health
