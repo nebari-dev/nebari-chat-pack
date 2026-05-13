@@ -14,7 +14,7 @@ keycloak:
 ravnar:
   image:
     repository: quay.io/nebari/nebari-chat-backend
-    tag: 0.0.6
+    tag: "{{ .Chart.AppVersion }}"
   config:
     existingConfigMap:
       name: '{{ .Release.Name }}-backend'
@@ -91,6 +91,7 @@ frontend:
     auth:
       enabled: true
       provider: keycloak
+      provisionClient: true
       redirectURI: /*
       scopes:
         - openid

@@ -19,6 +19,12 @@ spec:
   service:
     name: {{ $service.name }}
     port: {{ $service.port }}
+    {{- with $service.namespace }}
+    namespace: {{ . }}
+    {{- end }}
+  {{- with $nebariapp.serviceAccountName }}
+  serviceAccountName: {{ . }}
+  {{- end }}
   {{- with $nebariapp.routing }}
   routing:
     {{- toYaml . | nindent 4 }}
@@ -30,6 +36,9 @@ spec:
     provisionClient: {{ .provisionClient }}
     enforceAtGateway: {{ .enforceAtGateway }}
     redirectURI: {{ .redirectURI }}
+    {{- with .clientSecretRef }}
+    clientSecretRef: {{ . }}
+    {{- end }}
     {{- with .scopes }}
     scopes:
       {{- toYaml . | nindent 6 }}
@@ -38,8 +47,30 @@ spec:
     groups:
       {{- toYaml . | nindent 6 }}
     {{- end }}
+    {{- with .forwardAccessToken }}
+    forwardAccessToken: {{ . }}
+    {{- end }}
+    {{- with .denyRedirect }}
+    denyRedirect:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .issuerURL }}
+    issuerURL: {{ . }}
+    {{- end }}
     {{- with .spaClient }}
     spaClient:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .deviceFlowClient }}
+    deviceFlowClient:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .keycloakConfig }}
+    keycloakConfig:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .tokenExchange }}
+    tokenExchange:
       {{- toYaml . | nindent 6 }}
     {{- end }}
   {{- end }}
@@ -78,6 +109,9 @@ spec:
       {{- end }}
       {{- if .timeoutSeconds }}
       timeoutSeconds: {{ .timeoutSeconds }}
+      {{- end }}
+      {{- if .port }}
+      port: {{ .port }}
       {{- end }}
     {{- end }}
   {{- end }}
