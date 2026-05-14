@@ -39,28 +39,6 @@ backend:
         - pathPrefix: /
           pathType: PathPrefix
 
-  austinPermits:
-    # -- Whether to register the Austin Permits agent. When true, the api key
-    # and all database.* fields must be set.
-    enabled: false
-    # -- Display name for the Austin Permits agent
-    name: "Austin Permits Agent (Claude Sonnet 4.6)"
-    # -- The OpenRouter model name backing the agent
-    modelName: "anthropic/claude-sonnet-4.6"
-    # -- OpenRouter API key for the agent
-    apiKey: ""
-    database:
-      # -- Hostname of the Austin Permits Postgres database
-      host: ""
-      # -- Port of the Austin Permits Postgres database
-      port: "5432"
-      # -- Name of the Austin Permits Postgres database
-      name: ""
-      # -- Username for the Austin Permits Postgres database
-      user: ""
-      # -- Password for the Austin Permits Postgres database
-      password: ""
-
 frontend:
   # -- Whether to deploy the frontend
   enabled: true
