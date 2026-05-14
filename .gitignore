@@ -1,4 +1,5 @@
 .env
 helm/*/charts/**
-config.yml
+backend/config.yml
+backend/config.yaml
 .ravnar_local
