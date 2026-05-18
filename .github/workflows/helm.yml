@@ -34,15 +34,25 @@ jobs:
       - name: Set versions
         id: versions
         run: |
-          if [[ '${{ steps.workflow-metadata.outputs.workflow-type }}' == 'PR' ]]; then
-            VERSION='${{ steps.workflow-metadata.outputs.app-version-tag }}-pr-${{ github.event.number }}'
-            APP_VERSION="${VERSION}"
-            CHART_VERSION="${VERSION}"
-          else
-            APP_VERSION='${{ steps.workflow-metadata.outputs.app-version-latest }}
-            CHART_VERSION='${{ steps.workflow-metadata.outputs.chart-version-latest }}
-          fi
+          case '${{ steps.workflow-metadata.outputs.workflow-type }}' in
+            PR)
+              CHART_VERSION_SUFFIX='-pr.${{ github.event.number }}'
+              ;;
+            main)
+              CHART_VERSION_SUFFIX='-main'
+              ;;
+            release)
+              CHART_VERSION_SUFFIX=''
+              ;;
+            *)
+              echo "unknown workflow type '${{ steps.workflow-metadata.outputs.workflow-type  }}'" >&2
+              exit 1
+              ;;
+          esac
           
+          CHART_VERSION="${{ steps.workflow-metadata.outputs.chart-version-latest }}${CHART_VERSION_SUFFIX}"
+          APP_VERSION='${{ steps.workflow-metadata.outputs.app-version-tag }}'
+
           echo "app-version=${APP_VERSION}" | tee --append "${GITHUB_OUTPUT}"
           echo "chart-version=${CHART_VERSION}" | tee --append "${GITHUB_OUTPUT}"
 
