@@ -31,7 +31,7 @@ jobs:
           fetch-depth: 0
 
       - name: Compute workflow metadata
-        id: metadata
+        id: workflow-metadata
         uses: ./.github/actions/workflow-metadata
 
       - name: Set up QEMU
@@ -41,16 +41,16 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Setup image metadata
-        id: metadata
+        id: image-metadata
         uses: docker/metadata-action@v6
         with:
           images: ${{ matrix.image }}
           tags: |
-            type=raw,value=pr-${{ github.event.number }},enable=${{ steps.metadata.outputs.type == 'PR' }}
-            type=raw,value=pr-${{ github.event.number }}-${{ steps.tag.outputs.tag }},enable=${{ steps.metadata.outputs.type == 'PR' }}
-            type=raw,value=main,enable=${{ steps.metadata.outputs.type == 'main' }}
-            type=raw,value=latest,enable=${{ steps.metadata.outputs.type == 'release' }}
-            type=raw,value=${{ steps.tag.outputs.tag }},enable=${{ steps.metadata.outputs.type == 'release' }}
+            type=raw,value=pr-${{ github.event.number }},enable=${{ steps.workflow-metadata.outputs.type == 'PR' }}
+            type=raw,value=pr-${{ github.event.number }}-${{ steps.tag.outputs.tag }},enable=${{ steps.workflow-metadata.outputs.type == 'PR' }}
+            type=raw,value=main,enable=${{ steps.workflow-metadata.outputs.type == 'main' }}
+            type=raw,value=latest,enable=${{ steps.workflow-metadata.outputs.type == 'release' }}
+            type=raw,value=${{ steps.tag.outputs.tag }},enable=${{ steps.workflow-metadata.outputs.type == 'release' }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -63,7 +63,7 @@ jobs:
         run: |
           MAIN_TAG="main-buildcache"
 
-          case '${{ steps.metadata.outputs.workflow-type }}' in
+          case '${{ steps.workflow-metadata.outputs.workflow-type }}' in
             PR)
               PR_TAG="pr-${{ github.event.number }}-buildcache"
               
@@ -79,7 +79,7 @@ jobs:
               TO_TAGS=()
               ;;
             *)
-              echo "unknown build type '${{ steps.metadata.outputs.workflow-type  }}'" >&2
+              echo "unknown build type '${{ steps.workflow-metadata.outputs.workflow-type  }}'" >&2
               exit 1
               ;;
           esac
@@ -114,10 +114,10 @@ jobs:
         with:
           context: ${{ matrix.context }}
           build-args: |
-            VERSION=${{ steps.metadata.outputs.version-raw }}
+            VERSION=${{ steps.workflow-metadata.outputs.version-raw }}
           platforms: "linux/amd64,linux/arm64"
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
+          tags: ${{ steps.image-metadata.outputs.tags }}
+          labels: ${{ steps.image-metadata.outputs.labels }}
           push: true
           cache-from: ${{ join(fromJson(steps.cache.outputs.from-json), '\n') }}
           cache-to: ${{ join(fromJson(steps.cache.outputs.to-json), '\n') }}
