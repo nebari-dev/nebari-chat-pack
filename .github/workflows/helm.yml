@@ -76,4 +76,5 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Push helm chart
-        run: helm push 'nebari-chat-*.tgz' oci://quay.io/nebari/charts
+        shell: bash
+        run: helm push nebari-chat-*.tgz oci://quay.io/nebari/charts
