@@ -102,7 +102,6 @@ jobs:
           echo "to-json=${TO_JSON}" | tee --append "${GITHUB_OUTPUT}"
 
       - name: Login to Quay.io
-        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v4
         with:
           registry: quay.io
