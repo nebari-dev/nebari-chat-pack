@@ -16,7 +16,7 @@ outputs:
     value: ${{ steps.git.outputs.chart-version-latest }}
   image-tag:
     description: Unified docker image tag
-    value: ${{ steps.docker.outputs.tag }}
+    value: ${{ steps.docker.outputs.image-tag }}
 
 runs:
   using: composite
@@ -77,19 +77,19 @@ runs:
     - id: docker
       shell: bash
       run: |
-        case '${{ steps.workflow.outputs.type }}' in
+        case '${{ steps.workflow.outputs.workflow-type }}' in
           PR)
-            TAG="pr-${{ github.event.number }}-$(echo '${{ steps.git.outputs.app-version-raw }}' | sed 's/+/-/g')"
+            IMAGE_TAG="pr-${{ github.event.number }}-$(echo '${{ steps.git.outputs.app-version-raw }}' | sed 's/+/-/g')"
             ;;
           main)
-            TAG='main'
+            IMAGE_TAG='main'
             ;;
           release)
-            TAG='${{ steps.git.outputs.app-version-raw }}'
+            IMAGE_TAG='${{ steps.git.outputs.app-version-raw }}'
             ;;
           *)
-            echo "unknown workflow type '${{ steps.workflow.outputs.type  }}'" >&2
+            echo "unknown workflow type '${{ steps.workflow.outputs.workflow-type  }}'" >&2
             exit 1
             ;;
         esac
-        echo "tag=${TAG}" | tee --append "${GITHUB_OUTPUT}"
+        echo "image-tag=${IMAGE_TAG}" | tee --append "${GITHUB_OUTPUT}"
