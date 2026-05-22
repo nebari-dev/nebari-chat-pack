@@ -30,9 +30,9 @@ The CI has three workflows (`docker.yml`, `helm.yml`, `pr-cleanup.yml`) and two 
 - Restructured into `workflow`, `git`, `docker` steps
 - Outputs: `workflow-type`, `app-version-raw`, `app-version-latest`, `chart-version-latest`, `image-tag`
 - `image-tag` uses **dashes** (`pr-<number>-<app-version>`) instead of periods
-- No JSON output for centralized tag management (`stable-tag` + `additional-tags`)
+- No JSON outputs (`*-json` suffix) for centralized tag management
 - Chart version still uses raw `git describe` — no `uv-dynamic-versioning` with `pattern_prefix="chart/"`
-- No `app-base-version` or `chart-base-version` outputs
+- No `tags-json`, `app-version-json`, or `chart-version-json` outputs
 
 **`docker.yml` (partially refactored):**
 - Uses `image-tag` as the primary tag (replaces old multi-tag approach)
@@ -89,11 +89,6 @@ A single reusable Python script replaces both `hatch version` and the ad-hoc cha
 The script accepts `--root` (project directory, default `.`) and `--pattern-prefix` (tag prefix, default empty) as CLI arguments and prints a JSON dump of the `uv-dynamic-versioning` version object:
 
 ```python
-#!/usr/bin/env python3
-"""Compute version info using uv-dynamic-versioning.
-
-Usage: python version_info.py --root . --pattern-prefix "chart/"
-"""
 import argparse
 import dataclasses
 import json
@@ -102,114 +97,127 @@ from uv_dynamic_versioning.main import get_version
 from uv_dynamic_versioning.version_source import DynamicVersionSource
 
 
-def main():
+@dataclasses.dataclass
+class Input:
+    root: str
+    pattern_prefix: str
+
+@dataclasses.dataclass
+class Output:
+    version: str
+    base: str
+    commit: str
+
+def main(input: Input) -> None:
+    source = DynamicVersionSource(root=input.root, config={})
+    config = dataclasses.replace(source.project_config, pattern_prefix=input.pattern_prefix)
+    version, parts = get_version(config)
+    output = Output(
+        version=version,
+        base=parts.base,
+        commit=parts.commit,
+    )
+    print(json.dumps(dataclasses.asdict(output)))
+
+def parse_argv(argv: list[str] = None) -> Input:
     parser = argparse.ArgumentParser()
+
     parser.add_argument("--root", default=".")
     parser.add_argument("--pattern-prefix", default="")
-    args = parser.parse_args()
 
-    source = DynamicVersionSource(root=args.root, config={})
-    config = dataclasses.replace(source.project_config, pattern_prefix=args.pattern_prefix)
-    version_str, version_obj = get_version(config)
-    result = dataclasses.asdict(version_obj)
-    result["raw"] = version_str
-    print(json.dumps(result))
-
+    args = parser.parse_args(argv)
+    return Input(**args.__dict__)
 
 if __name__ == "__main__":
-    main()
+    input = parse_argv()
+    main(input)
 ```
 
 Sample output for the app version (run with `--root ./backend --pattern-prefix ""`):
 ```json
-{"raw": "0.1.0.dev9+g66ea5c8", "base": "0.1.0", "stage": null, "revision": null, "distance": 9, "commit": "66ea5c8", "dirty": false, "tagged_metadata": null, "epoch": null, "branch": null, "timestamp": "2026-05-19T18:58:41+00:00"}
+{"version": "0.1.0.dev9+g66ea5c8", "base": "0.1.0", "commit": "66ea5c8"}
 ```
 
 Sample output for the chart version (run with `--root ./backend --pattern-prefix "chart/"`):
 ```json
-{"raw": "0.0.20.dev9+g66ea5c8", "base": "0.0.20", "stage": null, "revision": null, "distance": 9, "commit": "66ea5c8", "dirty": false, "tagged_metadata": null, "epoch": null, "branch": null, "timestamp": "2026-05-19T18:58:41+00:00"}
+{"version": "0.0.20.dev9+g66ea5c8", "base": "0.0.20", "commit": "66ea5c8"}
 ```
 
 The script is invoked from `./backend` where `uv` is already set up, reusing the existing `uv-dynamic-versioning` dependency. The `pattern_prefix` parameter tells it which tag namespace to search (`v*` for app, `chart/v*` for chart).
 
 ### workflow-metadata Action Changes
 
-The action runs the version script twice (once for app, once for chart) and outputs a single JSON string with pre-computed tags:
+The action runs the version script twice (once for app, once for chart) and outputs the following GHA outputs (all JSON, consumed via `fromJson()`):
 
-```json
-{
-  "app-version": {
-    "raw": "0.1.0.dev9+g66ea5c8",
-    "base": "0.1.0",
-    "stage": null,
-    "revision": null,
-    "distance": 9,
-    "commit": "66ea5c8",
-    "dirty": false,
-    "tagged_metadata": null,
-    "epoch": null,
-    "branch": null,
-    "timestamp": "2026-05-19T18:58:41+00:00"
-  },
-  "chart-version": {
-    "raw": "0.0.20.dev9+g66ea5c8",
-    "base": "0.0.20",
-    "stage": null,
-    "revision": null,
-    "distance": 9,
-    "commit": "66ea5c8",
-    "dirty": false,
-    "tagged_metadata": null,
-    "epoch": null,
-    "branch": null,
-    "timestamp": "2026-05-19T18:58:41+00:00"
-  },
-  "stable-tag": "0.1.0-pr.42.66ea5c8",
-  "additional-tags": ["0.1.0-pr.42", "0.1.0-main"]
-}
-```
+**Version outputs** (from the version script):
+- `app-version-json`: Version info for the app namespace (`v*` tags):
+  ```json
+  {"version": "0.1.0.dev9+g66ea5c8", "base": "0.1.0", "commit": "66ea5c8"}
+  ```
+- `chart-version-json`: Version info for the chart namespace (`chart/v*` tags):
+  ```json
+  {"version": "0.0.20.dev9+g66ea5c8", "base": "0.0.20", "commit": "66ea5c8"}
+  ```
 
-Structure:
-- `app-version`: Full version object from `uv-dynamic-versioning` for the app namespace (`v*` tags). `raw` is the pep440 string (e.g. `0.1.0.dev9+g66ea5c8`), used as `VERSION` build arg for the Docker backend image. `base` is the bumped version (e.g. `0.1.0`), used as prefix for Docker versioned tags.
-- `chart-version`: Full version object for the chart namespace (`chart/v*` tags). The `base` field is the bumped chart version (e.g. `0.0.20`). Used as prefix for Helm chart versions.
+**Tag selection outputs** (computed by the action based on workflow type):
+- `tags-json`: Object with `stable-tag` and `additional-tags`:
+  ```json
+  {
+    "stable-tag": "0.1.0-pr.42.66ea5c8",
+    "additional-tags": ["0.1.0-pr.42", "0.1.0-main"]
+  }
+  ```
+
+Structure of `tags-json`:
 - `stable-tag`: The canonical versioned tag for this build. For PRs: `<app-base>-pr.<number>.<sha>`. For main: `<app-base>-main`. For releases: `<app-base>` (on release commits, `distance=0` so `base` equals the release version).
-- `additional-tags`: All other versioned tags to push (excludes Docker-specific bare tags like `main`, `latest`, `pr.<number>`).
+- `additional-tags`: All other versioned tags to push (excludes Docker-specific bare tags like `main`, `latest`, `pr.<number>`). On release, this is an empty array.
 
-Workflows consume this via `fromJson()` in GHA expressions:
+Workflows consume these via `fromJson()` in GHA expressions:
 
 ```yaml
 - name: Setup image metadata
   uses: docker/metadata-action@v6
   with:
     tags: |
-      type=raw,value=${{ fromJson(steps.workflow-metadata.outputs.tags).stable-tag }}
-      ${{ join(fromJson(steps.workflow-metadata.outputs.tags).additional-tags, '\n') }}
+      type=raw,value=${{ fromJson(steps.workflow-metadata.outputs.tags-json).stable-tag }}
+      ${{ join(fromJson(steps.workflow-metadata.outputs.tags-json).additional-tags, '\n') }}
       type=raw,value=pr.${{ github.event.number }},enable=${{ ... == 'PR' }}
       type=raw,value=latest,enable=${{ ... == 'release' }}
 ```
 
 ### Docker Workflow Changes
 
-- Replace the old `image-tag` output consumption with `fromJson(steps.workflow-metadata.outputs.tags).stable-tag` + `additional-tags`.
+- Replace the old `image-tag` output consumption with `fromJson(steps.workflow-metadata.outputs.tags-json).stable-tag` + `additional-tags`.
 - Keep Docker-specific tags (`pr.<number>`, `latest`, `main`) in the `metadata-action` step as today. Change dash-based `pr-${{ github.event.number }}` to period-based `pr.${{ github.event.number }}`.
 - Add `<app-base>.main` tag for main pushes alongside the existing bare `main` tag.
 - Update cache tags to use the new period-based format (`pr.42-buildcache` instead of `pr-42-buildcache`).
-- Docker build arg `VERSION` uses `app-version.raw` (the pep440 string). No changes to platforms or push logic.
+- Docker build arg `VERSION` uses `fromJson(steps.workflow-metadata.outputs.app-version-json).version` (the pep440 string). No changes to platforms or push logic.
 
 ### Helm Workflow Changes
 
 - **Add trigger**: `push: branches: ["main"]` so charts publish on every main push.
 - Remove the old `Set versions` step that manually constructed chart versions.
-- Construct chart versions using `chart-version.base` from the metadata action JSON with the same suffix pattern used for Docker tags:
-  - **PR**: `<chart-base>-pr.<number>` (stable) and `<chart-base>-pr.<number>.<sha>` (per-commit)
-  - **Main**: `<chart-base>-main`
-  - **Release**: `<chart-base>` (on release, `distance=0` so `base` equals the release version)
-- The `version` field in Chart.yaml gets the chart version (e.g. `0.0.20-pr.42`).
-- The `appVersion` field in Chart.yaml is set to the **stable tag** (e.g. `0.1.0-pr.42` for PRs, `0.1.0-main` for main, `0.0.20` for releases). This is a semver-compatible string that identifies the corresponding app version.
+
+**Chart version construction** using `fromJson(steps.workflow-metadata.outputs.chart-version-json).base`:
+- **PR**: stable version `<chart-base>-pr.<number>` and per-commit version `<chart-base>-pr.<number>.<sha>`
+- **Main**: `<chart-base>-main`
+- **Release**: `<chart-base>` (on release, `distance=0` so `base` equals the release version)
+
+**Multi-version publishing**: Unlike Docker (where multiple tags point to one image digest in a single push), Helm bakes the version into the `.tgz` filename and metadata. Each distinct version requires its own `helm package` + `helm push` cycle. The workflow iterates over all chart versions to publish:
+
+1. Patch Chart.yaml `version` with the chart version, patch `appVersion` with the app stable tag
+2. `helm dependencies update` and `helm package`
+3. `helm push` to OCI registry
+
+For PRs, this loop runs twice (stable + per-commit). For main and release, it runs once. The `helm dependencies update` step is executed only once (before the loop) since dependencies don't change between versions.
+
+**Chart.yaml fields**:
+- `version`: The chart version for the current loop iteration (e.g. `0.0.20-pr.42`)
+- `appVersion`: The **app stable tag** (e.g. `0.1.0-pr.42` for PRs, `0.1.0-main` for main, `0.0.20` for releases). This is a semver-compatible string that identifies the corresponding app build.
 
 Note: the raw pep440 version string (e.g. `0.1.0.dev9+g66ea5c8`) is only used as the `VERSION` build arg for the Docker backend image. It is not used in the Helm chart.
 
-Note: app and chart versions come from different tag namespaces (`v*` vs `chart/v*`) and may have different base numbers. The Docker workflow uses `app-version.base` for Docker tags; the Helm workflow uses `chart-version.base` for chart versions. The Helm `appVersion` field references the app's stable tag (from `app-version.base`) for cross-reference.
+Note: app and chart versions come from different tag namespaces (`v*` vs `chart/v*`) and may have different base numbers. The Docker workflow uses `app-version.base` for Docker tags; the Helm workflow uses `chart-version.base` for chart versions. The Helm `appVersion` field references the app's stable tag for cross-reference.
 
 ### Tag Cleanup Workflow (renamed from `pr-cleanup.yml`)
 
@@ -245,12 +253,14 @@ The `if` condition ensures the cleanup job only runs for the intended triggers. 
 
 1. **uv-dynamic-versioning for charts** — Running the chart version computation from `./backend` ties the chart versioning to the backend's Python environment. This is acceptable because: (a) `uv` is already set up there for app versioning, (b) the `uv-dynamic-versioning` library is a pure dependency, and (c) the chart version only depends on git tags, not on backend code.
 
-2. **Semver pre-release sorting** — `0.0.20-pr.42` sorts before `0.0.20` (release), which is correct for semver. But `0.0.20-pr.42.66ea5c8` sorts after `0.0.20-pr.42` because semver compares pre-release identifiers left-to-right: `pr` == `pr`, then `42` == `42`, then `66ea5c8` (extra identifier) sorts higher. This means the per-commit tag is considered "newer" than the stable PR tag, which is the desired behavior.
+2. **Helm multi-version publishing** — Each chart version requires its own `helm package` + `helm push` cycle. For PRs this means two publish operations (stable + per-commit). This doubles the CI time for helm on PRs but is necessary for parity with Docker's multi-tag behavior. The overhead is modest since packaging is fast and the OCI push reuses the same content layers.
 
-3. **Docker tag `pr.<number>` collision** — If the app version is `0.1.0` and a PR is `42`, the tags `pr.42` and `0.1.0-pr.42` are distinct. But if someone accidentally uses the `pr.<number>` convention as a release tag, it could conflict. This is a negligible risk.
+3. **Semver pre-release sorting** — `0.0.20-pr.42` sorts before `0.0.20` (release), which is correct for semver. But `0.0.20-pr.42.66ea5c8` sorts after `0.0.20-pr.42` because semver compares pre-release identifiers left-to-right: `pr` == `pr`, then `42` == `42`, then `66ea5c8` (extra identifier) sorts higher. This means the per-commit tag is considered "newer" than the stable PR tag, which is the desired behavior.
 
-4. **Cleanup on release is best-effort** — If a release tag is pushed but the cleanup workflow fails, the old `<version>-main` tag persists. This is benign — it just means an extra tag exists. Users pulling `<version>-main` would get the main build instead of the release, but they should be pulling `<version>` for releases anyway.
+4. **Docker tag `pr.<number>` collision** — If the app version is `0.1.0` and a PR is `42`, the tags `pr.42` and `0.1.0-pr.42` are distinct. But if someone accidentally uses the `pr.<number>` convention as a release tag, it could conflict. This is a negligible risk.
 
-5. **Helm chart `appVersion` is the stable tag** — The `appVersion` in Chart.yaml uses the app's stable tag (e.g. `0.1.0-pr.42`), not the raw pep440 version. This makes `appVersion` a meaningful, stable reference to the corresponding app build. The raw pep440 version is only used as the `VERSION` build arg for the Docker backend image.
+5. **Cleanup on release is best-effort** — If a release tag is pushed but the cleanup workflow fails, the old `<version>-main` tag persists. This is benign — it just means an extra tag exists. Users pulling `<version>-main` would get the main build instead of the release, but they should be pulling `<version>` for releases anyway.
+
+6. **Helm chart `appVersion` is the stable tag** — The `appVersion` in Chart.yaml uses the app's stable tag (e.g. `0.1.0-pr.42`), not the raw pep440 version. This makes `appVersion` a meaningful, stable reference to the corresponding app build. The raw pep440 version is only used as the `VERSION` build arg for the Docker backend image.
 
 ## Open Questions
