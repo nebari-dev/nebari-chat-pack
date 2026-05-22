@@ -29,8 +29,8 @@ jobs:
         run: |
           MATRIX=$(jq --null-input --compact-output \
             --argjson chart '${{ steps.workflow-metadata.outputs.chart-version-json }}' \
-            --arg app-stable '${{ steps.workflow-metadata.outputs.app-version-json }}' \
-            '{"include": ($chart.tags | map({"chart-version": ., "app-version": ($app-stable | fromjson | .["stable-tag"]) }))}' \
+            --argjson app '${{ steps.workflow-metadata.outputs.app-version-json }}' \
+            '{"include": ($chart.tags | map({"chart-version": ., "app-version": app.["stable-tag"] }))}' \
           )
           echo "matrix-json=${MATRIX}" | tee --append "${GITHUB_OUTPUT}"
     outputs:
