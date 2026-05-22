@@ -5,18 +5,12 @@ outputs:
   workflow-type:
     description: Workflow type. One of 'PR', 'main', or 'release'
     value: ${{ steps.workflow.outputs.workflow-type }}
-  stable-tag:
-    description: The canonical versioned tag for this build
-    value: ${{ steps.tags.outputs.stable-tag }}
-  tags-json:
-    description: All tags to push as JSON array (includes stable-tag)
-    value: ${{ steps.tags.outputs.tags-json }}
   app-version-json:
     description: App version info as JSON
-    value: ${{ steps.versions.outputs.app-version-json }}
+    value: ${{ steps.compute.outputs.app-version-json }}
   chart-version-json:
     description: Chart version info as JSON
-    value: ${{ steps.versions.outputs.chart-version-json }}
+    value: ${{ steps.compute.outputs.chart-version-json }}
 
 runs:
   using: composite
@@ -62,49 +56,70 @@ runs:
       working-directory: ./backend
       run: uv sync --link-mode copy --locked
 
-    - id: versions
+    - id: compute
       shell: bash
       working-directory: ./backend
       run: |
-        APP_VERSION_JSON=$(uv run python .github/actions/workflow-metadata/compute_version.py --root . --pattern-prefix "")
-        echo "app-version-json=${APP_VERSION_JSON}" | tee --append "${GITHUB_OUTPUT}"
-
-        CHART_VERSION_JSON=$(uv run python .github/actions/workflow-metadata/compute_version.py --root . --pattern-prefix "chart/")
-        echo "chart-version-json=${CHART_VERSION_JSON}" | tee --append "${GITHUB_OUTPUT}"
-
-    - id: tags
-      shell: bash
-      run: |
         WORKFLOW_TYPE='${{ steps.workflow.outputs.workflow-type }}'
-        APP_BASE=$(echo '${{ steps.versions.outputs.app-version-json }}' | jq --raw-output '.base')
-        SHA=$(echo '${{ steps.versions.outputs.app-version-json }}' | jq --raw-output '.commit')
 
-        case "${WORKFLOW_TYPE}" in
-          PR)
-            PR_NUMBER='${{ github.event.number }}'
-            STABLE_TAG="${APP_BASE}-pr.${PR_NUMBER}.${SHA}"
-            ADDITIONAL_TAGS=("${APP_BASE}-pr.${PR_NUMBER}")
-            ;;
-          main)
-            STABLE_TAG="${APP_BASE}-main"
-            ADDITIONAL_TAGS=()
-            ;;
-          release)
-            STABLE_TAG="${APP_BASE}"
-            ADDITIONAL_TAGS=()
-            ;;
-          *)
-            echo "unknown workflow type '${WORKFLOW_TYPE}'" >&2
-            exit 1
-            ;;
-        esac
+        types=(app chart)
+        prefixes=("" "chart/")
 
-        # Merge stable + additional, then convert to JSON via jq
-        ALL_TAGS=("${STABLE_TAG}" "${ADDITIONAL_TAGS[@]}")
+        for i in 0 1; do
+          TYPE="${types[$i]}"
+          PATTERN_PREFIX="${prefixes[$i]}"
 
-        TAGS_JSON=$(jq --null-input --compact-output \
-          '$ARGS.positional' \
-          -- "${ALL_TAGS[@]}" \
-        )
-        echo "stable-tag=${STABLE_TAG}" | tee --append "${GITHUB_OUTPUT}"
-        echo "tags-json=${TAGS_JSON}" | tee --append "${GITHUB_OUTPUT}"
+          # 1. Extract latest version using git describe
+          LATEST=$(git describe --tags --match "${PATTERN_PREFIX}v[0-9]*.[0-9]*.[0-9]*" --abbrev=0 | sed "s|^${PATTERN_PREFIX}v||")
+
+          # 2. Extract version data using the python script
+          VERSION_DATA=$(uv run python .github/actions/workflow-metadata/compute_version.py --root . --pattern-prefix "${PATTERN_PREFIX}")
+          BASE=$(echo "${VERSION_DATA}" | jq --raw-output '.base')
+          COMMIT=$(echo "${VERSION_DATA}" | jq --raw-output '.commit')
+          VERSION=$(echo "${VERSION_DATA}" | jq --raw-output '.version')
+
+          # 3. Compute stable-tag and tags array based on workflow type
+          case "${WORKFLOW_TYPE}" in
+            PR)
+              PR_NUMBER='${{ github.event.number }}'
+              if [[ "${TYPE}" == "chart" ]]; then
+                # Chart stable tag is the simpler one (no SHA)
+                STABLE_TAG="${BASE}-pr.${PR_NUMBER}"
+                ALL_TAGS=("${STABLE_TAG}" "${BASE}-pr.${PR_NUMBER}.${COMMIT}")
+              else
+                # App stable tag is the per-commit one
+                STABLE_TAG="${BASE}-pr.${PR_NUMBER}.${COMMIT}"
+                ALL_TAGS=("${STABLE_TAG}" "${BASE}-pr.${PR_NUMBER}")
+              fi
+              ;;
+            main)
+              STABLE_TAG="${BASE}-main"
+              ALL_TAGS=("${STABLE_TAG}")
+              ;;
+            release)
+              STABLE_TAG="${BASE}"
+              ALL_TAGS=("${BASE}")
+              ;;
+            *)
+              echo "unknown workflow type '${WORKFLOW_TYPE}'" >&2
+              exit 1
+              ;;
+          esac
+
+          # 4. Merge into JSON object
+          TAGS_JSON=$(jq --null-input --compact-output \
+            '$ARGS.positional' \
+            -- "${ALL_TAGS[@]}" \
+          )
+
+          OUTPUT_JSON=$(jq --null-input --compact-output \
+            --arg latest "${LATEST}" \
+            --arg version "${VERSION}" \
+            --arg base "${BASE}" \
+            --arg stable "${STABLE_TAG}" \
+            --argjson tags "${TAGS_JSON}" \
+            '{"latest": $latest, "version": $version, "base": $base, "stable-tag": $stable, "tags": $tags}' \
+          )
+
+          echo "${TYPE}-version-json=${OUTPUT_JSON}" | tee --append "${GITHUB_OUTPUT}"
+        done

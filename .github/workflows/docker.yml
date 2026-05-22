@@ -46,7 +46,7 @@ jobs:
         with:
           images: ${{ matrix.image }}
           tags: |
-            ${{ join(fromJson(steps.workflow-metadata.outputs.tags-json), '\n') }}
+            ${{ join(fromJson(steps.workflow-metadata.outputs.app-version-json).tags, '\n') }}
             type=raw,value=pr.${{ github.event.number }},enable=${{ steps.workflow-metadata.outputs.workflow-type == 'PR' }}
             type=raw,value=main,enable=${{ steps.workflow-metadata.outputs.workflow-type == 'main' }}
             type=raw,value=latest,enable=${{ steps.workflow-metadata.outputs.workflow-type == 'release' }}

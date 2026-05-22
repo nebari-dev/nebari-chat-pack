@@ -41,10 +41,7 @@ jobs:
             PR_NUMBER=${{ github.event.number }}
             TAGS=$(echo "${TAGS_JSON_RAW}" | jq --raw-output --arg pr "pr.${PR_NUMBER}" '.Tags[] | select(contains($pr))' || true)
           else
-            VERSION='${{ github.ref_name }}'
-            VERSION="${VERSION#chart/}"
-            VERSION="${VERSION#v}"
-            TAGS=$(echo "${TAGS_JSON_RAW}" | jq --raw-output --arg ver "${VERSION}" '.Tags[] | select(startswith($ver) and endswith("-main"))' || true)
+            TAGS=$(echo "${TAGS_JSON_RAW}" | jq --raw-output '.Tags[] | select(endswith("-main"))' || true)
           fi
 
           if [[ -z "${TAGS}" ]]; then
