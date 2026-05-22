@@ -35,24 +35,24 @@ jobs:
       - name: List tags to delete
         id: list-tags
         run: |
+          TAGS_JSON_RAW=$(skopeo list-tags docker://${{ matrix.image }})
+
           if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
             PR_NUMBER=${{ github.event.number }}
-            TAGS=$(skopeo list-tags docker://${{ matrix.image }} | jq --raw-output --arg pr "pr.${PR_NUMBER}" ".Tags[] | select(contains(\$pr))" || true)
+            TAGS=$(echo "${TAGS_JSON_RAW}" | jq --raw-output --arg pr "pr.${PR_NUMBER}" '.Tags[] | select(contains($pr))' || true)
           else
-            # Extract version from tag (strip 'v' or 'chart/v' prefix)
             VERSION='${{ github.ref_name }}'
             VERSION="${VERSION#chart/}"
             VERSION="${VERSION#v}"
-
-            TAGS=$(skopeo list-tags docker://${{ matrix.image }} | jq --raw-output --arg ver "${VERSION}" '.Tags[] | select(startswith($ver) and endswith("-main"))' || true)
+            TAGS=$(echo "${TAGS_JSON_RAW}" | jq --raw-output --arg ver "${VERSION}" '.Tags[] | select(startswith($ver) and endswith("-main"))' || true)
           fi
 
           if [[ -z "${TAGS}" ]]; then
-            echo "tags-json=[]" >> "${GITHUB_OUTPUT}"
+            TAGS_JSON="[]"
           else
             TAGS_JSON=$(echo "${TAGS}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(length > 0))')
-            echo "tags-json=${TAGS_JSON}" | tee --append "${GITHUB_OUTPUT}"
           fi
+          echo "tags-json=${TAGS_JSON}" >> "${GITHUB_OUTPUT}"
 
       - name: Delete tags
         run: |

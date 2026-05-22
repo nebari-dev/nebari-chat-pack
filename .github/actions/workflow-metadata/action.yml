@@ -83,15 +83,15 @@ runs:
           PR)
             PR_NUMBER='${{ github.event.number }}'
             STABLE_TAG="${APP_BASE}-pr.${PR_NUMBER}.${SHA}"
-            TAGS="[\"${STABLE_TAG}\", \"${APP_BASE}-pr.${PR_NUMBER}\"]"
+            ADDITIONAL_TAGS=("${APP_BASE}-pr.${PR_NUMBER}")
             ;;
           main)
             STABLE_TAG="${APP_BASE}-main"
-            TAGS="[\"${STABLE_TAG}\"]"
+            ADDITIONAL_TAGS=()
             ;;
           release)
             STABLE_TAG="${APP_BASE}"
-            TAGS="[\"${STABLE_TAG}\"]"
+            ADDITIONAL_TAGS=()
             ;;
           *)
             echo "unknown workflow type '${WORKFLOW_TYPE}'" >&2
@@ -99,5 +99,12 @@ runs:
             ;;
         esac
 
+        # Merge stable + additional, then convert to JSON via jq
+        ALL_TAGS=("${STABLE_TAG}" "${ADDITIONAL_TAGS[@]}")
+
+        TAGS_JSON=$(jq --null-input --compact-output \
+          '$ARGS.positional' \
+          -- "${ALL_TAGS[@]}" \
+        )
         echo "stable-tag=${STABLE_TAG}" | tee --append "${GITHUB_OUTPUT}"
-        echo "tags-json=${TAGS}" | tee --append "${GITHUB_OUTPUT}"
+        echo "tags-json=${TAGS_JSON}" | tee --append "${GITHUB_OUTPUT}"

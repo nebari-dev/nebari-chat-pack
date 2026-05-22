@@ -31,12 +31,6 @@ jobs:
           mise_toml: |
             [tools]
             helm = "latest"
-
-      - name: Install mise and setup dasel
-        uses: jdx/mise-action@v4
-        with:
-          mise_toml: |
-            [tools]
             dasel = "3"
 
       - name: Compute chart versions
