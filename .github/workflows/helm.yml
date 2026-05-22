@@ -3,16 +3,18 @@ name: helm
 on:
   pull_request:
   push:
-    tags: ['chart/v[0-9]+\.[0-9]+\.[0-9]+']
+    branches: 
+      - "main"
+    tags: 
+      - 'chart/v[0-9]+\.[0-9]+\.[0-9]+'
 
 concurrency:
   group: helm-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  metadata:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -24,6 +26,31 @@ jobs:
         id: workflow-metadata
         uses: ./.github/actions/workflow-metadata
 
+      - name: Set helm matrix
+        id: helm-matrix
+        run: |
+          MATRIX=$(jq --null-input --compact-output \
+            --argjson chart '${{ steps.workflow-metadata.outputs.chart-version-json }}' \
+            --argjson app '${{ steps.workflow-metadata.outputs.app-version-json }}' \
+            '{"include": ($chart.tags | map({"chart-version": ., "app-version": $app."stable-tag" }))}' \
+          )
+          echo "matrix-json=${MATRIX}" | tee --append "${GITHUB_OUTPUT}"
+    outputs:
+      matrix-json: ${{ steps.helm-matrix.outputs.matrix-json }}
+
+  helm:
+    needs: metadata
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.metadata.outputs.matrix-json) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
       - name: Install mise and setup helm
         uses: jdx/mise-action@v4
         with:
@@ -31,36 +58,11 @@ jobs:
             [tools]
             helm = "latest"
 
-      - name: Set versions
-        id: versions
-        run: |
-          case '${{ steps.workflow-metadata.outputs.workflow-type }}' in
-            PR)
-              CHART_VERSION_SUFFIX='-pr.${{ github.event.number }}'
-              ;;
-            main)
-              CHART_VERSION_SUFFIX='-main'
-              ;;
-            release)
-              CHART_VERSION_SUFFIX=''
-              ;;
-            *)
-              echo "unknown workflow type '${{ steps.workflow-metadata.outputs.workflow-type  }}'" >&2
-              exit 1
-              ;;
-          esac
-          
-          CHART_VERSION="${{ steps.workflow-metadata.outputs.chart-version-latest }}${CHART_VERSION_SUFFIX}"
-          APP_VERSION='${{ steps.workflow-metadata.outputs.image-tag }}'
-
-          echo "app-version=${APP_VERSION}" | tee --append "${GITHUB_OUTPUT}"
-          echo "chart-version=${CHART_VERSION}" | tee --append "${GITHUB_OUTPUT}"
-
       - name: Patch helm chart
         uses: ./.github/actions/patch-helm-chart
         with:
-          chart-version: ${{ steps.versions.outputs.chart-version }}
-          app-version: ${{ steps.versions.outputs.app-version }}
+          chart-version: ${{ matrix.chart-version }}
+          app-version: ${{ matrix.app-version }}
 
       - name: Install chart dependencies
         run: helm dependencies update ./helm/nebari-chat
@@ -76,5 +78,4 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Push helm chart
-        shell: bash
         run: helm push nebari-chat-*.tgz oci://quay.io/nebari/charts

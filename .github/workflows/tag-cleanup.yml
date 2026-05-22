@@ -1,0 +1,54 @@
+name: Tag cleanup
+
+on:
+  pull_request:
+    types: 
+      - closed
+  push:
+    tags: 
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'chart/v[0-9]+.[0-9]+.[0-9]+'
+
+concurrency:
+  group: tag-cleanup-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.event_name == 'pull_request' || github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        image:
+          - quay.io/nebari/nebari-chat-backend
+          - quay.io/nebari/nebari-chat-frontend
+          - quay.io/nebari/charts/nebari-chat
+
+    steps:
+      - name: Install Skopeo and jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes skopeo jq
+
+      - name: Login to Quay.io
+        run: |
+          echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | skopeo login --username "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin quay.io
+
+      - name: List tags to delete
+        id: list-tags
+        run: |
+          TAGS_JSON_RAW=$(skopeo list-tags docker://${{ matrix.image }})
+
+          if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
+            PR_NUMBER=${{ github.event.number }}
+            TAGS_JSON=$(echo "${TAGS_JSON_RAW}" | jq --compact-output --arg pr "pr.${PR_NUMBER}" '[.Tags[] | select(contains($pr))]')
+          else
+            TAGS_JSON=$(echo "${TAGS_JSON_RAW}" | jq --compact-output '[.Tags[] | select(endswith("-main"))]')
+          fi
+          echo "tags-json=${TAGS_JSON}" >> "${GITHUB_OUTPUT}"
+
+      - name: Delete tags
+        run: |
+          TAGS=$(echo '${{ steps.list-tags.outputs.tags-json }}' | jq --raw-output '.[]')
+          echo "${TAGS}" | xargs -t -I '{tag}' skopeo delete 'docker://${{ matrix.image }}:{tag}'
