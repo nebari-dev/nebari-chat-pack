@@ -2,9 +2,12 @@ name: Tag cleanup
 
 on:
   pull_request:
-    types: [closed]
+    types: 
+      - closed
   push:
-    tags: ['v[0-9]+.[0-9]+.[0-9]+', 'chart/v[0-9]+.[0-9]+.[0-9]+']
+    tags: 
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'chart/v[0-9]+.[0-9]+.[0-9]+'
 
 concurrency:
   group: tag-cleanup-${{ github.ref }}

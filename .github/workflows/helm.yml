@@ -3,8 +3,10 @@ name: helm
 on:
   pull_request:
   push:
-    branches: ["main"]
-    tags: ['chart/v[0-9]+\.[0-9]+\.[0-9]+']
+    branches: 
+      - "main"
+    tags: 
+      - 'chart/v[0-9]+\.[0-9]+\.[0-9]+'
 
 concurrency:
   group: helm-${{ github.ref }}
