@@ -43,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.metadata.outputs.matrix-json) }}
+      fail-fast: false
 
     steps:
       - name: Checkout repository
