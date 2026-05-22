@@ -28,9 +28,9 @@ jobs:
         id: helm-matrix
         run: |
           MATRIX=$(jq --null-input --compact-output \
-            --argjson chart-tags '${{ fromJson(steps.workflow-metadata.outputs.chart-version-json).tags }}' \
-            --arg app-stable '${{ fromJson(steps.workflow-metadata.outputs.app-version-json).stable-tag }}' \
-            '{"include": ($chart-tags | map({"chart-version": ., "app-version": $app-stable}))}' \
+            --argjson chart '${{ steps.workflow-metadata.outputs.chart-version-json }}' \
+            --arg app-stable '${{ steps.workflow-metadata.outputs.app-version-json }}' \
+            '{"include": ($chart.tags | map({"chart-version": ., "app-version": ($app-stable | fromjson | .["stable-tag"]) }))}' \
           )
           echo "matrix-json=${MATRIX}" | tee --append "${GITHUB_OUTPUT}"
     outputs:
