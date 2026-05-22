@@ -82,8 +82,8 @@ runs:
           case "${WORKFLOW_TYPE}" in
             PR)
               PR_NUMBER='${{ github.event.number }}'
-              STABLE_TAG="${BASE}-pr.${PR_NUMBER}"
-              ADDITIONAL_TAGS=("${BASE}-pr.${PR_NUMBER}.${COMMIT}")
+              STABLE_TAG="${BASE}-pr.${PR_NUMBER}.${COMMIT}"
+              ADDITIONAL_TAGS=("${BASE}-pr.${PR_NUMBER}")
               ;;
             main)
               STABLE_TAG="${BASE}-main"
