@@ -24,6 +24,7 @@ jobs:
           - quay.io/nebari/nebari-chat-backend
           - quay.io/nebari/nebari-chat-frontend
           - quay.io/nebari/charts/nebari-chat
+      fail-fast: false
 
     steps:
       - name: Install Skopeo and jq
