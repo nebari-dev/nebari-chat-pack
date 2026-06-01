@@ -40,7 +40,7 @@ function Recent(props: Recent.Props): ReactNode {
     pageSize: 5,
     pageNumber: 1,
     sortBy: 'createdAt',
-    sortOrder: 'desc'
+    sortOrder: 'descending'
   }));
 
   // Bail early if the sidebar is not open.
