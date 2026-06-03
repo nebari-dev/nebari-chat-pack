@@ -67,16 +67,8 @@ yarn build
 
 ## Deployment
 
-The site deploys automatically via [Netlify](https://www.netlify.com/) whenever changes land on the `main` branch. Configuration lives in [`netlify.toml`](../netlify.toml) at the repository root:
+The site deploys automatically via [GitHub Pages](https://pages.github.com/) whenever changes land on the `main` branch. Configuration lives in [`.github/workflows/deploy-docs.yml`](../.github/workflows/deploy-docs.yml).
 
-| Setting | Value |
-|---------|-------|
-| Base directory | `docs/` |
-| Build command | `yarn run build` |
-| Publish directory | `build/` (resolved to `docs/build/`) |
-| Node version | `20` |
-| Yarn version | `1.22.22` |
+Pull requests trigger a build-only job (no deploy) so CI catches broken links before merge.
 
-Pull requests get an automatic Netlify deploy preview, so reviewers can browse the rendered site before merging. No manual deploy step is required; if you need to trigger a rebuild without a code change, do it from the Netlify dashboard.
-
-To point the site at a custom domain, update `url` in [`docusaurus.config.js`](./docusaurus.config.js) and configure the domain in Netlify. The current default, `https://nebari-chat-pack.netlify.app`, matches the Netlify-generated subdomain.
+To enable GitHub Pages for this repository, go to **Settings → Pages** and set the source to **GitHub Actions**.

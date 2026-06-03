@@ -10,8 +10,8 @@ const config = {
   tagline: 'Deploy a chat interface on Nebari',
   favicon: 'img/favicon.ico',
 
-  url: 'https://nebari-chat-pack.netlify.app',
-  baseUrl: '/',
+  url: 'https://nebari-dev.github.io',
+  baseUrl: '/nebari-chat-pack/',
 
   organizationName: 'nebari-dev',
   projectName: 'nebari-chat-pack',
