@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import { JsonEditor } from "json-edit-react";
+import { JsonEditor } from 'json-edit-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useChatConfig } from "@/context/chat";
+import { useChatConfig } from '@/context/chat';
 
-import { threadMessagesQuery } from "@/queries";
+import { threadMessagesQuery } from '@/queries';
 
 /**
  * A react component that renders the sidebar tool content.
@@ -125,9 +125,9 @@ namespace Private {
     // Try to parse the result to JSON, falling back on the string.
     const result = (() => {
       try {
-        return JSON.parse(toolMessage?.content ?? "");
+        return JSON.parse(toolMessage?.content ?? '');
       } catch {
-        return toolMessage?.content ?? "";
+        return toolMessage?.content ?? '';
       }
     })();
 
@@ -160,7 +160,7 @@ namespace Private {
       ...query,
       select: (msgs) => {
         return (msgs ?? []).find(
-          (msg) => msg.role === "tool" && msg.toolCallId === toolCallId,
+          (msg) => msg.role === 'tool' && msg.toolCallId === toolCallId,
         );
       },
     });

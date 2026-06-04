@@ -1,15 +1,15 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import type { PropsWithChildren, ReactNode, RefObject } from "react";
+import type { PropsWithChildren, ReactNode, RefObject } from 'react';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { useChatConfig } from "@/context";
+import { useChatConfig } from '@/context';
 
-import { threadMessagesQuery } from "@/queries";
+import { threadMessagesQuery } from '@/queries';
 
 /**
  * A react component that renders the scroll viewport for the chat.
@@ -43,7 +43,7 @@ namespace Private {
    */
   export function useScrollToBottom(): RefObject<HTMLDivElement | null> {
     // Define the type for the scroll state.
-    type ScrollState = "auto" | "user";
+    type ScrollState = 'auto' | 'user';
 
     // Fetch the thread from the chat config.
     const { thread } = useChatConfig();
@@ -58,7 +58,7 @@ namespace Private {
     const ref = useRef<HTMLDivElement>(null);
 
     // Set up the state to track the current scroll state.
-    const [scrollState, setScrollState] = useState<ScrollState>("auto");
+    const [scrollState, setScrollState] = useState<ScrollState>('auto');
 
     // Create an effect that attaches the scroll listener.
     useEffect(() => {
@@ -79,18 +79,18 @@ namespace Private {
       // input.
       const onScroll = () => {
         if (div.scrollHeight - div.scrollTop - div.clientHeight < 1) {
-          setScrollState("auto");
+          setScrollState('auto');
         } else {
-          setScrollState("user");
+          setScrollState('user');
         }
       };
 
       // Add the scroll event listener to the div.
-      div.addEventListener("scroll", onScroll);
+      div.addEventListener('scroll', onScroll);
 
       // Return the cleanup function which removes the event listener.
       return () => {
-        div.removeEventListener("scroll", onScroll);
+        div.removeEventListener('scroll', onScroll);
       };
     }, []);
 
@@ -108,7 +108,7 @@ namespace Private {
       }
 
       // Set the scroll state to auto.
-      setScrollState("auto");
+      setScrollState('auto');
     }, [messages?.length]);
 
     // Create an effect that scrolls the div on new messages.
@@ -125,7 +125,7 @@ namespace Private {
       }
 
       // Bail early if we are not auto-scrolling.
-      if (scrollState === "user") {
+      if (scrollState === 'user') {
         return;
       }
 

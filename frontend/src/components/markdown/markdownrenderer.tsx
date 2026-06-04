@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import Markdown from "react-markdown";
+import Markdown from 'react-markdown';
 
-import rehypeKatex from "rehype-katex";
+import rehypeKatex from 'rehype-katex';
 
-import remarkGfm from "remark-gfm";
+import remarkGfm from 'remark-gfm';
 
-import remarkMath from "remark-math";
+import remarkMath from 'remark-math';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A react component that renders markdown configured for Nebari Chat.
@@ -25,7 +25,7 @@ export function MarkdownRenderer(props: MarkdownRenderer.Props): ReactNode {
   // The markdown elements are formatted in `main.css` based on the
   // `ot-NebariChat-markdown` class name. Do not remove it.
   return (
-    <div className={cn("ot-NebariChat-markdown", className)}>
+    <div className={cn('ot-NebariChat-markdown', className)}>
       <Markdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}

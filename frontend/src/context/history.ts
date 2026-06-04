@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
-import type * as api from "@/api";
+import type * as api from '@/api';
 
 /**
  * The configuration for the history page.
@@ -34,7 +34,7 @@ export function useHistoryConfig(): HistoryConfig {
   const config = useContext(HistoryConfigContext);
   if (config === undefined) {
     throw new Error(
-      "`useHistoryConfig` must be called within a `HistoryConfigContext`",
+      '`useHistoryConfig` must be called within a `HistoryConfigContext`',
     );
   }
   return config;

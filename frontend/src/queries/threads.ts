@@ -1,24 +1,24 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from "@ag-ui/core";
+import * as agui from '@ag-ui/core';
 
-import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 
-import { applyPatch } from "fast-json-patch";
+import { applyPatch } from 'fast-json-patch';
 
-import type { WritableDraft } from "immer";
+import type { WritableDraft } from 'immer';
 
-import { produce } from "immer";
+import { produce } from 'immer';
 
-import * as api from "@/api";
+import * as api from '@/api';
 
 /**
  * A query for fetching a thread by id.
  */
 export const threadQuery = (id: string | undefined) => {
   return queryOptions({
-    queryKey: ["thread", id],
+    queryKey: ['thread', id],
     queryFn: () => (id ? api.getThread(id) : null),
     staleTime: 1000 * 60 * 5, // 5min
   });
@@ -29,7 +29,7 @@ export const threadQuery = (id: string | undefined) => {
  */
 export const threadPageQuery = (options: api.getThreadPage.Options) => {
   return queryOptions({
-    queryKey: ["threads", options],
+    queryKey: ['threads', options],
     queryFn: () => api.getThreadPage(options),
     staleTime: 1000 * 60 * 5, // 5min
   });
@@ -43,7 +43,7 @@ export const deleteThreadsMutation = mutationOptions({
     return api.deleteThreads(ids);
   },
   onSuccess: (_, __, ___, context) => {
-    context.client.invalidateQueries({ queryKey: ["threads"] });
+    context.client.invalidateQueries({ queryKey: ['threads'] });
   },
   onError: console.error.bind(console),
 });
@@ -53,7 +53,7 @@ export const deleteThreadsMutation = mutationOptions({
  */
 export const threadMessagesQuery = (id: string | undefined) => {
   return queryOptions({
-    queryKey: ["thread", "messages", id],
+    queryKey: ['thread', 'messages', id],
     queryFn: () => (id ? api.getThreadMessages(id) : null),
     staleTime: 1000 * 60 * 5, // 5min
   });
@@ -67,11 +67,11 @@ export const createThreadMutation = mutationOptions({
     return api.createThread(options);
   },
   onSuccess: (thread, _, __, context) => {
-    const threadKey = ["thread", thread.id];
-    const messagesKey = ["thread", "messages", thread.id];
+    const threadKey = ['thread', thread.id];
+    const messagesKey = ['thread', 'messages', thread.id];
     context.client.setQueryData<api.Thread>(threadKey, thread);
     context.client.setQueryData<api.ThreadMessages>(messagesKey, []);
-    context.client.invalidateQueries({ queryKey: ["threads"] });
+    context.client.invalidateQueries({ queryKey: ['threads'] });
   },
   onError: console.error.bind(console),
 });
@@ -82,7 +82,7 @@ export const createThreadMutation = mutationOptions({
 export const createRunMutation = mutationOptions({
   mutationFn: async (options: api.createRun.Options, context) => {
     // Create the query key for the thread messages.
-    const queryKey = ["thread", "messages", options.threadId];
+    const queryKey = ['thread', 'messages', options.threadId];
 
     // Optimistically update the query cache with the new messages.
     context.client.setQueryData<api.ThreadMessages>(queryKey, (prev) => [
@@ -154,7 +154,7 @@ namespace Private {
 
       // Backend error events.
       case agui.EventType.RUN_ERROR:
-        console.error("Error during run:", evt);
+        console.error('Error during run:', evt);
         break;
 
       // Unsupported events, since they don't make sense, or are just
@@ -184,7 +184,7 @@ namespace Private {
 
       // Last resort. Log anything unexpected.
       default:
-        console.log("Unhandled ag-ui event:", evt);
+        console.log('Unhandled ag-ui event:', evt);
     }
   }
 
@@ -196,13 +196,13 @@ namespace Private {
     draft: Draft,
   ): void {
     // Ignore non-assistant messages for now.
-    if (evt.role !== "assistant") {
+    if (evt.role !== 'assistant') {
       console.log(`Ignoring 'TextMessageStart' event with role: ${evt.role}`);
       return;
     }
 
     // Create a new empty assistant message.
-    draft.push({ role: "assistant", id: evt.messageId, content: "" });
+    draft.push({ role: 'assistant', id: evt.messageId, content: '' });
   }
 
   /**
@@ -222,13 +222,13 @@ namespace Private {
     }
 
     // If a message is found, validate its role.
-    if (msg.role !== "assistant") {
+    if (msg.role !== 'assistant') {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
 
     // Add the content delta to the message.
-    msg.content = (msg.content ?? "") + evt.delta;
+    msg.content = (msg.content ?? '') + evt.delta;
   }
 
   /**
@@ -240,15 +240,15 @@ namespace Private {
 
     // Create the new tool call.
     const toolCall = {
-      type: "function",
+      type: 'function',
       id: evt.toolCallId,
-      function: { name: evt.toolCallName, arguments: "" },
+      function: { name: evt.toolCallName, arguments: '' },
     } as const;
 
     // Find the best message to associate with the tool call.
     const msg = evt.pid
       ? draft.findLast((m) => m.id === pid)
-      : draft.findLast((m) => m.role === "assistant");
+      : draft.findLast((m) => m.role === 'assistant');
 
     // It's an error if a parent id was specified but not found.
     //
@@ -260,15 +260,15 @@ namespace Private {
       console.warn(`Message ${pid} not found. Synthesizing one.`);
       draft.push({
         id: pid,
-        role: "assistant",
-        content: "",
+        role: 'assistant',
+        content: '',
         toolCalls: [toolCall],
       });
       return;
     }
 
     // If a message is found, validate its role.
-    if (msg && msg.role !== "assistant") {
+    if (msg && msg.role !== 'assistant') {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -282,8 +282,8 @@ namespace Private {
     // As a last resort, create a new message to hold the tool call.
     draft.push({
       id: crypto.randomUUID(),
-      role: "assistant",
-      content: "",
+      role: 'assistant',
+      content: '',
       toolCalls: [toolCall],
     });
   }
@@ -317,7 +317,7 @@ namespace Private {
   ): void {
     // Add the tool result to the messages.
     draft.push({
-      role: "tool",
+      role: 'tool',
       id: evt.messageId,
       toolCallId: evt.toolCallId,
       content: evt.content,
@@ -346,7 +346,7 @@ namespace Private {
     const msg = draft.findLast((msg) => msg.id === evt.messageId);
 
     // Log an error if the message exists and has an invalid role.
-    if (msg && msg.role !== "activity") {
+    if (msg && msg.role !== 'activity') {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -360,7 +360,7 @@ namespace Private {
 
     // Otherwise, add the new activity message to the history.
     draft.push({
-      role: "activity",
+      role: 'activity',
       id: evt.messageId,
       activityType: evt.activityType,
       content: evt.content,
@@ -381,7 +381,7 @@ namespace Private {
     }
 
     // Log an error if the message has an invalid role.
-    if (msg.role !== "activity") {
+    if (msg.role !== 'activity') {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -406,7 +406,7 @@ namespace Private {
     draft: Draft,
   ): void {
     // Create a new empty reasoning message.
-    draft.push({ role: "reasoning", id: evt.messageId, content: "" });
+    draft.push({ role: 'reasoning', id: evt.messageId, content: '' });
   }
 
   /**
@@ -426,7 +426,7 @@ namespace Private {
     }
 
     // If a message is found, validate its role.
-    if (msg.role !== "reasoning") {
+    if (msg.role !== 'reasoning') {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -449,7 +449,7 @@ namespace Private {
   function findToolCall(toolCallId: string, draft: Draft) {
     for (let i = draft.length - 1; i >= 0; i--) {
       const msg = draft[i];
-      if (msg.role === "assistant" && msg.toolCalls) {
+      if (msg.role === 'assistant' && msg.toolCalls) {
         for (let j = msg.toolCalls.length - 1; j >= 0; j--) {
           const tc = msg.toolCalls[j];
           if (tc.id === toolCallId) {

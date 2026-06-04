@@ -2,23 +2,23 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
-import type { HistoryConfig } from "@/context";
+import type { HistoryConfig } from '@/context';
 
-import { HistoryConfigContext } from "@/context";
+import { HistoryConfigContext } from '@/context';
 
-import { History } from "@/history";
+import { History } from '@/history';
 
-import { deleteThreadsMutation, threadPageQuery } from "@/queries";
+import { deleteThreadsMutation, threadPageQuery } from '@/queries';
 
 /**
  * The route for the `/history` endpoint.
  */
-export const Route = createFileRoute("/_authenticated/history")({
+export const Route = createFileRoute('/_authenticated/history')({
   loader: ({ context }) => {
     // TODO - support pagination query params
     const query = threadPageQuery({});

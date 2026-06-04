@@ -1,24 +1,24 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import type { Table as TSTable } from "@tanstack/react-table";
+import type { Table as TSTable } from '@tanstack/react-table';
 
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import * as api from "@/api";
+import * as api from '@/api';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from '@/components/ui/checkbox';
 
 import {
   Table,
@@ -27,11 +27,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
-import { useHistoryConfig } from "@/context";
+import { useHistoryConfig } from '@/context';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A React component that renders the threads table.
@@ -52,7 +52,7 @@ export function ThreadsTable(): ReactNode {
 
   // Create the column -> className mapping.
   const classNames = {
-    name: "w-[60%]",
+    name: 'w-[60%]',
   } as Record<string, string>;
 
   // Iterate the header groups to create the header rows.
@@ -141,19 +141,19 @@ namespace Private {
    * Create the column for the selection check boxes.
    */
   const selectColumn = columnHelper.display({
-    id: "select",
+    id: 'select',
     header: (headerContext) => {
       const table = headerContext.table;
       const all = table.getIsAllRowsSelected();
       const some = table.getIsSomeRowsSelected();
       const handleChange = () => table.toggleAllRowsSelected();
-      const checked = all ? true : some ? "indeterminate" : false;
+      const checked = all ? true : some ? 'indeterminate' : false;
       return (
         <Checkbox
           aria-label="Select All"
           className={cn(
-            "data-[state=checked]:bg-bd-brand-default",
-            "data-[state=checked]:border-none",
+            'data-[state=checked]:bg-bd-brand-default',
+            'data-[state=checked]:border-none',
           )}
           checked={checked}
           onCheckedChange={handleChange}
@@ -168,8 +168,8 @@ namespace Private {
         <Checkbox
           aria-label="Select Row"
           className={cn(
-            "data-[state=checked]:bg-bd-brand-default",
-            "data-[state=checked]:border-none",
+            'data-[state=checked]:bg-bd-brand-default',
+            'data-[state=checked]:border-none',
           )}
           checked={checked}
           onCheckedChange={handleChange}
@@ -181,13 +181,13 @@ namespace Private {
   /**
    * Create the column to display the memory text data.
    */
-  const nameColumn = columnHelper.accessor("name", {
-    header: "Name",
+  const nameColumn = columnHelper.accessor('name', {
+    header: 'Name',
     cell: (cellContext) => {
       const row = cellContext.row;
       const threadId = row.original.id;
       const activeProps = {
-        className: "text-bd-brand-default font-semibold",
+        className: 'text-bd-brand-default font-semibold',
       };
       return (
         <p className="whitespace-pre-wrap">
@@ -197,7 +197,7 @@ namespace Private {
             search={{ threadId }}
             activeProps={activeProps}
           >
-            {cellContext.getValue() || "Untitled Thread"}
+            {cellContext.getValue() || 'Untitled Thread'}
           </Link>
         </p>
       );
@@ -207,8 +207,8 @@ namespace Private {
   /**
    * Create the column to display the agent Id.
    */
-  const agentIdColumn = columnHelper.accessor("agentId", {
-    header: "Agent Id",
+  const agentIdColumn = columnHelper.accessor('agentId', {
+    header: 'Agent Id',
     cell: (cellContext) => {
       return (
         <span className="whitespace-nowrap text-xs text-muted-foreground">
@@ -221,8 +221,8 @@ namespace Private {
   /**
    * Create the column to display the created timestamp.
    */
-  const createdAtColumn = columnHelper.accessor("createdAt", {
-    header: "Created At",
+  const createdAtColumn = columnHelper.accessor('createdAt', {
+    header: 'Created At',
     cell: (cellContext) => {
       const ts = cellContext.getValue();
       const dateStr = new Date(ts).toLocaleString();
@@ -241,8 +241,8 @@ namespace Private {
    * to the thread's own createdAt when there are no runs.
    */
   const updatedAtColumn = columnHelper.display({
-    id: "updatedAt",
-    header: "Updated At",
+    id: 'updatedAt',
+    header: 'Updated At',
     cell: (cellContext) => {
       const thread = cellContext.row.original;
       const ts = api.getThreadUpdatedAt(thread);
@@ -318,8 +318,8 @@ namespace Private {
     return (
       <div
         className={cn(
-          "fixed bottom-4 flex flex-row justify-self-center items-center gap-4",
-          "rounded-sm border px-4 py-2 shadow-lg z-1 bg-bg-white",
+          'fixed bottom-4 flex flex-row justify-self-center items-center gap-4',
+          'rounded-sm border px-4 py-2 shadow-lg z-1 bg-bg-white',
         )}
       >
         <div>

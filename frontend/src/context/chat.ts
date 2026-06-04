@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
-import type * as api from "@/api";
+import type * as api from '@/api';
 
 /**
  * The configuration for the chat page.
@@ -57,7 +57,7 @@ export function useChatConfig(): ChatConfig {
   const config = useContext(ChatConfigContext);
   if (config === undefined) {
     throw new Error(
-      "`useChatConfig` must be called within a `ChatConfigContext`",
+      '`useChatConfig` must be called within a `ChatConfigContext`',
     );
   }
   return config;

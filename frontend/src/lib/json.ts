@@ -70,9 +70,9 @@ export namespace JSONExt {
   ): value is JSONPrimitive {
     return (
       value === null ||
-      typeof value === "boolean" ||
-      typeof value === "number" ||
-      typeof value === "string"
+      typeof value === 'boolean' ||
+      typeof value === 'number' ||
+      typeof value === 'string'
     );
   }
 

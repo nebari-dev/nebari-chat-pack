@@ -1,19 +1,19 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import { X } from "lucide-react";
+import { X } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { Separator } from "@/components/ui/separator";
+import { Separator } from '@/components/ui/separator';
 
-import { SidebarReasoning } from "./sidebarreasoning";
+import { SidebarReasoning } from './sidebarreasoning';
 
-import { SidebarTools } from "./sidebartools";
+import { SidebarTools } from './sidebartools';
 
 /**
  * A react component that renders the sidebar panel for a detail message.
@@ -28,16 +28,16 @@ export function SidebarPanel(props: SidebarPanel.Props): ReactNode {
 
   // Dispatch on the role.
   switch (message.role) {
-    case "reasoning":
-      title = "Reasoning";
+    case 'reasoning':
+      title = 'Reasoning';
       content = <SidebarReasoning message={message} />;
       break;
-    case "assistant":
-      title = "Tool Calls";
+    case 'assistant':
+      title = 'Tool Calls';
       content = <SidebarTools message={message} />;
       break;
     default:
-      throw "unreachable";
+      throw 'unreachable';
   }
 
   // Return the rendered component.

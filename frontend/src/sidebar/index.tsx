@@ -1,19 +1,19 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { Header } from "./header";
+import { Header } from './header';
 
-import { Launcher } from "./launcher";
+import { Launcher } from './launcher';
 
-import { Recent } from "./recent";
+import { Recent } from './recent';
 
-import { UserProfile } from "./userprofile";
+import { UserProfile } from './userprofile';
 
 /**
  * A React component that renders the application sidebar.
@@ -31,9 +31,9 @@ export function Sidebar(): ReactNode {
   return (
     <div
       className={cn(
-        "flex flex-col flex-none gap-3 border-r border-bd-neutral-default",
-        "bg-bg-white transition-[width] duration-150",
-        isSidebarOpen ? "w-60" : "w-12.25",
+        'flex flex-col flex-none gap-3 border-r border-bd-neutral-default',
+        'bg-bg-white transition-[width] duration-150',
+        isSidebarOpen ? 'w-60' : 'w-12.25',
       )}
     >
       <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />

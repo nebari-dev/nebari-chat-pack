@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { MarkdownRenderer } from "@/components/markdown/markdownrenderer";
+import { MarkdownRenderer } from '@/components/markdown/markdownrenderer';
 
 /**
  * A react component that renders the sidebar reasoning content.

@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |-----------------------------------------------------------------------------*/
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 /**
  * A React component that renders an error screen for misconfiguration.

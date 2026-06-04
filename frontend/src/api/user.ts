@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |-----------------------------------------------------------------------------*/
-import * as z from "zod";
+import * as z from 'zod';
 
-import * as auth from "@/auth";
+import * as auth from '@/auth';
 
 /**
  * The schema for the current user.
@@ -35,7 +35,7 @@ export type User = z.infer<typeof UserSchema>;
  */
 export async function getUser(): Promise<User> {
   // Fetch the resource.
-  const resp = await auth.fetch("/api/user");
+  const resp = await auth.fetch('/api/user');
 
   // Return the parsed result.
   return UserSchema.parse(await resp.json());

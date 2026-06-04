@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { EChartRenderer } from "@/components/charts/echartrenderer";
+import { EChartRenderer } from '@/components/charts/echartrenderer';
 
-import { LeafletRenderer } from "@/components/maps/leafletrenderer";
+import { LeafletRenderer } from '@/components/maps/leafletrenderer';
 
 /**
  * A react component that renders an ag-ui `ActivityMessage`.
@@ -21,7 +21,7 @@ export function ActivityMessage(props: ActivityMessage.Props): ReactNode {
 
   // Dipspatch on the message activity type.
   switch (message.activityType) {
-    case "application/json+echart":
+    case 'application/json+echart':
       content = (
         <EChartRenderer
           className="h-120 p-4 border rounded-md"
@@ -29,7 +29,7 @@ export function ActivityMessage(props: ActivityMessage.Props): ReactNode {
         />
       );
       break;
-    case "application/json+leaflet":
+    case 'application/json+leaflet':
       content = (
         <LeafletRenderer
           className="h-120 border rounded-md"

@@ -1,29 +1,29 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable";
+} from '@/components/ui/resizable';
 
-import { useChatConfig } from "@/context";
+import { useChatConfig } from '@/context';
 
-import { threadMessagesQuery } from "@/queries";
+import { threadMessagesQuery } from '@/queries';
 
-import { ChatInput } from "./chatinput";
+import { ChatInput } from './chatinput';
 
-import { ChatOutput } from "./chatoutput";
+import { ChatOutput } from './chatoutput';
 
-import { Header } from "./header";
+import { Header } from './header';
 
-import { SidebarPanel } from "./sidebarpanel";
+import { SidebarPanel } from './sidebarpanel';
 
-import { Viewport } from "./viewport";
+import { Viewport } from './viewport';
 
 /**
  * A component that renders the chat panel.
@@ -47,7 +47,7 @@ export function Chat(): ReactNode {
   // Render the sidebar panel if we have a valid detail message.
   const sidebarPanel =
     message !== undefined &&
-    (message.role === "reasoning" || message.role === "assistant") ? (
+    (message.role === 'reasoning' || message.role === 'assistant') ? (
       <SidebarPanel message={message} />
     ) : null;
 

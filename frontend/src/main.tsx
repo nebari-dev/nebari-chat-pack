@@ -2,16 +2,16 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from './routeTree.gen';
 
-import "katex/dist/katex.min.css";
+import 'katex/dist/katex.min.css';
 
-import "./main.css";
+import './main.css';
 
 // Create the singleton query client.
 const client = new QueryClient();
@@ -19,13 +19,13 @@ const client = new QueryClient();
 // Create the main router object.
 const router = createRouter({
   routeTree,
-  defaultPreload: "intent",
+  defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
   context: { client },
 });
 
 // Register the router for type safety.
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
@@ -43,4 +43,4 @@ function App() {
 }
 
 // Render the app into the root element.
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById('root')!).render(<App />);

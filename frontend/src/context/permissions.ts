@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |-----------------------------------------------------------------------------*/
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
 /**
  * The permissions context.
@@ -21,7 +21,7 @@ export function usePermissions(): Set<string> {
   const permissions = useContext(PermissionsContext);
   if (permissions === undefined) {
     throw new Error(
-      "`usePermissions` must be called within a `PermissionsContext`",
+      '`usePermissions` must be called within a `PermissionsContext`',
     );
   }
   return permissions;

@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as echarts from "echarts";
+import * as echarts from 'echarts';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 /**
  * A react component that renders an EChart.

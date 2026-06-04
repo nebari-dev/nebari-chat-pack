@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-import * as z from "zod";
+import * as z from 'zod';
 
-import type * as api from "@/api";
+import type * as api from '@/api';
 
-import { Chat } from "@/chat";
+import { Chat } from '@/chat';
 
-import { ChatConfigContext } from "@/context";
+import { ChatConfigContext } from '@/context';
 
-import { agentsQuery, threadQuery } from "@/queries";
+import { agentsQuery, threadQuery } from '@/queries';
 
 // The schema for the `/chat` route search params
 const searchSchema = z.object({
@@ -23,7 +23,7 @@ const searchSchema = z.object({
 /**
  * The route for the `/chat` endpoint.
  */
-export const Route = createFileRoute("/_authenticated/chat")({
+export const Route = createFileRoute('/_authenticated/chat')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => search,
   beforeLoad: async ({ context, search }) => {

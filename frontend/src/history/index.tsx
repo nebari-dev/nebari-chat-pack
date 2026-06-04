@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { ThreadsTable } from "./threadstable";
+import { ThreadsTable } from './threadstable';
 
 /**
  * A React component that renders the session history page.

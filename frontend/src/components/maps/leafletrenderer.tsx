@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as L from "leaflet";
+import * as L from 'leaflet';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-import "leaflet/dist/leaflet.css";
+import 'leaflet/dist/leaflet.css';
 
 /**
  * A react component that renders a **simple** Leaflet map.
@@ -37,7 +37,7 @@ export function LeafletRenderer(props: LeafletRenderer.Props): ReactNode {
     const map = L.map(node).setView(center, 10);
 
     // Add the tile layer.
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);

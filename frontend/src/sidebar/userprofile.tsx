@@ -2,15 +2,15 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 
-import { Link } from "@tanstack/react-router";
-import { ChevronsUpDown } from "lucide-react";
-import type { ReactNode } from "react";
+import { Link } from '@tanstack/react-router';
+import { ChevronsUpDown } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-import * as auth from "@/auth";
+import * as auth from '@/auth';
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 import {
   DropdownMenu,
@@ -19,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 /**
  * A react component that renders the user profile in the sidebar.

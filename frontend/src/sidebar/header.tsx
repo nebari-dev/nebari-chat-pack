@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import { PanelLeft } from "lucide-react";
+import { PanelLeft } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A React component that renders the sidebar header.
@@ -20,16 +20,16 @@ export function Header(props: Header.Props): ReactNode {
   return (
     <div
       className={cn(
-        "flex flex-row flex-none h-12 p-2",
-        isSidebarOpen ? "justify-between" : "justify-center",
+        'flex flex-row flex-none h-12 p-2',
+        isSidebarOpen ? 'justify-between' : 'justify-center',
       )}
     >
       <Link
         to="/"
         className={cn(
-          "bg-[url(/assets/Nebari-Logo-Horizontal-Lockup.svg)] bg-[auto_100px]",
-          "bg-center bg-no-repeat w-[100px] cursor-pointer ml-2",
-          isSidebarOpen ? "" : "hidden",
+          'bg-[url(/assets/Nebari-Logo-Horizontal-Lockup.svg)] bg-[auto_100px]',
+          'bg-center bg-no-repeat w-[100px] cursor-pointer ml-2',
+          isSidebarOpen ? '' : 'hidden',
         )}
       />
       <button

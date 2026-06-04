@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { MessageSquarePlus } from "lucide-react";
+import { MessageSquarePlus } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useAgents } from "@/context";
+import { useAgents } from '@/context';
 
-import { LinkCard } from "./linkcard";
+import { LinkCard } from './linkcard';
 
 /**
  * A React component that renders the agents cards for the home page.
@@ -23,7 +23,7 @@ export function Agents(): ReactNode {
 
   // Create the cards for the agents.
   const cards = agents.map((agent) => {
-    const agentName = agent.capabilities.identity?.name ?? "";
+    const agentName = agent.capabilities.identity?.name ?? '';
     return (
       <LinkCard
         key={agent.id}

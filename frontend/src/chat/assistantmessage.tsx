@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { MarkdownRenderer } from "@/components/markdown/markdownrenderer";
+import { MarkdownRenderer } from '@/components/markdown/markdownrenderer';
 
-import { ToolCountLink } from "./toolcountlink";
+import { ToolCountLink } from './toolcountlink';
 
 /**
  * A react component that renders an ag-ui assistant message.
@@ -19,7 +19,7 @@ export function AssistantMessage(props: AssistantMessage.Props): ReactNode {
   // Return the rendered component.
   return (
     <div className="flex flex-col">
-      <MarkdownRenderer content={message.content ?? ""} />
+      <MarkdownRenderer content={message.content ?? ''} />
       <ToolCountLink message={message} />
     </div>
   );

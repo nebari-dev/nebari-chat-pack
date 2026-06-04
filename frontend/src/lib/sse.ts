@@ -60,10 +60,10 @@ namespace Private {
    */
   export function createTransformer(): Transformer<string, ServerSentEvent> {
     // Setup the mutable variables for the transformer.
-    let eventType = "";
-    let dataBuffer = "";
-    let lastEventId = "";
-    let incomplete = "";
+    let eventType = '';
+    let dataBuffer = '';
+    let lastEventId = '';
+    let incomplete = '';
 
     // Return the transformer object.
     return { transform };
@@ -102,26 +102,26 @@ namespace Private {
      */
     function processLine(line: string, controller: Controller): void {
       // If the line is empty, dispatch the accumulated event.
-      if (line === "") {
+      if (line === '') {
         dispatchEvent(controller);
         return;
       }
 
       // Ignore lines that start with a `:` character.
-      if (line[0] === ":") {
+      if (line[0] === ':') {
         return;
       }
 
       // Search for the first `:` character.
-      const i = line.indexOf(":");
+      const i = line.indexOf(':');
 
       // Split the line into name and value.
       let name: string;
       let value: string;
       if (i === -1) {
         name = line;
-        value = "";
-      } else if (line[i + 1] === " ") {
+        value = '';
+      } else if (line[i + 1] === ' ') {
         name = line.slice(0, i);
         value = line.slice(i + 2);
       } else {
@@ -142,16 +142,16 @@ namespace Private {
      */
     function processField(name: string, value: string): void {
       switch (name) {
-        case "event":
+        case 'event':
           eventType = value;
           break;
-        case "data":
-          dataBuffer += value + "\n";
+        case 'data':
+          dataBuffer += value + '\n';
           break;
-        case "id":
-          lastEventId = value.includes("\0") ? lastEventId : value;
+        case 'id':
+          lastEventId = value.includes('\0') ? lastEventId : value;
           break;
-        case "retry":
+        case 'retry':
           // TODO: Intentially ignored for now until I better understand how
           // or if this value could be useful in the context of a stream.
           console.log(`Ignoring SSE retry | ${name}:${value}`);
@@ -174,19 +174,19 @@ namespace Private {
     function dispatchEvent(controller: Controller): void {
       // Fetch the data buffer and event type.
       const db = dataBuffer;
-      const et = eventType || "message";
+      const et = eventType || 'message';
 
       // Reset the data buffer and event type.
-      dataBuffer = "";
-      eventType = "";
+      dataBuffer = '';
+      eventType = '';
 
       // Bail early if there is no data for the event.
-      if (db === "") {
+      if (db === '') {
         return;
       }
 
       // Remove a trailing line feed character, if it exists.
-      const data = db.endsWith("\n") ? db.slice(0, -1) : db;
+      const data = db.endsWith('\n') ? db.slice(0, -1) : db;
 
       // Dispatch the event by enqueuing it in the controller.
       controller.enqueue({ type: et, data, id: lastEventId });
@@ -218,7 +218,7 @@ namespace Private {
   function splitLines(chunk: string): SplitLinesResult {
     // Set up the variables to hold the results.
     const lines: string[] = [];
-    let rest = "";
+    let rest = '';
 
     // Set up the index to track the search position.
     let index = 0;
@@ -226,7 +226,7 @@ namespace Private {
     // Loop over the chunk extracting the lines.
     while (index < chunk.length) {
       // Search for CRLF first.
-      const crlf = chunk.indexOf("\r\n", index);
+      const crlf = chunk.indexOf('\r\n', index);
 
       // If CRLF was found, slice out the line and increment the index.
       if (crlf !== -1) {
@@ -236,7 +236,7 @@ namespace Private {
       }
 
       // Search for LF next.
-      const lf = chunk.indexOf("\n", index);
+      const lf = chunk.indexOf('\n', index);
 
       // If LF was found, slice out the line and increment the index.
       if (lf !== -1) {
@@ -246,7 +246,7 @@ namespace Private {
       }
 
       // Search for CR next.
-      const cr = chunk.indexOf("\r", index);
+      const cr = chunk.indexOf('\r', index);
 
       // If CR was found, slice out the line and increment the index.
       //

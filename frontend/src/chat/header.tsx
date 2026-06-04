@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from '@tanstack/react-router';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 import {
   Select,
@@ -11,11 +11,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-import { useAgents, useChatConfig } from "@/context";
+import { useAgents, useChatConfig } from '@/context';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A react component that renders the header for the chat page.
@@ -50,7 +50,7 @@ namespace Private {
 
     // Create the callback for the value change.
     const handleValueChange = (value: string) => {
-      navigate({ to: ".", search: { agentId: value } });
+      navigate({ to: '.', search: { agentId: value } });
     };
 
     // Create the items for the selector
@@ -69,8 +69,8 @@ namespace Private {
         <SelectTrigger
           size="sm"
           className={cn(
-            "w-[200px] rounded-sm shadow-none focus-visible:ring-0",
-            "focus-visible:border-bd-brand-default data-[size=sm]:h-7",
+            'w-[200px] rounded-sm shadow-none focus-visible:ring-0',
+            'focus-visible:border-bd-brand-default data-[size=sm]:h-7',
           )}
         >
           <SelectValue placeholder="Select..." />
@@ -114,8 +114,8 @@ namespace Private {
         to="."
         search={(prev) => ({ agentId: prev.agentId })}
         className={cn(
-          "h-7 w-24 flex justify-center items-center rounded-sm text-white",
-          isDisabled ? "bg-bd-brand-default/50" : "bg-bd-brand-default",
+          'h-7 w-24 flex justify-center items-center rounded-sm text-white',
+          isDisabled ? 'bg-bd-brand-default/50' : 'bg-bd-brand-default',
         )}
         disabled={isDisabled}
       >

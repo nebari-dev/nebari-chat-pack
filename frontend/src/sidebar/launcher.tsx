@@ -1,13 +1,13 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import { History, MessageSquarePlus } from "lucide-react";
+import { History, MessageSquarePlus } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A React component that renders the sidebar launcher links.
@@ -88,12 +88,12 @@ namespace Private {
 
     // Create the active link props.
     const activeProps = {
-      className: "text-bd-brand-default font-semibold",
+      className: 'text-bd-brand-default font-semibold',
     };
 
     // Create the inactive link props.
     const inactiveProps = {
-      className: "hover:bg-bg-neutral-dark",
+      className: 'hover:bg-bg-neutral-dark',
     };
 
     // Return the rendered component.
@@ -103,12 +103,12 @@ namespace Private {
         activeProps={activeProps}
         inactiveProps={inactiveProps}
         className={cn(
-          "h-9 px-1 flex flex-row gap-2 items-center",
-          "rounded-sm whitespace-nowrap overflow-hidden",
+          'h-9 px-1 flex flex-row gap-2 items-center',
+          'rounded-sm whitespace-nowrap overflow-hidden',
         )}
       >
         <span className="flex-none w-6">{icon}</span>
-        <span className={collapsed ? "hidden" : ""}>{text}</span>
+        <span className={collapsed ? 'hidden' : ''}>{text}</span>
       </Link>
     );
   }

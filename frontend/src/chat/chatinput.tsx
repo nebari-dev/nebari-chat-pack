@@ -1,29 +1,29 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { ArrowUp, Paperclip, X } from "lucide-react";
+import { ArrowUp, Paperclip, X } from 'lucide-react';
 
-import type { FormEvent, KeyboardEvent, MouseEvent, ReactNode } from "react";
+import type { FormEvent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from 'react';
 
-import type * as api from "@/api";
+import type * as api from '@/api';
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
-import { useHasPermissions } from "@/context";
+import { useHasPermissions } from '@/context';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { useOnSubmit } from "./hooks";
+import { useOnSubmit } from './hooks';
 
 /**
  * A react component that renders the chat input box.
@@ -39,11 +39,11 @@ export function ChatInput(): ReactNode {
   };
 
   // Check file-related permissions.
-  const canAttachFiles = useHasPermissions(["files:read", "files:write"]);
+  const canAttachFiles = useHasPermissions(['files:read', 'files:write']);
 
   // Build the tooltip message for disabled file attachment.
   const filePermissionTooltip = !canAttachFiles
-    ? "Attaching files requires `files:read` and `files:write` permissions. Contact an administrator."
+    ? 'Attaching files requires `files:read` and `files:write` permissions. Contact an administrator.'
     : undefined;
 
   // Fetch the submit handler from the runtime.
@@ -78,7 +78,7 @@ export function ChatInput(): ReactNode {
       const prompt = textarea.value;
 
       // Clear the text area's value before submitting the request.
-      textarea.value = "";
+      textarea.value = '';
 
       // Do nothing for an empty prompt.
       //
@@ -108,9 +108,9 @@ export function ChatInput(): ReactNode {
         const fics: readonly api.FileInputContent[] = await Promise.all(
           inputFiles.map(async ({ file }) => {
             return {
-              type: "document",
+              type: 'document',
               source: {
-                type: "data",
+                type: 'data',
                 mimeType: file.type,
                 value: (await file.bytes()).toBase64(),
               },
@@ -131,7 +131,7 @@ export function ChatInput(): ReactNode {
 
   // Create the handler for the keydown event.
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
       // Stop the event when submitting a chat request.
       event.stopPropagation();
       event.preventDefault();
@@ -168,7 +168,7 @@ export function ChatInput(): ReactNode {
     }));
 
     // Reset the input to empty for the next use.
-    input.value = "";
+    input.value = '';
 
     // Add the new files to the existing files.
     setFiles((prev) => [...prev, ...files]);
@@ -203,8 +203,8 @@ export function ChatInput(): ReactNode {
       disabled={isSubmitting || !!filePermissionTooltip}
       variant="ghost"
       className={cn(
-        "font-light",
-        filePermissionTooltip && "opacity-50 cursor-not-allowed",
+        'font-light',
+        filePermissionTooltip && 'opacity-50 cursor-not-allowed',
       )}
       onClick={filePermissionTooltip ? undefined : triggerInput}
     >
@@ -216,15 +216,15 @@ export function ChatInput(): ReactNode {
   return (
     <div
       className={cn(
-        "pb-6 bg-white mx-auto w-full min-w-3xs max-w-3xl sticky bottom-0",
+        'pb-6 bg-white mx-auto w-full min-w-3xs max-w-3xl sticky bottom-0',
       )}
     >
       <form
         ref={formRef}
         onSubmit={handleSubmit}
         className={cn(
-          "p-4 flex flex-col gap-6 rounded-md border shadow-sm",
-          "has-[textarea:focus-visible]:border-bd-brand-default",
+          'p-4 flex flex-col gap-6 rounded-md border shadow-sm',
+          'has-[textarea:focus-visible]:border-bd-brand-default',
         )}
       >
         <textarea
@@ -263,8 +263,8 @@ export function ChatInput(): ReactNode {
             disabled={isSubmitting}
             onClick={handleClick}
             className={cn(
-              "rounded-full size-8 bg-bd-brand-default",
-              "hover:bg-bd-brand-default/90 hover:cursor-pointer",
+              'rounded-full size-8 bg-bd-brand-default',
+              'hover:bg-bd-brand-default/90 hover:cursor-pointer',
             )}
           >
             <ArrowUp />

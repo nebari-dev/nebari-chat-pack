@@ -2,10 +2,10 @@
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
 
-import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import type { QueryClient } from '@tanstack/react-query';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 /**
  * The root route context.

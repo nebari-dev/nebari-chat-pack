@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import Keycloak from "keycloak-js";
+import Keycloak from 'keycloak-js';
 
 // Save a reference to the native fetch before it can be overridden.
 //
@@ -12,10 +12,10 @@ import Keycloak from "keycloak-js";
 const nativeFetch = window.fetch;
 
 // Whether auth is enabled for the application.
-const AUTH_ENABLED = import.meta.env.VITE_AUTH_ENABLED === "true";
+const AUTH_ENABLED = import.meta.env.VITE_AUTH_ENABLED === 'true';
 
 // The singleton `Keycloak` instance for handling authentication.
-const keycloak = new Keycloak("/keycloak-config.json");
+const keycloak = new Keycloak('/keycloak-config.json');
 
 // If auth is enabled, init keycloak before anything else is loaded.
 //
@@ -44,7 +44,7 @@ export async function fetch(
 
   // Create the extra headers if needed.
   const headers = (
-    AUTH_ENABLED ? { Authorization: `Bearer ${keycloak.token ?? ""}` } : {}
+    AUTH_ENABLED ? { Authorization: `Bearer ${keycloak.token ?? ''}` } : {}
   ) as HeadersInit;
 
   // Clone the init object and headers to prevent snooping by the caller.
@@ -123,7 +123,7 @@ export function getUserProfile(): UserProfile | null {
 
   // Return the user profile from the parsed token data.
   return {
-    name: keycloak.tokenParsed?.name ?? "",
-    email: keycloak.tokenParsed?.email ?? "",
+    name: keycloak.tokenParsed?.name ?? '',
+    email: keycloak.tokenParsed?.email ?? '',
   };
 }

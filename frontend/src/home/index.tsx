@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { Agents } from "./agents";
+import { Agents } from './agents';
 
-import { Explorer } from "./explorer";
+import { Explorer } from './explorer';
 
 /**
  * A React component that renders the home page.

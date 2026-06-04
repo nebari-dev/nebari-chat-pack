@@ -1,19 +1,19 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from '@tanstack/react-query';
 
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from '@tanstack/react-router';
 
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
-import * as api from "@/api";
+import * as api from '@/api';
 
-import { useChatConfig, useHasPermissions } from "@/context";
+import { useChatConfig, useHasPermissions } from '@/context';
 
-import { createRunMutation, createThreadMutation } from "@/queries";
+import { createRunMutation, createThreadMutation } from '@/queries';
 
 /**
  * A hook for submitting a user prompt.
@@ -38,7 +38,7 @@ export function useOnSubmit() {
   const { thread, agentId } = useChatConfig();
 
   // Check file-related permissions.
-  const canAttachFiles = useHasPermissions(["files:read", "files:write"]);
+  const canAttachFiles = useHasPermissions(['files:read', 'files:write']);
 
   // Fetch the route navigator.
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ export function useOnSubmit() {
       // This should not happen if the router search param validation is
       // operating properly.
       if (agentId === undefined) {
-        throw new Error("`agentId` is `undefined`");
+        throw new Error('`agentId` is `undefined`');
       }
 
       // Upload any attached files to ravnar, if permissions allow.
@@ -79,7 +79,7 @@ export function useOnSubmit() {
           const thread = await createThread({ agentId, name });
 
           // Navigate to the new thread id.
-          navigate({ to: ".", search: { threadId: thread.id } });
+          navigate({ to: '.', search: { threadId: thread.id } });
 
           // Return the new thread id.
           return thread.id;
@@ -87,9 +87,9 @@ export function useOnSubmit() {
 
       // Create the user message for the prompt.
       const msg: agui.UserMessage = {
-        role: "user",
+        role: 'user',
         id: crypto.randomUUID(),
-        content: [{ type: "text", text: prompt }, ...ravnarFiles],
+        content: [{ type: 'text', text: prompt }, ...ravnarFiles],
       };
 
       // Create the run for the thread.

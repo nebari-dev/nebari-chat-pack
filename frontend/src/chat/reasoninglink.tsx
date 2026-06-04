@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import type * as agui from "@ag-ui/core";
+import type * as agui from '@ag-ui/core';
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import { ArrowLeftFromLine, ArrowRightFromLine } from "lucide-react";
+import { ArrowLeftFromLine, ArrowRightFromLine } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useChatConfig } from "@/context";
+import { useChatConfig } from '@/context';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * A react component that renders a "Reasoning" link.
@@ -45,9 +45,9 @@ export function ReasoningLink(props: ReasoningLink.Props): ReactNode {
           detailId: opened ? undefined : message.id,
         })}
         className={cn(
-          "px-2 h-6 inline-flex gap-2 items-center text-nowrap text-xs",
-          "rounded-sm cursor-pointer bg-bg-neutral-dark border",
-          "hover:no-underline hover:bg-bg-neutral-default",
+          'px-2 h-6 inline-flex gap-2 items-center text-nowrap text-xs',
+          'rounded-sm cursor-pointer bg-bg-neutral-dark border',
+          'hover:no-underline hover:bg-bg-neutral-default',
         )}
       >
         Reasoning

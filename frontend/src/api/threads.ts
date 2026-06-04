@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from "@ag-ui/core";
+import * as agui from '@ag-ui/core';
 
-import * as z from "zod";
+import * as z from 'zod';
 
-import * as auth from "@/auth";
+import * as auth from '@/auth';
 
-import type { PaginationOptions } from "@/lib/pagination";
+import type { PaginationOptions } from '@/lib/pagination';
 
-import { createPageSchema } from "@/lib/pagination";
+import { createPageSchema } from '@/lib/pagination';
 
-import { SSEParserStream } from "@/lib/sse";
+import { SSEParserStream } from '@/lib/sse';
 
 /**
  * The schema for a run.
@@ -165,16 +165,16 @@ export async function getThreadPage(
 
   // Convert the options to search params.
   if (options.pageSize !== undefined) {
-    params.append("pageSize", `${options.pageSize}`);
+    params.append('pageSize', `${options.pageSize}`);
   }
   if (options.pageNumber !== undefined) {
-    params.append("pageNumber", `${options.pageNumber}`);
+    params.append('pageNumber', `${options.pageNumber}`);
   }
   if (options.sortBy !== undefined) {
-    params.append("sortBy", options.sortBy);
+    params.append('sortBy', options.sortBy);
   }
   if (options.sortOrder !== undefined) {
-    params.append("sortOrder", options.sortOrder);
+    params.append('sortOrder', options.sortOrder);
   }
 
   // Fetch the resource.
@@ -205,9 +205,9 @@ export async function createThread(
   options: createThread.Options,
 ): Promise<Thread> {
   // Fetch the resource.
-  const resp = await auth.fetch("/api/threads", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const resp = await auth.fetch('/api/threads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(options),
   });
 
@@ -252,8 +252,8 @@ export async function renameThread(
 
   // Fetch the resource.
   const resp = await auth.fetch(`/api/threads/${threadId}/rename`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: name }),
   });
 
@@ -289,9 +289,9 @@ export namespace renameThread {
 export async function deleteThreads(
   threadIds: readonly string[],
 ): Promise<void> {
-  await auth.fetch("/api/threads", {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+  await auth.fetch('/api/threads', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ids: threadIds }),
   });
 }
@@ -311,8 +311,8 @@ export async function* createRun(
 
   // Fetch the resource.
   const resp = await auth.fetch(`/api/threads/${threadId}/runs`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(rest),
   });
 
@@ -340,6 +340,6 @@ export namespace createRun {
    */
   export type Options = Omit<
     agui.RunAgentInput,
-    "runId" | "parentRunId" | "state"
+    'runId' | 'parentRunId' | 'state'
   >;
 }

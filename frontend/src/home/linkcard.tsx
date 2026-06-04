@@ -1,16 +1,16 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 /**
  * A React component the renders a link card for the home page.

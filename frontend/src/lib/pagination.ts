@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as z from "zod";
+import * as z from 'zod';
 
 /**
  * A type alias for a request pagination options.
@@ -25,7 +25,7 @@ export type PaginationOptions<T> = {
   /**
    * The sort order based on the sort key.
    */
-  readonly sortOrder?: "ascending" | "descending";
+  readonly sortOrder?: 'ascending' | 'descending';
 };
 
 /**

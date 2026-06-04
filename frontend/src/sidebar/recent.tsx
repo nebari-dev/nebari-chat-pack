@@ -1,17 +1,17 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import * as api from "@/api";
+import * as api from '@/api';
 
-import { Separator } from "@/components/ui/separator";
+import { Separator } from '@/components/ui/separator';
 
-import { threadPageQuery } from "@/queries";
+import { threadPageQuery } from '@/queries';
 
 /**
  * A react component that renders the recent threads in the sidebar.
@@ -28,8 +28,8 @@ export function Recent(props: Recent.Props): ReactNode {
     threadPageQuery({
       pageSize: 5,
       pageNumber: 1,
-      sortBy: "createdAt",
-      sortOrder: "descending",
+      sortBy: 'createdAt',
+      sortOrder: 'descending',
     }),
   );
 
@@ -102,12 +102,12 @@ namespace Private {
 
     // Define the active link props.
     const activeProps = {
-      className: "text-bd-brand-default",
+      className: 'text-bd-brand-default',
     };
 
     // Define the inactive link props.
     const inactiveProps = {
-      className: "text-muted-foreground",
+      className: 'text-muted-foreground',
     };
 
     // Return the rendered component.
@@ -119,7 +119,7 @@ namespace Private {
         activeProps={activeProps}
         inactiveProps={inactiveProps}
       >
-        {thread.name || "Untitled Thread"}
+        {thread.name || 'Untitled Thread'}
       </Link>
     );
   }

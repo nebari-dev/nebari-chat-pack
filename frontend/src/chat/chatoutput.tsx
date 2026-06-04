@@ -1,15 +1,15 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { useChatConfig } from "@/context";
+import { useChatConfig } from '@/context';
 
-import { threadMessagesQuery } from "@/queries";
+import { threadMessagesQuery } from '@/queries';
 
-import { MessageRendererMemo } from "./messagerenderer";
+import { MessageRendererMemo } from './messagerenderer';
 
 /**
  * A react component that renders the chat output for the session.

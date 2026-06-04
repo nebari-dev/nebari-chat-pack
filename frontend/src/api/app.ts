@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from "@ag-ui/core";
-import * as z from "zod";
-import * as auth from "@/auth";
+import * as agui from '@ag-ui/core';
+import * as z from 'zod';
+import * as auth from '@/auth';
 
 /**
  * The schema for a quick prompt for a specific agent.
@@ -93,7 +93,7 @@ export type AppConfig = z.infer<typeof AppConfigSchema>;
  */
 export async function getAppConfig(): Promise<AppConfig> {
   // Fetch the resource.
-  const resp = await auth.fetch("/api/config");
+  const resp = await auth.fetch('/api/config');
 
   // Return the parsed result.
   return AppConfigSchema.parse(await resp.json());
@@ -106,7 +106,7 @@ export async function getAppConfig(): Promise<AppConfig> {
  */
 export async function getAgents(): Promise<AgentConfig[]> {
   // Fetch the resource.
-  const resp = await auth.fetch("/api/agents");
+  const resp = await auth.fetch('/api/agents');
 
   // Return the parsed result.
   return z.array(AgentConfigSchema).parse(await resp.json());

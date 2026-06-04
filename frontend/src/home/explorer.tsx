@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import { MessageSquarePlus, MessagesSquare } from "lucide-react";
+import { MessageSquarePlus, MessagesSquare } from 'lucide-react';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { LinkCard } from "./linkcard";
+import { LinkCard } from './linkcard';
 
 /**
  * A React component that renders the explorer links for the home page.
