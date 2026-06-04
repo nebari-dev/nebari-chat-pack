@@ -1,18 +1,14 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import {
-  createContext, useContext
-} from 'react';
+import { createContext, useContext } from "react";
 
-import * as api from '@/api';
-
+import type * as api from "@/api";
 
 /**
  * The configuration for the chat page.
  */
-export
-type ChatConfig = {
+export type ChatConfig = {
   /**
    * The loaded thread object for the `/chat` `threadId` search param.
    *
@@ -47,22 +43,22 @@ type ChatConfig = {
   readonly detailId: string | undefined;
 };
 
-
 /**
  * The chat config context.
  */
-export
-const ChatConfigContext = createContext<ChatConfig | undefined>(undefined);
-
+export const ChatConfigContext = createContext<ChatConfig | undefined>(
+  undefined,
+);
 
 /**
  * A hook which returns the chat config.
  */
-export
-function useChatConfig(): ChatConfig {
+export function useChatConfig(): ChatConfig {
   const config = useContext(ChatConfigContext);
   if (config === undefined) {
-    throw new Error('`useChatConfig` must be called within a `ChatConfigContext`');
+    throw new Error(
+      "`useChatConfig` must be called within a `ChatConfigContext`",
+    );
   }
   return config;
 }

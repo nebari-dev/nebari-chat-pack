@@ -1,23 +1,18 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from '@ag-ui/core';
+import type * as agui from "@ag-ui/core";
 
-import type {
-  ReactNode
-} from 'react';
+import type { ReactNode } from "react";
 
 import * as api from "@/api";
 
-import {
-  Badge
-} from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 /**
  * A react component that renders an ag-ui `UserMessage`.
  */
-export
-function UserMessage(props: UserMessage.Props): ReactNode {
+export function UserMessage(props: UserMessage.Props): ReactNode {
   // Extract the props.
   const { message } = props;
 
@@ -50,24 +45,20 @@ function UserMessage(props: UserMessage.Props): ReactNode {
   );
 }
 
-
 /**
  * The namespace for the `UserMessage` statics.
  */
-export
-namespace UserMessage {
+export namespace UserMessage {
   /**
    * A type alias for the `UserMessage` props.
    */
-  export
-  type Props = {
+  export type Props = {
     /**
      * The ag-ui user message.
      */
     readonly message: agui.UserMessage;
   };
 }
-
 
 /**
  * The namespace for the module implementation details.

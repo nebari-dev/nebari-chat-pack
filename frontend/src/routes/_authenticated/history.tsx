@@ -1,48 +1,31 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import {
-  createFileRoute, useRouter
-} from '@tanstack/react-router';
 
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 
-import {
-  useCallback
-} from 'react';
+import { useCallback } from "react";
 
-import type {
-  HistoryConfig
-} from '@/context';
+import type { HistoryConfig } from "@/context";
 
-import {
-  HistoryConfigContext
-} from '@/context';
+import { HistoryConfigContext } from "@/context";
 
-import {
-  History
-} from '@/history';
+import { History } from "@/history";
 
-import {
-  deleteThreadsMutation, threadPageQuery
-} from '@/queries';
-
+import { deleteThreadsMutation, threadPageQuery } from "@/queries";
 
 /**
  * The route for the `/history` endpoint.
  */
-export
-const Route = createFileRoute('/_authenticated/history')({
+export const Route = createFileRoute("/_authenticated/history")({
   loader: ({ context }) => {
     // TODO - support pagination query params
     const query = threadPageQuery({});
     return context.client.fetchQuery(query);
   },
-  component: RouteComponent
+  component: RouteComponent,
 });
-
 
 /**
  * The component that renders the `/sessions` route.
@@ -58,20 +41,23 @@ function RouteComponent() {
   const { mutateAsync } = useMutation(deleteThreadsMutation);
 
   // Create the handler for deleting threads.
-  const deleteThreads = useCallback(async (ids: readonly string[]) => {
-    // Run the mutation to delete the threads.
-    await mutateAsync(ids);
+  const deleteThreads = useCallback(
+    async (ids: readonly string[]) => {
+      // Run the mutation to delete the threads.
+      await mutateAsync(ids);
 
-    // Force the router to reload.
-    await router.invalidate();
-  }, [mutateAsync, router]);
+      // Force the router to reload.
+      await router.invalidate();
+    },
+    [mutateAsync, router],
+  );
 
   // Create the history config.
   const config: HistoryConfig = { page, deleteThreads };
 
   // Return the rendered component.
   return (
-    <HistoryConfigContext value={ config }>
+    <HistoryConfigContext value={config}>
       <History />
     </HistoryConfigContext>
   );

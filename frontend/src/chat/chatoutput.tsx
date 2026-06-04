@@ -1,32 +1,20 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import type {
-  ReactNode
-} from 'react';
+import type { ReactNode } from "react";
 
-import {
-  useChatConfig
-} from '@/context';
+import { useChatConfig } from "@/context";
 
-import {
-  threadMessagesQuery
-} from '@/queries';
+import { threadMessagesQuery } from "@/queries";
 
-import {
-  MessageRendererMemo
-} from './messagerenderer';
-
+import { MessageRendererMemo } from "./messagerenderer";
 
 /**
  * A react component that renders the chat output for the session.
  */
-export
-function ChatOutput(): ReactNode {
+export function ChatOutput(): ReactNode {
   // Fetch the current thread from the chat config.
   const { thread } = useChatConfig();
 
@@ -37,14 +25,12 @@ function ChatOutput(): ReactNode {
   const { data: messages } = useQuery(query);
 
   // Create the content for the thread.
-  const content = (messages ?? []).map(msg =>
-    <MessageRendererMemo key={ msg.id } message={ msg } />
-  );
+  const content = (messages ?? []).map((msg) => (
+    <MessageRendererMemo key={msg.id} message={msg} />
+  ));
 
   // Return the rendered component.
   return (
-    <div className='grow mx-auto w-full min-w-3xs max-w-3xl'>
-      { content }
-    </div>
+    <div className="grow mx-auto w-full min-w-3xs max-w-3xl">{content}</div>
   );
 }

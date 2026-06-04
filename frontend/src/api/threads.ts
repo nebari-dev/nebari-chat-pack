@@ -1,30 +1,22 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from '@ag-ui/core';
+import * as agui from "@ag-ui/core";
 
-import * as z from 'zod';
+import * as z from "zod";
 
-import * as auth from '@/auth';
+import * as auth from "@/auth";
 
-import type {
-  PaginationOptions
-} from '@/lib/pagination';
+import type { PaginationOptions } from "@/lib/pagination";
 
-import {
-  createPageSchema
-} from '@/lib/pagination';
+import { createPageSchema } from "@/lib/pagination";
 
-import {
-  SSEParserStream
-} from '@/lib/sse';
-
+import { SSEParserStream } from "@/lib/sse";
 
 /**
  * The schema for a run.
  */
-export
-const RunSchema = z.object({
+export const RunSchema = z.object({
   /**
    * The unique id of the run.
    */
@@ -46,19 +38,15 @@ const RunSchema = z.object({
   createdAt: z.string().datetime(),
 });
 
-
 /**
  * A type alias for a run.
  */
-export
-type Run = z.infer<typeof RunSchema>;
-
+export type Run = z.infer<typeof RunSchema>;
 
 /**
  * The schema for a thread.
  */
-export
-const ThreadSchema = z.object({
+export const ThreadSchema = z.object({
   /**
    * The unique id of the thread.
    */
@@ -85,13 +73,10 @@ const ThreadSchema = z.object({
   runs: z.array(RunSchema).default([]),
 });
 
-
 /**
  * A type alias for a thread.
  */
-export
-type Thread = z.infer<typeof ThreadSchema>;
-
+export type Thread = z.infer<typeof ThreadSchema>;
 
 /**
  * Compute the effective "updated at" timestamp for a thread.
@@ -99,8 +84,7 @@ type Thread = z.infer<typeof ThreadSchema>;
  * This is derived from the latest run's `createdAt`, falling back
  * to the thread's own `createdAt` when there are no runs.
  */
-export
-function getThreadUpdatedAt(thread: Thread): string {
+export function getThreadUpdatedAt(thread: Thread): string {
   if (thread.runs.length === 0) {
     return thread.createdAt;
   }
@@ -114,34 +98,25 @@ function getThreadUpdatedAt(thread: Thread): string {
   return latest;
 }
 
-
 /**
  * The schema for a thread page.
  */
-export
-const ThreadPageSchema = createPageSchema(ThreadSchema);
-
+export const ThreadPageSchema = createPageSchema(ThreadSchema);
 
 /**
  * A type alias for a thread page.
  */
-export
-type ThreadPage = z.infer<typeof ThreadPageSchema>;
-
+export type ThreadPage = z.infer<typeof ThreadPageSchema>;
 
 /**
  * The schema for thread messages.
  */
-export
-const ThreadMessagesSchema = z.array(agui.MessageSchema);
-
+export const ThreadMessagesSchema = z.array(agui.MessageSchema);
 
 /**
  * A type alias for detailed information about a thread.
  */
-export
-type ThreadMessages = z.infer<typeof ThreadMessagesSchema>;
-
+export type ThreadMessages = z.infer<typeof ThreadMessagesSchema>;
 
 /**
  * Fetch a single `Thread` object.
@@ -150,15 +125,13 @@ type ThreadMessages = z.infer<typeof ThreadMessagesSchema>;
  *
  * @returns The requested thread object.
  */
-export
-async function getThread(threadId: string): Promise<Thread> {
+export async function getThread(threadId: string): Promise<Thread> {
   // Fetch the resource.
   const resp = await auth.fetch(`/api/threads/${threadId}`);
 
   // Return the parsed result.
   return ThreadSchema.parse(await resp.json());
 }
-
 
 /**
  * Get the messages for a particular thread.
@@ -167,15 +140,15 @@ async function getThread(threadId: string): Promise<Thread> {
  *
  * @returns The messages for the thread.
  */
-export
-async function getThreadMessages(threadId: string): Promise<ThreadMessages> {
+export async function getThreadMessages(
+  threadId: string,
+): Promise<ThreadMessages> {
   // Fetch the resource.
   const resp = await auth.fetch(`/api/threads/${threadId}/messages`);
 
   // Return the parsed result.
   return ThreadMessagesSchema.parse(await resp.json());
 }
-
 
 /**
  * Fetch a page of `Thread` objects.
@@ -184,23 +157,24 @@ async function getThreadMessages(threadId: string): Promise<ThreadMessages> {
  *
  * @returns A thread page subject to the query.
  */
-export
-async function getThreadPage(options: getThreadPage.Options): Promise<ThreadPage> {
+export async function getThreadPage(
+  options: getThreadPage.Options,
+): Promise<ThreadPage> {
   // Create the search params.
   const params = new URLSearchParams();
 
   // Convert the options to search params.
   if (options.pageSize !== undefined) {
-    params.append('pageSize', `${options.pageSize}`);
+    params.append("pageSize", `${options.pageSize}`);
   }
   if (options.pageNumber !== undefined) {
-    params.append('pageNumber', `${options.pageNumber}`);
+    params.append("pageNumber", `${options.pageNumber}`);
   }
   if (options.sortBy !== undefined) {
-    params.append('sortBy', options.sortBy);
+    params.append("sortBy", options.sortBy);
   }
   if (options.sortOrder !== undefined) {
-    params.append('sortOrder', options.sortOrder);
+    params.append("sortOrder", options.sortOrder);
   }
 
   // Fetch the resource.
@@ -210,19 +184,15 @@ async function getThreadPage(options: getThreadPage.Options): Promise<ThreadPage
   return ThreadPageSchema.parse(await resp.json());
 }
 
-
 /**
  * The namespace for the `getThreadPage` statics.
  */
-export
-namespace getThreadPage {
+export namespace getThreadPage {
   /**
    * A type alias for the `getThreadPage()` options.
    */
-  export
-  type Options = PaginationOptions<Thread>;
+  export type Options = PaginationOptions<Thread>;
 }
-
 
 /**
  * A create a new empty thread prior to running user input.
@@ -231,30 +201,28 @@ namespace getThreadPage {
  *
  * @returns The new `Thread` object.
  */
-export
-async function createThread(options: createThread.Options): Promise<Thread> {
+export async function createThread(
+  options: createThread.Options,
+): Promise<Thread> {
   // Fetch the resource.
-  const resp = await auth.fetch('/api/threads', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(options)
+  const resp = await auth.fetch("/api/threads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(options),
   });
 
   // Return the parsed result.
   return ThreadSchema.parse(await resp.json());
 }
 
-
 /**
  * The namespace for the `createThread` statics.
  */
-export
-namespace createThread {
+export namespace createThread {
   /**
    * A type alias for the options to `createThread()`.
    */
-  export
-  type Options = {
+  export type Options = {
     /**
      * The unique id of the agent for running the thread.
      */
@@ -318,15 +286,15 @@ export namespace renameThread {
  *
  * @param threadIds - The ids of the threads to delete.
  */
-export
-async function deleteThreads(threadIds: readonly string[]): Promise<void> {
-  await auth.fetch('/api/threads', {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ids: threadIds })
+export async function deleteThreads(
+  threadIds: readonly string[],
+): Promise<void> {
+  await auth.fetch("/api/threads", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: threadIds }),
   });
 }
-
 
 /**
  * Create a new run in a thread and stream the resulting events.
@@ -335,21 +303,22 @@ async function deleteThreads(threadIds: readonly string[]): Promise<void> {
  *
  * @returns An async generator that streams the ag-ui events.
  */
-export
-async function *createRun(options: createRun.Options): AsyncGenerator<agui.AGUIEvent> {
+export async function* createRun(
+  options: createRun.Options,
+): AsyncGenerator<agui.AGUIEvent> {
   // Extract the options.
   const { threadId, ...rest } = options;
 
   // Fetch the resource.
   const resp = await auth.fetch(`/api/threads/${threadId}/runs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(rest)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(rest),
   });
 
   // Setup the SSE stream parser.
-  const stream = resp.body!
-    .pipeThrough(new TextDecoderStream())
+  const stream = resp
+    .body!.pipeThrough(new TextDecoderStream())
     .pipeThrough(new SSEParserStream());
 
   // Yield the parsed events.
@@ -362,15 +331,15 @@ async function *createRun(options: createRun.Options): AsyncGenerator<agui.AGUIE
   }
 }
 
-
 /**
  * The namespace for the `createRun` statics.
  */
-export
-namespace createRun {
+export namespace createRun {
   /**
    * A type alias for the options to `createRun()`.
    */
-  export
-  type Options = Omit<agui.RunAgentInput, 'runId' | 'parentRunId' | 'state'>;
+  export type Options = Omit<
+    agui.RunAgentInput,
+    "runId" | "parentRunId" | "state"
+  >;
 }

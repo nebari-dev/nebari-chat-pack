@@ -1,8 +1,7 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import Keycloak from 'keycloak-js';
-
+import Keycloak from "keycloak-js";
 
 // Save a reference to the native fetch before it can be overridden.
 //
@@ -12,14 +11,11 @@ import Keycloak from 'keycloak-js';
 //   2) It allows us to define our own `fetch` without name-clashing.
 const nativeFetch = window.fetch;
 
-
 // Whether auth is enabled for the application.
-const AUTH_ENABLED = import.meta.env.VITE_AUTH_ENABLED === 'true';
-
+const AUTH_ENABLED = import.meta.env.VITE_AUTH_ENABLED === "true";
 
 // The singleton `Keycloak` instance for handling authentication.
-const keycloak = new Keycloak('/keycloak-config.json');
-
+const keycloak = new Keycloak("/keycloak-config.json");
 
 // If auth is enabled, init keycloak before anything else is loaded.
 //
@@ -29,7 +25,6 @@ if (AUTH_ENABLED) {
   await keycloak.init({ checkLoginIframe: false });
 }
 
-
 /**
  * A fetch wrapper that adds the bearer token to the request headers.
  *
@@ -38,8 +33,10 @@ if (AUTH_ENABLED) {
  *   2) It automatically handles refreshing the bearer token
  *   3) It handles the `!response.okay` condition
  */
-export
-async function fetch(url: string, init: RequestInit = {}): Promise<Response> {
+export async function fetch(
+  url: string,
+  init: RequestInit = {},
+): Promise<Response> {
   // Ensure we have an unexpired token.
   if (AUTH_ENABLED) {
     await keycloak.updateToken();
@@ -47,7 +44,7 @@ async function fetch(url: string, init: RequestInit = {}): Promise<Response> {
 
   // Create the extra headers if needed.
   const headers = (
-    AUTH_ENABLED ? { 'Authorization': `Bearer ${keycloak.token ?? ''}` } : { }
+    AUTH_ENABLED ? { Authorization: `Bearer ${keycloak.token ?? ""}` } : {}
   ) as HeadersInit;
 
   // Clone the init object and headers to prevent snooping by the caller.
@@ -65,14 +62,12 @@ async function fetch(url: string, init: RequestInit = {}): Promise<Response> {
   return resp;
 }
 
-
 /**
  * A function which handles the user login via Keycloak.
  *
  * If the user is already logged-in this is a no-op.
  */
-export
-async function login(): Promise<void> {
+export async function login(): Promise<void> {
   // Bail early if login is not needed.
   if (!AUTH_ENABLED || keycloak.authenticated) {
     return;
@@ -82,14 +77,12 @@ async function login(): Promise<void> {
   await keycloak.login({ redirectUri: window.location.origin });
 }
 
-
 /**
  * A function which handles user logout via Keycloack.
  *
  * If the user is already logged-out this is just a redirect to origin.
  */
-export
-async function logout(): Promise<void> {
+export async function logout(): Promise<void> {
   // Redirect if auth is not enabled.
   //
   // On execution, `keycloak.authenticated` might be `false` if the user
@@ -104,12 +97,10 @@ async function logout(): Promise<void> {
   await keycloak.logout({ redirectUri: window.location.origin });
 }
 
-
 /**
  * A type alias for a user profile.
  */
-export
-type UserProfile = {
+export type UserProfile = {
   /**
    * The user name.
    */
@@ -121,12 +112,10 @@ type UserProfile = {
   email: string;
 };
 
-
 /**
  * Get the profile for the logged in user, or `null`.
  */
-export
-function getUserProfile(): UserProfile | null {
+export function getUserProfile(): UserProfile | null {
   // Bail early if auth is not enabled.
   if (!AUTH_ENABLED || !keycloak.authenticated) {
     return null;
@@ -134,7 +123,7 @@ function getUserProfile(): UserProfile | null {
 
   // Return the user profile from the parsed token data.
   return {
-    name: keycloak.tokenParsed?.name ?? '',
-    email: keycloak.tokenParsed?.email ?? ''
+    name: keycloak.tokenParsed?.name ?? "",
+    email: keycloak.tokenParsed?.email ?? "",
   };
 }

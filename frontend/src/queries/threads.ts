@@ -1,114 +1,94 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as agui from '@ag-ui/core';
+import * as agui from "@ag-ui/core";
 
-import {
-  mutationOptions, queryOptions
-} from '@tanstack/react-query';
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
 
-import {
-  applyPatch
-} from 'fast-json-patch';
+import { applyPatch } from "fast-json-patch";
 
-import type {
-  WritableDraft
-} from 'immer';
+import type { WritableDraft } from "immer";
 
-import {
-  produce
-} from 'immer';
+import { produce } from "immer";
 
-import * as api from '@/api';
-
+import * as api from "@/api";
 
 /**
  * A query for fetching a thread by id.
  */
-export
-const threadQuery = (id: string | undefined) => {
+export const threadQuery = (id: string | undefined) => {
   return queryOptions({
-    queryKey: ['thread', id],
-    queryFn: () => id ? api.getThread(id) : null,
-    staleTime: 1000 * 60 * 5 // 5min
+    queryKey: ["thread", id],
+    queryFn: () => (id ? api.getThread(id) : null),
+    staleTime: 1000 * 60 * 5, // 5min
   });
 };
-
 
 /**
  * A query for fetching a page of threads.
  */
-export
-const threadPageQuery = (options: api.getThreadPage.Options) => {
+export const threadPageQuery = (options: api.getThreadPage.Options) => {
   return queryOptions({
-    queryKey: ['threads', options],
+    queryKey: ["threads", options],
     queryFn: () => api.getThreadPage(options),
-    staleTime: 1000 * 60 * 5 // 5min
+    staleTime: 1000 * 60 * 5, // 5min
   });
 };
-
 
 /**
  * A mutation for deleting threads.
  */
-export
-const deleteThreadsMutation = mutationOptions({
+export const deleteThreadsMutation = mutationOptions({
   mutationFn: (ids: readonly string[]) => {
     return api.deleteThreads(ids);
   },
   onSuccess: (_, __, ___, context) => {
-    context.client.invalidateQueries({ queryKey: ['threads'] });
+    context.client.invalidateQueries({ queryKey: ["threads"] });
   },
-  onError: console.error.bind(console)
+  onError: console.error.bind(console),
 });
-
 
 /**
  * A query for fetching thread messages by thread id.
  */
-export
-const threadMessagesQuery = (id: string | undefined) => {
+export const threadMessagesQuery = (id: string | undefined) => {
   return queryOptions({
-    queryKey: ['thread', 'messages', id],
-    queryFn: () => id ? api.getThreadMessages(id) : null,
-    staleTime: 1000 * 60 * 5 // 5min
+    queryKey: ["thread", "messages", id],
+    queryFn: () => (id ? api.getThreadMessages(id) : null),
+    staleTime: 1000 * 60 * 5, // 5min
   });
 };
-
 
 /**
  * A mutation for creating a new thread.
  */
-export
-const createThreadMutation = mutationOptions({
+export const createThreadMutation = mutationOptions({
   mutationFn: (options: api.createThread.Options) => {
     return api.createThread(options);
   },
   onSuccess: (thread, _, __, context) => {
-    const threadKey = ['thread', thread.id];
-    const messagesKey = ['thread', 'messages', thread.id];
+    const threadKey = ["thread", thread.id];
+    const messagesKey = ["thread", "messages", thread.id];
     context.client.setQueryData<api.Thread>(threadKey, thread);
     context.client.setQueryData<api.ThreadMessages>(messagesKey, []);
-    context.client.invalidateQueries({ queryKey: ['threads'] });
+    context.client.invalidateQueries({ queryKey: ["threads"] });
   },
-  onError: console.error.bind(console)
+  onError: console.error.bind(console),
 });
-
 
 /**
  * A mutation for creating a run in an existing thread.
  */
-export
-const createRunMutation = mutationOptions({
+export const createRunMutation = mutationOptions({
   mutationFn: async (options: api.createRun.Options, context) => {
     // Create the query key for the thread messages.
-    const queryKey = ['thread', 'messages', options.threadId];
+    const queryKey = ["thread", "messages", options.threadId];
 
     // Optimistically update the query cache with the new messages.
-    context.client.setQueryData<api.ThreadMessages>(
-      queryKey,
-      prev => [...(prev ?? []), ...options.messages]
-    );
+    context.client.setQueryData<api.ThreadMessages>(queryKey, (prev) => [
+      ...(prev ?? []),
+      ...options.messages,
+    ]);
 
     // Create the event stream for the run.
     const stream = api.createRun(options);
@@ -117,13 +97,14 @@ const createRunMutation = mutationOptions({
     for await (const evt of stream) {
       context.client.setQueryData<api.ThreadMessages>(
         queryKey,
-        produce(draft => { Private.processEvent(evt, draft!); })
+        produce((draft) => {
+          Private.processEvent(evt, draft!);
+        }),
       );
     }
   },
-  onError: console.error.bind(console)
+  onError: console.error.bind(console),
 });
-
 
 /**
  * The namespace for the module implementation details.
@@ -132,104 +113,107 @@ namespace Private {
   /**
    * A type alias for a writable draft of thread messages.
    */
-  export
-  type Draft = WritableDraft<api.ThreadMessages>;
+  export type Draft = WritableDraft<api.ThreadMessages>;
 
   /**
    * Dispatch an ag-ui event to the appropriate event handler.
    */
-  export
-  function processEvent(evt: agui.AGUIEvent, draft: Draft): void {
+  export function processEvent(evt: agui.AGUIEvent, draft: Draft): void {
     switch (evt.type) {
+      // Events that can be converted into messages.
+      case agui.EventType.TEXT_MESSAGE_START:
+        evtTextMessageStart(evt, draft);
+        break;
+      case agui.EventType.TEXT_MESSAGE_CONTENT:
+        evtTextMessageContent(evt, draft);
+        break;
+      case agui.EventType.TOOL_CALL_START:
+        evtToolCallStart(evt, draft);
+        break;
+      case agui.EventType.TOOL_CALL_ARGS:
+        evtToolCallArgs(evt, draft);
+        break;
+      case agui.EventType.TOOL_CALL_RESULT:
+        evtToolCallResult(evt, draft);
+        break;
+      case agui.EventType.MESSAGES_SNAPSHOT:
+        evtMessagesSnapshot(evt, draft);
+        break;
+      case agui.EventType.ACTIVITY_SNAPSHOT:
+        evtActivitySnapshot(evt, draft);
+        break;
+      case agui.EventType.ACTIVITY_DELTA:
+        evtActivityDelta(evt, draft);
+        break;
+      case agui.EventType.REASONING_MESSAGE_START:
+        evtReasoningMessageStart(evt, draft);
+        break;
+      case agui.EventType.REASONING_MESSAGE_CONTENT:
+        evtReasoningMessageContent(evt, draft);
+        break;
 
-    // Events that can be converted into messages.
-    case agui.EventType.TEXT_MESSAGE_START:
-      evtTextMessageStart(evt, draft);
-      break;
-    case agui.EventType.TEXT_MESSAGE_CONTENT:
-      evtTextMessageContent(evt, draft);
-      break;
-    case agui.EventType.TOOL_CALL_START:
-      evtToolCallStart(evt, draft);
-      break;
-    case agui.EventType.TOOL_CALL_ARGS:
-      evtToolCallArgs(evt, draft);
-      break;
-    case agui.EventType.TOOL_CALL_RESULT:
-      evtToolCallResult(evt, draft);
-      break;
-    case agui.EventType.MESSAGES_SNAPSHOT:
-      evtMessagesSnapshot(evt, draft);
-      break;
-    case agui.EventType.ACTIVITY_SNAPSHOT:
-      evtActivitySnapshot(evt, draft);
-      break;
-    case agui.EventType.ACTIVITY_DELTA:
-      evtActivityDelta(evt, draft);
-      break;
-    case agui.EventType.REASONING_MESSAGE_START:
-      evtReasoningMessageStart(evt, draft);
-      break;
-    case agui.EventType.REASONING_MESSAGE_CONTENT:
-      evtReasoningMessageContent(evt, draft);
-      break;
+      // Backend error events.
+      case agui.EventType.RUN_ERROR:
+        console.error("Error during run:", evt);
+        break;
 
-    // Backend error events.
-    case agui.EventType.RUN_ERROR:
-      console.error('Error during run:', evt);
-      break;
+      // Unsupported events, since they don't make sense, or are just
+      // a more complicated way of expressing start->content->end.
+      case agui.EventType.TEXT_MESSAGE_CHUNK:
+      case agui.EventType.TOOL_CALL_CHUNK:
+      case agui.EventType.STATE_SNAPSHOT:
+      case agui.EventType.STATE_DELTA:
+      case agui.EventType.REASONING_MESSAGE_CHUNK:
+        console.log(`${evt.type} events are not supported:`, evt);
+        break;
 
-    // Unsupported events, since they don't make sense, or are just
-    // a more complicated way of expressing start->content->end.
-    case agui.EventType.TEXT_MESSAGE_CHUNK:
-    case agui.EventType.TOOL_CALL_CHUNK:
-    case agui.EventType.STATE_SNAPSHOT:
-    case agui.EventType.STATE_DELTA:
-    case agui.EventType.REASONING_MESSAGE_CHUNK:
-      console.log(`${evt.type} events are not supported:`, evt);
-      break;
+      // Ignored events, since they aren't needed for now.
+      case agui.EventType.TEXT_MESSAGE_END:
+      case agui.EventType.TOOL_CALL_END:
+      case agui.EventType.RAW:
+      case agui.EventType.CUSTOM:
+      case agui.EventType.RUN_STARTED:
+      case agui.EventType.RUN_FINISHED:
+      case agui.EventType.STEP_STARTED:
+      case agui.EventType.STEP_FINISHED:
+      case agui.EventType.REASONING_START:
+      case agui.EventType.REASONING_MESSAGE_END:
+      case agui.EventType.REASONING_END:
+      case agui.EventType.REASONING_ENCRYPTED_VALUE:
+        break;
 
-    // Ignored events, since they aren't needed for now.
-    case agui.EventType.TEXT_MESSAGE_END:
-    case agui.EventType.TOOL_CALL_END:
-    case agui.EventType.RAW:
-    case agui.EventType.CUSTOM:
-    case agui.EventType.RUN_STARTED:
-    case agui.EventType.RUN_FINISHED:
-    case agui.EventType.STEP_STARTED:
-    case agui.EventType.STEP_FINISHED:
-    case agui.EventType.REASONING_START:
-    case agui.EventType.REASONING_MESSAGE_END:
-    case agui.EventType.REASONING_END:
-    case agui.EventType.REASONING_ENCRYPTED_VALUE:
-      break;
-
-    // Last resort. Log anything unexpected.
-    default:
-      console.log('Unhandled ag-ui event:', evt);
+      // Last resort. Log anything unexpected.
+      default:
+        console.log("Unhandled ag-ui event:", evt);
     }
   }
 
   /**
    * Handle the ag-ui `TextMessageStart` event.
    */
-  function evtTextMessageStart(evt: agui.TextMessageStartEvent, draft: Draft): void {
+  function evtTextMessageStart(
+    evt: agui.TextMessageStartEvent,
+    draft: Draft,
+  ): void {
     // Ignore non-assistant messages for now.
-    if (evt.role !== 'assistant') {
+    if (evt.role !== "assistant") {
       console.log(`Ignoring 'TextMessageStart' event with role: ${evt.role}`);
       return;
     }
 
     // Create a new empty assistant message.
-    draft.push({ role: 'assistant', id: evt.messageId, content: '' });
+    draft.push({ role: "assistant", id: evt.messageId, content: "" });
   }
 
   /**
    * Handle the ag-ui `TextMessageContent` event.
    */
-  function evtTextMessageContent(evt: agui.TextMessageContentEvent, draft: Draft): void {
+  function evtTextMessageContent(
+    evt: agui.TextMessageContentEvent,
+    draft: Draft,
+  ): void {
     // Find the message with specified id.
-    const msg = draft.findLast(m => m.id === evt.messageId);
+    const msg = draft.findLast((m) => m.id === evt.messageId);
 
     // Log an error the message is not found.
     if (!msg) {
@@ -238,13 +222,13 @@ namespace Private {
     }
 
     // If a message is found, validate its role.
-    if (msg.role !== 'assistant') {
+    if (msg.role !== "assistant") {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
 
     // Add the content delta to the message.
-    msg.content = (msg.content ?? '') + evt.delta;
+    msg.content = (msg.content ?? "") + evt.delta;
   }
 
   /**
@@ -256,17 +240,15 @@ namespace Private {
 
     // Create the new tool call.
     const toolCall = {
-      type: 'function',
+      type: "function",
       id: evt.toolCallId,
-      function: { name: evt.toolCallName, arguments: '' }
+      function: { name: evt.toolCallName, arguments: "" },
     } as const;
 
     // Find the best message to associate with the tool call.
-    const msg = (
-      evt.pid ?
-      draft.findLast(m => m.id === pid) :
-      draft.findLast(m => m.role === 'assistant')
-    );
+    const msg = evt.pid
+      ? draft.findLast((m) => m.id === pid)
+      : draft.findLast((m) => m.role === "assistant");
 
     // It's an error if a parent id was specified but not found.
     //
@@ -278,15 +260,15 @@ namespace Private {
       console.warn(`Message ${pid} not found. Synthesizing one.`);
       draft.push({
         id: pid,
-        role: 'assistant',
-        content: '',
-        toolCalls: [toolCall]
+        role: "assistant",
+        content: "",
+        toolCalls: [toolCall],
       });
       return;
     }
 
     // If a message is found, validate its role.
-    if (msg && msg.role !== 'assistant') {
+    if (msg && msg.role !== "assistant") {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -300,9 +282,9 @@ namespace Private {
     // As a last resort, create a new message to hold the tool call.
     draft.push({
       id: crypto.randomUUID(),
-      role: 'assistant',
-      content: '',
-      toolCalls: [toolCall]
+      role: "assistant",
+      content: "",
+      toolCalls: [toolCall],
     });
   }
 
@@ -329,20 +311,26 @@ namespace Private {
   /**
    * Handle the ag-ui `ToolCallResult` event.
    */
-  function evtToolCallResult(evt: agui.ToolCallResultEvent, draft: Draft): void {
+  function evtToolCallResult(
+    evt: agui.ToolCallResultEvent,
+    draft: Draft,
+  ): void {
     // Add the tool result to the messages.
     draft.push({
-      role: 'tool',
+      role: "tool",
       id: evt.messageId,
       toolCallId: evt.toolCallId,
-      content: evt.content
+      content: evt.content,
     });
   }
 
   /**
    * Handle the ag-ui `MessagesSnapshot` event.
    */
-  function evtMessagesSnapshot(evt: agui.MessagesSnapshotEvent, draft: Draft): void {
+  function evtMessagesSnapshot(
+    evt: agui.MessagesSnapshotEvent,
+    draft: Draft,
+  ): void {
     // Replace the entire messages history with the snapshot.
     draft.splice(0, draft.length, ...evt.messages);
   }
@@ -350,12 +338,15 @@ namespace Private {
   /**
    * Handle the ag-ui `ActivitySnapshot` event.
    */
-  function evtActivitySnapshot(evt: agui.ActivitySnapshotEvent, draft: Draft): void {
+  function evtActivitySnapshot(
+    evt: agui.ActivitySnapshotEvent,
+    draft: Draft,
+  ): void {
     // Find the message with the matching id.
-    const msg = draft.findLast(msg => msg.id === evt.messageId);
+    const msg = draft.findLast((msg) => msg.id === evt.messageId);
 
     // Log an error if the message exists and has an invalid role.
-    if (msg && msg.role !== 'activity') {
+    if (msg && msg.role !== "activity") {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -369,10 +360,10 @@ namespace Private {
 
     // Otherwise, add the new activity message to the history.
     draft.push({
-      role: 'activity',
+      role: "activity",
       id: evt.messageId,
       activityType: evt.activityType,
-      content: evt.content
+      content: evt.content,
     });
   }
 
@@ -381,7 +372,7 @@ namespace Private {
    */
   function evtActivityDelta(evt: agui.ActivityDeltaEvent, draft: Draft): void {
     // Find the message with the matching id.
-    const msg = draft.findLast(msg => msg.id === evt.messageId);
+    const msg = draft.findLast((msg) => msg.id === evt.messageId);
 
     // Log an error the message is not found.
     if (!msg) {
@@ -390,14 +381,16 @@ namespace Private {
     }
 
     // Log an error if the message has an invalid role.
-    if (msg.role !== 'activity') {
+    if (msg.role !== "activity") {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
 
     // Log an error if the activity type has changed.
     if (msg.activityType !== evt.activityType) {
-      console.error(`Activity type changed: ${msg.activityType} -> ${evt.activityType}`);
+      console.error(
+        `Activity type changed: ${msg.activityType} -> ${evt.activityType}`,
+      );
       return;
     }
 
@@ -408,17 +401,23 @@ namespace Private {
   /**
    * Handle the ag-ui `ReasoningMessageStart` event.
    */
-  function evtReasoningMessageStart(evt: agui.ReasoningMessageStartEvent, draft: Draft): void {
+  function evtReasoningMessageStart(
+    evt: agui.ReasoningMessageStartEvent,
+    draft: Draft,
+  ): void {
     // Create a new empty reasoning message.
-    draft.push({ role: 'reasoning', id: evt.messageId, content: '' });
+    draft.push({ role: "reasoning", id: evt.messageId, content: "" });
   }
 
   /**
    * Handle the ag-ui `ReasoningMessageContent` event.
    */
-  function evtReasoningMessageContent(evt: agui.ReasoningMessageContentEvent, draft: Draft): void {
+  function evtReasoningMessageContent(
+    evt: agui.ReasoningMessageContentEvent,
+    draft: Draft,
+  ): void {
     // Find the message with specified id.
-    const msg = draft.findLast(m => m.id === evt.messageId);
+    const msg = draft.findLast((m) => m.id === evt.messageId);
 
     // Log an error the message is not found.
     if (!msg) {
@@ -427,7 +426,7 @@ namespace Private {
     }
 
     // If a message is found, validate its role.
-    if (msg.role !== 'reasoning') {
+    if (msg.role !== "reasoning") {
       console.error(`Message ${msg.id} has invalid role: ${msg.role}`);
       return;
     }
@@ -450,7 +449,7 @@ namespace Private {
   function findToolCall(toolCallId: string, draft: Draft) {
     for (let i = draft.length - 1; i >= 0; i--) {
       const msg = draft[i];
-      if (msg.role === 'assistant' && msg.toolCalls) {
+      if (msg.role === "assistant" && msg.toolCalls) {
         for (let j = msg.toolCalls.length - 1; j >= 0; j--) {
           const tc = msg.toolCalls[j];
           if (tc.id === toolCallId) {

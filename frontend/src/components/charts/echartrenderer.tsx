@@ -1,22 +1,16 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 
-import type {
-  ReactNode
-} from 'react';
+import type { ReactNode } from "react";
 
-import {
-  useEffect, useRef
-} from 'react';
-
+import { useEffect, useRef } from "react";
 
 /**
  * A react component that renders an EChart.
  */
-export
-function EChartRenderer(props: EChartRenderer.Props): ReactNode {
+export function EChartRenderer(props: EChartRenderer.Props): ReactNode {
   // Extract the echart option.
   const { option, className } = props;
 
@@ -54,20 +48,17 @@ function EChartRenderer(props: EChartRenderer.Props): ReactNode {
   }, [option]);
 
   // Return the rendered component.
-  return <div ref={ ref } className={ className } />;
+  return <div ref={ref} className={className} />;
 }
-
 
 /**
  * The namespace for the `EChartRenderer` statics.
  */
-export
-namespace EChartRenderer {
+export namespace EChartRenderer {
   /**
    * A type alias for the `EChartRenderer` props.
    */
-  export
-  type Props = {
+  export type Props = {
     /**
      * The option object for configuring the echart.
      */

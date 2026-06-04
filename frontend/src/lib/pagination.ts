@@ -1,14 +1,12 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2025-present, OpenTeams Inc.
 |----------------------------------------------------------------------------*/
-import * as z from 'zod';
-
+import * as z from "zod";
 
 /**
  * A type alias for a request pagination options.
  */
-export
-type PaginationOptions<T> = {
+export type PaginationOptions<T> = {
   /**
    * The upper limit of the number of responses to return per page.
    */
@@ -27,9 +25,8 @@ type PaginationOptions<T> = {
   /**
    * The sort order based on the sort key.
    */
-  readonly sortOrder?: 'ascending' | 'descending';
+  readonly sortOrder?: "ascending" | "descending";
 };
-
 
 /**
  * Create a schema for a paginated response.
@@ -38,8 +35,7 @@ type PaginationOptions<T> = {
  *
  * @returns A schema for a paginated response of the given item type.
  */
-export
-function createPageSchema<T extends z.ZodTypeAny>(itemSchema: T) {
+export function createPageSchema<T extends z.ZodTypeAny>(itemSchema: T) {
   return z.object({
     /**
      * The limit of the number of responses per page.
@@ -71,6 +67,6 @@ function createPageSchema<T extends z.ZodTypeAny>(itemSchema: T) {
      *
      * The `length` must always be `<= pageSize`.
      */
-    items: z.array(itemSchema)
+    items: z.array(itemSchema),
   });
 }
