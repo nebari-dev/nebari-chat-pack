@@ -43,7 +43,7 @@
     "katex": "^0.17.0",
     "keycloak-js": "^26.2.4",
     "leaflet": "^1.9.4",
-    "lucide-react": "^0.544.0",
+    "lucide-react": "^1.17.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
