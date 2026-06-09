@@ -11,7 +11,11 @@ import { useChatConfig } from '@/context';
 
 import { threadErrorQuery, threadMessagesQuery } from '@/queries';
 
+import { useIsRunning } from './hooks';
+
 import { MessageRendererMemo } from './messagerenderer';
+
+import { WaitingSpinner } from './waitingspinner';
 
 /**
  * A react component that renders the chat output for the session.
@@ -32,10 +36,29 @@ export function ChatOutput(): ReactNode {
   // Fetch the inline error state for the thread, if any.
   const { data: error } = useQuery(threadErrorQuery(thread?.id));
 
+  // Determine whether the thread is waiting on an LLM response.
+  const isRunning = useIsRunning(thread?.id);
+
   // Create the content for the thread.
   const content = (messages ?? []).map((msg) => (
     <MessageRendererMemo key={msg.id} message={msg} />
   ));
+
+  // Show the waiting spinner whenever the run is in-flight and the model is
+  // not actively speaking. The only state that should replace the spinner is
+  // an assistant message with text content, which streams as its own
+  // indicator. Every other state — the user's prompt, a reasoning step, a
+  // running tool call, or an activity — means the model is still working
+  // toward its answer, so the spinner stays up to show progress.
+  const last = messages?.at(-1);
+  const assistantSpeaking =
+    last?.role === 'assistant' && !!last.content?.trim();
+  const showSpinner = isRunning && !assistantSpeaking;
+  const spinner = showSpinner ? (
+    <div className="mt-4">
+      <WaitingSpinner />
+    </div>
+  ) : null;
 
   // Render the inline error when the latest run failed to send.
   const inlineError =
@@ -59,6 +82,7 @@ export function ChatOutput(): ReactNode {
   return (
     <div className="grow mx-auto w-full min-w-3xs max-w-3xl">
       {content}
+      {spinner}
       {inlineError}
     </div>
   );
