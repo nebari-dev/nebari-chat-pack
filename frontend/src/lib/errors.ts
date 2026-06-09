@@ -100,7 +100,7 @@ const COPY: Record<ErrorCategory, string> = {
     'Authentication error. Refresh the page or sign in again.',
   [ErrorCategory.RateLimit]:
     "You've hit the rate limit. Wait a moment before retrying.",
-  [ErrorCategory.Server]: 'Something went wrong on our end. Try again shortly.',
+  [ErrorCategory.Server]: 'Something went wrong. Try again shortly.',
   [ErrorCategory.Unknown]: 'An unexpected error occurred.',
 };
 
