@@ -232,40 +232,44 @@ export function ChatInput(): ReactNode {
   // The toggle flips the `showTools` search param, which opens or closes the
   // tools panel (the agent identity and its tools) in the chat sidebar.
   // When the agent provides no tools, the toggle is disabled.
-  const toolsToggle = hasTools ? (
+  const toolsButton = (
     <Button
-      asChild
-      aria-label="Toggle tools"
-      title="Tools"
+      asChild={hasTools}
+      aria-label="Toggle tools panel"
+      title={hasTools ? 'Tools' : undefined}
       variant="ghost"
-      className={cn('font-light', showTools && 'bg-bg-neutral-dark')}
+      disabled={!hasTools}
+      className={cn(
+        'font-light',
+        hasTools && showTools && 'bg-bg-neutral-dark',
+        !hasTools && 'opacity-50 cursor-not-allowed',
+      )}
     >
-      <Link
-        to="."
-        search={(prev) => ({
-          ...prev,
-          // Opening the tools panel closes any open message detail so
-          // the two never compete for the right sidebar slot.
-          detailId: undefined,
-          showTools: showTools ? undefined : true,
-        })}
-      >
+      {hasTools ? (
+        <Link
+          to="."
+          search={(prev) => ({
+            ...prev,
+            // Opening the tools panel closes any open message detail so
+            // the two never compete for the right sidebar slot.
+            detailId: undefined,
+            showTools: showTools ? undefined : true,
+          })}
+        >
+          <Hammer />
+        </Link>
+      ) : (
         <Hammer />
-      </Link>
+      )}
     </Button>
+  );
+
+  const toolsToggle = hasTools ? (
+    toolsButton
   ) : (
     // A disabled button suppresses pointer events, so the `title` tooltip
     // only shows when it is set on a wrapping element.
-    <span title="This agent does not provide any tools.">
-      <Button
-        aria-label="Toggle tools"
-        variant="ghost"
-        disabled
-        className="font-light opacity-50 cursor-not-allowed"
-      >
-        <Hammer />
-      </Button>
-    </span>
+    <span title="This agent does not provide any tools.">{toolsButton}</span>
   );
 
   // Return the rendered component.
