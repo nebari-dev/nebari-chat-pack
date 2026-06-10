@@ -80,8 +80,17 @@ export function useOnSubmit() {
           // Create a new thread with the user's selected agent.
           const thread = await createThread({ agentId, name });
 
-          // Navigate to the new thread id.
-          navigate({ to: '.', search: { threadId: thread.id } });
+          // Navigate to the new thread id, preserving the other search
+          // params (e.g. the open tools panel) and clearing the stale
+          // detail id, which referred to the prior context.
+          navigate({
+            to: '.',
+            search: (prev) => ({
+              ...prev,
+              threadId: thread.id,
+              detailId: undefined,
+            }),
+          });
 
           // Return the new thread id.
           return thread.id;
