@@ -15,6 +15,8 @@ import { useChatConfig, useHasPermissions } from '@/context';
 
 import { createRunMutation, createThreadMutation } from '@/queries';
 
+import { enabledFrontendToolDefinitions } from './tools';
+
 /**
  * A hook for submitting a user prompt.
  *
@@ -96,7 +98,7 @@ export function useOnSubmit() {
       await createRun({
         threadId: tid,
         messages: [msg],
-        tools: [], // TODO support client-side tools.
+        tools: enabledFrontendToolDefinitions(),
         context: [], // TODO support client-side context.
       });
     },
