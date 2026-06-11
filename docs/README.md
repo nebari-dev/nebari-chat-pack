@@ -2,8 +2,6 @@
 
 This directory contains the [Docusaurus 3.5.2](https://docusaurus.io/) site for the Nebari Chat pack.
 
-> **Note:** The site is currently an empty scaffold with a placeholder landing page. Section content will be added in follow-on work.
-
 ## Prerequisites
 
 - Node.js `>= 18` (enforced by the `engines` field in `package.json`).
@@ -44,31 +42,8 @@ yarn run serve
 
 Serves the contents of `docs/build/` locally so you can verify the production output, including search.
 
-## Troubleshooting
-
-### `ValidationError: Invalid options object. Progress Plugin has been initialized using an options object that does not match the API schema`
-
-This is a webpack-version mismatch. Docusaurus 3.5.2 targets webpack 5.94; webpack 5.97+ tightens the `ProgressPlugin` options schema and rejects what Docusaurus passes. `package.json` pins the resolution with:
-
-```json
-"resolutions": {
-  "webpack": "5.94.0"
-}
-```
-
-Yarn applies `resolutions` on install, but if `node_modules` was populated before the field existed (or by a different package manager) the wrong webpack stays cached. Reinstall cleanly:
-
-```bash
-cd docs
-rm -rf node_modules yarn.lock
-yarn install
-yarn build
-```
-
 ## Deployment
 
 The site deploys automatically via [GitHub Pages](https://pages.github.com/) whenever changes land on the `main` branch. Configuration lives in [`.github/workflows/deploy-docs.yml`](../.github/workflows/deploy-docs.yml).
 
 Pull requests trigger a build-only job (no deploy) so CI catches broken links before merge.
-
-To enable GitHub Pages for this repository, go to **Settings → Pages** and set the source to **GitHub Actions**.
